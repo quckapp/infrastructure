@@ -5,9 +5,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: quikapp-staging
+  name: quckapp-staging
 
-namespace: quikapp-staging
+namespace: quckapp-staging
 
 resources:
   - ../../base
@@ -16,7 +16,7 @@ commonLabels:
   environment: staging
 
 commonAnnotations:
-  quikapp.io/environment: staging
+  quckapp.io/environment: staging
 
 patches:
   # Staging replicas (near production)
@@ -76,15 +76,15 @@ patches:
         value: 8
 
 configMapGenerator:
-  - name: quikapp-common-config
+  - name: quckapp-common-config
     behavior: merge
     literals:
       - NODE_ENV=staging
       - ENVIRONMENT=staging
       - LOG_LEVEL=info
-      - CORS_ORIGIN=https://staging.quikapp.io
+      - CORS_ORIGIN=https://staging.quckapp.io
 
-  - name: quikapp-version
+  - name: quckapp-version
     behavior: replace
     literals:
       - VERSION=staging
@@ -92,47 +92,47 @@ configMapGenerator:
       - ENVIRONMENT=staging
 
 images:
-  - name: quikapp.azurecr.io/backend-gateway
+  - name: quckapp.azurecr.io/backend-gateway
     newTag: staging
-  - name: quikapp.azurecr.io/auth-service
+  - name: quckapp.azurecr.io/auth-service
     newTag: staging
-  - name: quikapp.azurecr.io/user-service
+  - name: quckapp.azurecr.io/user-service
     newTag: staging
-  - name: quikapp.azurecr.io/workspace-service
+  - name: quckapp.azurecr.io/workspace-service
     newTag: staging
-  - name: quikapp.azurecr.io/channel-service
+  - name: quckapp.azurecr.io/channel-service
     newTag: staging
-  - name: quikapp.azurecr.io/thread-service
+  - name: quckapp.azurecr.io/thread-service
     newTag: staging
-  - name: quikapp.azurecr.io/search-service
+  - name: quckapp.azurecr.io/search-service
     newTag: staging
-  - name: quikapp.azurecr.io/file-service
+  - name: quckapp.azurecr.io/file-service
     newTag: staging
-  - name: quikapp.azurecr.io/media-service
+  - name: quckapp.azurecr.io/media-service
     newTag: staging
-  - name: quikapp.azurecr.io/notification-service
+  - name: quckapp.azurecr.io/notification-service
     newTag: staging
-  - name: quikapp.azurecr.io/realtime-service
+  - name: quckapp.azurecr.io/realtime-service
     newTag: staging
-  - name: quikapp.azurecr.io/presence-service
+  - name: quckapp.azurecr.io/presence-service
     newTag: staging
-  - name: quikapp.azurecr.io/message-service
+  - name: quckapp.azurecr.io/message-service
     newTag: staging
-  - name: quikapp.azurecr.io/call-service
+  - name: quckapp.azurecr.io/call-service
     newTag: staging
-  - name: quikapp.azurecr.io/huddle-service
+  - name: quckapp.azurecr.io/huddle-service
     newTag: staging
-  - name: quikapp.azurecr.io/analytics-service
+  - name: quckapp.azurecr.io/analytics-service
     newTag: staging
-  - name: quikapp.azurecr.io/ml-service
+  - name: quckapp.azurecr.io/ml-service
     newTag: staging
-  - name: quikapp.azurecr.io/moderation-service
+  - name: quckapp.azurecr.io/moderation-service
     newTag: staging
-  - name: quikapp.azurecr.io/sentiment-service
+  - name: quckapp.azurecr.io/sentiment-service
     newTag: staging
-  - name: quikapp.azurecr.io/permission-service
+  - name: quckapp.azurecr.io/permission-service
     newTag: staging
-  - name: quikapp.azurecr.io/audit-service
+  - name: quckapp.azurecr.io/audit-service
     newTag: staging
-  - name: quikapp.azurecr.io/admin-service
+  - name: quckapp.azurecr.io/admin-service
     newTag: staging

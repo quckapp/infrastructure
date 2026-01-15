@@ -6,10 +6,10 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: quikapp-service-account
-  namespace: quikapp
+  name: quckapp-service-account
+  namespace: quckapp
   labels:
-    app.kubernetes.io/name: quikapp
+    app.kubernetes.io/name: quckapp
   annotations:
     azure.workload.identity/client-id: ""  # Set from Terraform
 ---
@@ -17,20 +17,20 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: quikapp-backend-sa
-  namespace: quikapp
+  name: quckapp-backend-sa
+  namespace: quckapp
   labels:
-    app.kubernetes.io/name: quikapp
+    app.kubernetes.io/name: quckapp
     app.kubernetes.io/component: backend
 ---
 # Service account for worker services (queue processing)
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: quikapp-worker-sa
-  namespace: quikapp
+  name: quckapp-worker-sa
+  namespace: quckapp
   labels:
-    app.kubernetes.io/name: quikapp
+    app.kubernetes.io/name: quckapp
     app.kubernetes.io/component: worker
 ---
 # =============================================================================
@@ -41,8 +41,8 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: quikapp-config-reader
-  namespace: quikapp
+  name: quckapp-config-reader
+  namespace: quckapp
 rules:
   - apiGroups: [""]
     resources: ["configmaps"]
@@ -55,8 +55,8 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: quikapp-service-discovery
-  namespace: quikapp
+  name: quckapp-service-discovery
+  namespace: quckapp
 rules:
   - apiGroups: [""]
     resources: ["services", "endpoints", "pods"]
@@ -70,39 +70,39 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: quikapp-config-reader-binding
-  namespace: quikapp
+  name: quckapp-config-reader-binding
+  namespace: quckapp
 subjects:
   - kind: ServiceAccount
-    name: quikapp-service-account
-    namespace: quikapp
+    name: quckapp-service-account
+    namespace: quckapp
   - kind: ServiceAccount
-    name: quikapp-backend-sa
-    namespace: quikapp
+    name: quckapp-backend-sa
+    namespace: quckapp
   - kind: ServiceAccount
-    name: quikapp-worker-sa
-    namespace: quikapp
+    name: quckapp-worker-sa
+    namespace: quckapp
 roleRef:
   kind: Role
-  name: quikapp-config-reader
+  name: quckapp-config-reader
   apiGroup: rbac.authorization.k8s.io
 ---
 # Bind service discovery to all service accounts
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: quikapp-service-discovery-binding
-  namespace: quikapp
+  name: quckapp-service-discovery-binding
+  namespace: quckapp
 subjects:
   - kind: ServiceAccount
-    name: quikapp-service-account
-    namespace: quikapp
+    name: quckapp-service-account
+    namespace: quckapp
   - kind: ServiceAccount
-    name: quikapp-backend-sa
-    namespace: quikapp
+    name: quckapp-backend-sa
+    namespace: quckapp
 roleRef:
   kind: Role
-  name: quikapp-service-discovery
+  name: quckapp-service-discovery
   apiGroup: rbac.authorization.k8s.io
 ---
 # =============================================================================
@@ -111,7 +111,7 @@ roleRef:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: quikapp
+  name: quckapp
   labels:
     pod-security.kubernetes.io/enforce: restricted
     pod-security.kubernetes.io/audit: restricted

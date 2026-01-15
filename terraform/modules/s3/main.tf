@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp S3 Media Storage Module
+# QuckApp S3 Media Storage Module
 # =============================================================================
 # This module creates S3 buckets for media storage with:
 # - Server-side encryption (SSE-KMS or SSE-S3)
@@ -25,7 +25,7 @@ terraform {
 # -----------------------------------------------------------------------------
 
 locals {
-  bucket_name = "quikapp-media-${var.environment}"
+  bucket_name = "quckapp-media-${var.environment}"
 
   common_tags = merge(var.tags, {
     Module      = "s3-media"
@@ -43,7 +43,7 @@ resource "aws_s3_bucket" "media" {
   force_destroy = var.environment != "prod" && var.environment != "live"
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Storage"
+    Name    = "QuckApp Media Storage"
     Purpose = "media-storage"
   })
 }
@@ -135,11 +135,11 @@ resource "aws_s3_bucket_policy" "media" {
 resource "aws_s3_bucket" "thumbnails" {
   count = var.create_thumbnails_bucket ? 1 : 0
 
-  bucket        = "quikapp-thumbnails-${var.environment}"
+  bucket        = "quckapp-thumbnails-${var.environment}"
   force_destroy = var.environment != "prod" && var.environment != "live"
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Thumbnails"
+    Name    = "QuckApp Thumbnails"
     Purpose = "thumbnails"
   })
 }
@@ -190,11 +190,11 @@ resource "aws_s3_bucket_ownership_controls" "thumbnails" {
 resource "aws_s3_bucket" "logs" {
   count = var.create_logs_bucket ? 1 : 0
 
-  bucket        = "quikapp-logs-${var.environment}"
+  bucket        = "quckapp-logs-${var.environment}"
   force_destroy = var.environment != "prod" && var.environment != "live"
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Access Logs"
+    Name    = "QuckApp Access Logs"
     Purpose = "logging"
   })
 }

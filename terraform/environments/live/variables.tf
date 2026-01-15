@@ -4,7 +4,7 @@
 
 variable "aws_region" { type = string; default = "us-east-1" }
 variable "dr_region" { type = string; default = "us-west-2" }
-variable "project_name" { type = string; default = "quikapp" }
+variable "project_name" { type = string; default = "quckapp" }
 variable "environment" { type = string; default = "live" }
 variable "cost_center" { type = string; default = "production" }
 
@@ -36,25 +36,25 @@ variable "global_cluster_identifier" { type = string; default = "" }
 variable "cors_allowed_origins" {
   type = list(string)
   default = [
-    "https://quikapp.com",
-    "https://www.quikapp.com",
-    "https://app.quikapp.com"
+    "https://quckapp.com",
+    "https://www.quckapp.com",
+    "https://app.quckapp.com"
   ]
 }
 
 variable "cognito_callback_urls" {
   type = list(string)
   default = [
-    "https://quikapp.com/callback",
-    "https://app.quikapp.com/callback"
+    "https://quckapp.com/callback",
+    "https://app.quckapp.com/callback"
   ]
 }
 
 variable "cognito_logout_urls" {
   type = list(string)
   default = [
-    "https://quikapp.com/logout",
-    "https://app.quikapp.com/logout"
+    "https://quckapp.com/logout",
+    "https://app.quckapp.com/logout"
   ]
 }
 
@@ -62,7 +62,7 @@ variable "cognito_logout_urls" {
 variable "acm_certificate_arn" { type = string; default = "" }
 variable "cloudfront_aliases" {
   type    = list(string)
-  default = ["cdn.quikapp.com", "media.quikapp.com"]
+  default = ["cdn.quckapp.com", "media.quckapp.com"]
 }
 variable "waf_web_acl_arn" { type = string; default = "" }
 variable "geo_restriction_type" { type = string; default = "none" }

@@ -11,11 +11,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: analytics-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: analytics-service
     app.kubernetes.io/component: analytics
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: python
 spec:
   replicas: 2
@@ -27,7 +27,7 @@ spec:
       labels:
         app.kubernetes.io/name: analytics-service
         app.kubernetes.io/component: analytics
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: python
         app.kubernetes.io/uses-broker: "true"
       annotations:
@@ -35,13 +35,13 @@ spec:
         prometheus.io/port: "8000"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: quikapp-worker-sa
+      serviceAccountName: quckapp-worker-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: analytics-service
-          image: quikapp.azurecr.io/analytics-service:latest
+          image: quckapp.azurecr.io/analytics-service:latest
           ports:
             - name: http
               containerPort: 8000
@@ -49,7 +49,7 @@ spec:
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: PORT
               value: "8000"
@@ -59,52 +59,52 @@ spec:
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: POSTGRES_HOST
             - name: POSTGRES_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: POSTGRES_PORT
             - name: POSTGRES_DB
-              value: "quikapp_analytics"
+              value: "quckapp_analytics"
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_USERNAME
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_PASSWORD
             # Redis
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: REDIS_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_PORT
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: REDIS_PASSWORD
             # Kafka
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             # ClickHouse for analytics storage
             - name: CLICKHOUSE_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: CLICKHOUSE_HOST
             - name: CLICKHOUSE_PORT
               value: "9000"
@@ -114,7 +114,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-monitoring-config
+                  name: quckapp-monitoring-config
                   key: OTEL_EXPORTER_OTLP_ENDPOINT
           resources:
             requests:
@@ -155,7 +155,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: analytics-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -169,7 +169,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: analytics-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -192,11 +192,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ml-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: ml-service
     app.kubernetes.io/component: ml
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: python
 spec:
   replicas: 2
@@ -208,19 +208,19 @@ spec:
       labels:
         app.kubernetes.io/name: ml-service
         app.kubernetes.io/component: ml
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: python
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
-      serviceAccountName: quikapp-worker-sa
+      serviceAccountName: quckapp-worker-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: ml-service
-          image: quikapp.azurecr.io/ml-service:latest
+          image: quckapp.azurecr.io/ml-service:latest
           ports:
             - name: http
               containerPort: 8000
@@ -230,7 +230,7 @@ spec:
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: PORT
               value: "8000"
@@ -242,18 +242,18 @@ spec:
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: REDIS_PASSWORD
             # Model storage
             - name: AZURE_STORAGE_CONNECTION_STRING
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-storage-secrets
+                  name: quckapp-storage-secrets
                   key: AZURE_STORAGE_CONNECTION_STRING
             - name: MODEL_CONTAINER
               value: "ml-models"
@@ -323,7 +323,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ml-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -340,7 +340,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: ml-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -369,11 +369,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: moderation-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: moderation-service
     app.kubernetes.io/component: moderation
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: python
 spec:
   replicas: 2
@@ -385,20 +385,20 @@ spec:
       labels:
         app.kubernetes.io/name: moderation-service
         app.kubernetes.io/component: moderation
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: python
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
-      serviceAccountName: quikapp-worker-sa
+      serviceAccountName: quckapp-worker-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: moderation-service
-          image: quikapp.azurecr.io/moderation-service:latest
+          image: quckapp.azurecr.io/moderation-service:latest
           ports:
             - name: http
               containerPort: 8000
@@ -406,7 +406,7 @@ spec:
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: PORT
               value: "8000"
@@ -416,7 +416,7 @@ spec:
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: KAFKA_CONSUMER_GROUP
               value: "moderation-service"
@@ -424,28 +424,28 @@ spec:
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: REDIS_PASSWORD
             # ML Service for model inference
             - name: ML_SERVICE_URL
-              value: "http://ml-service.quikapp.svc.cluster.local"
+              value: "http://ml-service.quckapp.svc.cluster.local"
             - name: ML_SERVICE_GRPC
-              value: "ml-service.quikapp.svc.cluster.local:50051"
+              value: "ml-service.quckapp.svc.cluster.local:50051"
             # External moderation APIs (Azure Content Safety)
             - name: AZURE_CONTENT_SAFETY_ENDPOINT
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: AZURE_CONTENT_SAFETY_ENDPOINT
             - name: AZURE_CONTENT_SAFETY_KEY
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: AZURE_CONTENT_SAFETY_KEY
             # Moderation config
             - name: TOXICITY_THRESHOLD
@@ -496,7 +496,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: moderation-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -510,7 +510,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: moderation-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -533,11 +533,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: sentiment-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: sentiment-service
     app.kubernetes.io/component: nlp
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: python
 spec:
   replicas: 2
@@ -549,20 +549,20 @@ spec:
       labels:
         app.kubernetes.io/name: sentiment-service
         app.kubernetes.io/component: nlp
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: python
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
     spec:
-      serviceAccountName: quikapp-worker-sa
+      serviceAccountName: quckapp-worker-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: sentiment-service
-          image: quikapp.azurecr.io/sentiment-service:latest
+          image: quckapp.azurecr.io/sentiment-service:latest
           ports:
             - name: http
               containerPort: 8000
@@ -570,7 +570,7 @@ spec:
             - name: ENVIRONMENT
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: PORT
               value: "8000"
@@ -580,7 +580,7 @@ spec:
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: KAFKA_CONSUMER_GROUP
               value: "sentiment-service"
@@ -588,12 +588,12 @@ spec:
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: REDIS_PASSWORD
             # Model config
             - name: MODEL_NAME
@@ -604,7 +604,7 @@ spec:
               value: "16"
             # Analytics integration
             - name: ANALYTICS_SERVICE_URL
-              value: "http://analytics-service.quikapp.svc.cluster.local"
+              value: "http://analytics-service.quckapp.svc.cluster.local"
             # Monitoring
             - name: OTEL_SERVICE_NAME
               value: "sentiment-service"
@@ -652,7 +652,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sentiment-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -666,7 +666,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: sentiment-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -695,7 +695,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: analytics-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 1
   selector:
@@ -706,7 +706,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: ml-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 1
   selector:
@@ -717,7 +717,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: moderation-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 1
   selector:

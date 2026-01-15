@@ -9,7 +9,7 @@
 resource "aws_cloudwatch_metric_alarm" "media_processing_dlq" {
   count = var.create_media_processing_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-media-processing-dlq-messages"
+  alarm_name          = "quckapp-${var.environment}-media-processing-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -33,7 +33,7 @@ resource "aws_cloudwatch_metric_alarm" "media_processing_dlq" {
 resource "aws_cloudwatch_metric_alarm" "media_processing_age" {
   count = var.create_media_processing_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-media-processing-message-age"
+  alarm_name          = "quckapp-${var.environment}-media-processing-message-age"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateAgeOfOldestMessage"
@@ -61,7 +61,7 @@ resource "aws_cloudwatch_metric_alarm" "media_processing_age" {
 resource "aws_cloudwatch_metric_alarm" "thumbnail_dlq" {
   count = var.create_thumbnail_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-thumbnail-dlq-messages"
+  alarm_name          = "quckapp-${var.environment}-thumbnail-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -85,7 +85,7 @@ resource "aws_cloudwatch_metric_alarm" "thumbnail_dlq" {
 resource "aws_cloudwatch_metric_alarm" "thumbnail_age" {
   count = var.create_thumbnail_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-thumbnail-message-age"
+  alarm_name          = "quckapp-${var.environment}-thumbnail-message-age"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateAgeOfOldestMessage"
@@ -113,7 +113,7 @@ resource "aws_cloudwatch_metric_alarm" "thumbnail_age" {
 resource "aws_cloudwatch_metric_alarm" "video_processing_dlq" {
   count = var.create_video_processing_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-video-processing-dlq-messages"
+  alarm_name          = "quckapp-${var.environment}-video-processing-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -137,7 +137,7 @@ resource "aws_cloudwatch_metric_alarm" "video_processing_dlq" {
 resource "aws_cloudwatch_metric_alarm" "video_processing_age" {
   count = var.create_video_processing_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-video-processing-message-age"
+  alarm_name          = "quckapp-${var.environment}-video-processing-message-age"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateAgeOfOldestMessage"
@@ -165,7 +165,7 @@ resource "aws_cloudwatch_metric_alarm" "video_processing_age" {
 resource "aws_cloudwatch_metric_alarm" "notification_dlq" {
   count = var.create_notification_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-notification-dlq-messages"
+  alarm_name          = "quckapp-${var.environment}-notification-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -189,7 +189,7 @@ resource "aws_cloudwatch_metric_alarm" "notification_dlq" {
 resource "aws_cloudwatch_metric_alarm" "notification_age" {
   count = var.create_notification_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-notification-message-age"
+  alarm_name          = "quckapp-${var.environment}-notification-message-age"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateAgeOfOldestMessage"
@@ -217,7 +217,7 @@ resource "aws_cloudwatch_metric_alarm" "notification_age" {
 resource "aws_cloudwatch_metric_alarm" "export_dlq" {
   count = var.create_export_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-export-dlq-messages"
+  alarm_name          = "quckapp-${var.environment}-export-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -245,7 +245,7 @@ resource "aws_cloudwatch_metric_alarm" "export_dlq" {
 resource "aws_cloudwatch_metric_alarm" "fifo_dlq" {
   count = var.create_fifo_queue && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-fifo-dlq-messages"
+  alarm_name          = "quckapp-${var.environment}-fifo-dlq-messages"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 1
   metric_name         = "ApproximateNumberOfMessagesVisible"

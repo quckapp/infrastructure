@@ -20,11 +20,11 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Load Tests with k6'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
 
         echo "========================================"
         echo "Load Test Configuration"

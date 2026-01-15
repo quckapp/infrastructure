@@ -1,4 +1,4 @@
-# QuikApp Helm Chart Values
+# QuckApp Helm Chart Values
 # Default configuration for all microservices
 
 # =============================================================================
@@ -18,21 +18,21 @@ global:
   imagePullSecrets: []
 
   # Namespace
-  namespace: quikapp
+  namespace: quckapp
 
   # Domain for ingress
-  domain: quikapp.local
+  domain: quckapp.local
 
   # TLS enabled
   tlsEnabled: false
 
   # TLS secret name
-  tlsSecretName: quikapp-tls
+  tlsSecretName: quckapp-tls
 
   # Service account
   serviceAccount:
     create: true
-    name: quikapp-sa
+    name: quckapp-sa
     annotations: {}
 
   # Pod security context
@@ -92,7 +92,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
   hosts:
-    - host: api.quikapp.local
+    - host: api.quckapp.local
       paths:
         - path: /
           pathType: Prefix
@@ -123,7 +123,7 @@ backendGateway:
   name: backend-gateway
   replicaCount: 2
   image:
-    repository: quikapp/backend-gateway
+    repository: quckapp/backend-gateway
     tag: latest
   service:
     type: ClusterIP
@@ -143,9 +143,9 @@ backendGateway:
     PORT: "3000"
   envFrom:
     - secretRef:
-        name: quikapp-secrets
+        name: quckapp-secrets
     - configMapRef:
-        name: quikapp-config
+        name: quckapp-config
   healthCheck:
     path: /health
     port: 3000
@@ -161,7 +161,7 @@ notificationService:
   name: notification-service
   replicaCount: 2
   image:
-    repository: quikapp/notification-service
+    repository: quckapp/notification-service
     tag: latest
   service:
     type: ClusterIP
@@ -190,7 +190,7 @@ realtimeService:
   name: realtime-service
   replicaCount: 3
   image:
-    repository: quikapp/realtime-service
+    repository: quckapp/realtime-service
     tag: latest
   service:
     type: ClusterIP
@@ -230,7 +230,7 @@ authService:
   name: auth-service
   replicaCount: 2
   image:
-    repository: quikapp/auth-service
+    repository: quckapp/auth-service
     tag: latest
   service:
     type: ClusterIP
@@ -262,7 +262,7 @@ userService:
   name: user-service
   replicaCount: 2
   image:
-    repository: quikapp/user-service
+    repository: quckapp/user-service
     tag: latest
   service:
     type: ClusterIP
@@ -294,7 +294,7 @@ permissionService:
   name: permission-service
   replicaCount: 2
   image:
-    repository: quikapp/permission-service
+    repository: quckapp/permission-service
     tag: latest
   service:
     type: ClusterIP
@@ -323,7 +323,7 @@ auditService:
   name: audit-service
   replicaCount: 2
   image:
-    repository: quikapp/audit-service
+    repository: quckapp/audit-service
     tag: latest
   service:
     type: ClusterIP
@@ -352,7 +352,7 @@ adminService:
   name: admin-service
   replicaCount: 1
   image:
-    repository: quikapp/admin-service
+    repository: quckapp/admin-service
     tag: latest
   service:
     type: ClusterIP
@@ -384,7 +384,7 @@ presenceService:
   name: presence-service
   replicaCount: 3
   image:
-    repository: quikapp/presence-service
+    repository: quckapp/presence-service
     tag: latest
   service:
     type: ClusterIP
@@ -399,7 +399,7 @@ presenceService:
   env:
     MIX_ENV: prod
     PORT: "4000"
-    RELEASE_COOKIE: quikapp-cookie
+    RELEASE_COOKIE: quckapp-cookie
   healthCheck:
     path: /health
     port: 4000
@@ -414,7 +414,7 @@ messageService:
   name: message-service
   replicaCount: 3
   image:
-    repository: quikapp/message-service
+    repository: quckapp/message-service
     tag: latest
   service:
     type: ClusterIP
@@ -432,7 +432,7 @@ messageService:
   env:
     MIX_ENV: prod
     PORT: "4001"
-    RELEASE_COOKIE: quikapp-cookie
+    RELEASE_COOKIE: quckapp-cookie
   healthCheck:
     path: /health
     port: 4001
@@ -447,7 +447,7 @@ callService:
   name: call-service
   replicaCount: 2
   image:
-    repository: quikapp/call-service
+    repository: quckapp/call-service
     tag: latest
   service:
     type: ClusterIP
@@ -465,7 +465,7 @@ callService:
   env:
     MIX_ENV: prod
     PORT: "4002"
-    RELEASE_COOKIE: quikapp-cookie
+    RELEASE_COOKIE: quckapp-cookie
   healthCheck:
     path: /health
     port: 4002
@@ -480,7 +480,7 @@ notificationOrchestrator:
   name: notification-orchestrator
   replicaCount: 2
   image:
-    repository: quikapp/notification-orchestrator
+    repository: quckapp/notification-orchestrator
     tag: latest
   service:
     type: ClusterIP
@@ -495,7 +495,7 @@ notificationOrchestrator:
   env:
     MIX_ENV: prod
     PORT: "4003"
-    RELEASE_COOKIE: quikapp-cookie
+    RELEASE_COOKIE: quckapp-cookie
   healthCheck:
     path: /health
     port: 4003
@@ -510,7 +510,7 @@ huddleService:
   name: huddle-service
   replicaCount: 2
   image:
-    repository: quikapp/huddle-service
+    repository: quckapp/huddle-service
     tag: latest
   service:
     type: ClusterIP
@@ -528,7 +528,7 @@ huddleService:
   env:
     MIX_ENV: prod
     PORT: "4004"
-    RELEASE_COOKIE: quikapp-cookie
+    RELEASE_COOKIE: quckapp-cookie
   healthCheck:
     path: /health
     port: 4004
@@ -543,7 +543,7 @@ eventBroadcastService:
   name: event-broadcast-service
   replicaCount: 2
   image:
-    repository: quikapp/event-broadcast-service
+    repository: quckapp/event-broadcast-service
     tag: latest
   service:
     type: ClusterIP
@@ -558,7 +558,7 @@ eventBroadcastService:
   env:
     MIX_ENV: prod
     PORT: "4005"
-    RELEASE_COOKIE: quikapp-cookie
+    RELEASE_COOKIE: quckapp-cookie
   healthCheck:
     path: /health
     port: 4005
@@ -576,7 +576,7 @@ workspaceService:
   name: workspace-service
   replicaCount: 2
   image:
-    repository: quikapp/workspace-service
+    repository: quckapp/workspace-service
     tag: latest
   service:
     type: ClusterIP
@@ -608,7 +608,7 @@ channelService:
   name: channel-service
   replicaCount: 2
   image:
-    repository: quikapp/channel-service
+    repository: quckapp/channel-service
     tag: latest
   service:
     type: ClusterIP
@@ -640,7 +640,7 @@ threadService:
   name: thread-service
   replicaCount: 2
   image:
-    repository: quikapp/thread-service
+    repository: quckapp/thread-service
     tag: latest
   service:
     type: ClusterIP
@@ -672,7 +672,7 @@ searchService:
   name: search-service
   replicaCount: 2
   image:
-    repository: quikapp/search-service
+    repository: quckapp/search-service
     tag: latest
   service:
     type: ClusterIP
@@ -704,7 +704,7 @@ fileService:
   name: file-service
   replicaCount: 2
   image:
-    repository: quikapp/file-service
+    repository: quckapp/file-service
     tag: latest
   service:
     type: ClusterIP
@@ -738,7 +738,7 @@ mediaService:
   name: media-service
   replicaCount: 2
   image:
-    repository: quikapp/media-service
+    repository: quckapp/media-service
     tag: latest
   service:
     type: ClusterIP
@@ -772,7 +772,7 @@ bookmarkService:
   name: bookmark-service
   replicaCount: 2
   image:
-    repository: quikapp/bookmark-service
+    repository: quckapp/bookmark-service
     tag: latest
   service:
     type: ClusterIP
@@ -804,7 +804,7 @@ reminderService:
   name: reminder-service
   replicaCount: 2
   image:
-    repository: quikapp/reminder-service
+    repository: quckapp/reminder-service
     tag: latest
   service:
     type: ClusterIP
@@ -836,7 +836,7 @@ attachmentService:
   name: attachment-service
   replicaCount: 2
   image:
-    repository: quikapp/attachment-service
+    repository: quckapp/attachment-service
     tag: latest
   service:
     type: ClusterIP
@@ -870,7 +870,7 @@ cdnService:
   name: cdn-service
   replicaCount: 3
   image:
-    repository: quikapp/cdn-service
+    repository: quckapp/cdn-service
     tag: latest
   service:
     type: ClusterIP
@@ -908,7 +908,7 @@ analyticsService:
   name: analytics-service
   replicaCount: 2
   image:
-    repository: quikapp/analytics-service
+    repository: quckapp/analytics-service
     tag: latest
   service:
     type: ClusterIP
@@ -940,7 +940,7 @@ mlService:
   name: ml-service
   replicaCount: 2
   image:
-    repository: quikapp/ml-service
+    repository: quckapp/ml-service
     tag: latest
   service:
     type: ClusterIP
@@ -969,7 +969,7 @@ moderationService:
   name: moderation-service
   replicaCount: 2
   image:
-    repository: quikapp/moderation-service
+    repository: quckapp/moderation-service
     tag: latest
   service:
     type: ClusterIP
@@ -998,7 +998,7 @@ exportService:
   name: export-service
   replicaCount: 2
   image:
-    repository: quikapp/export-service
+    repository: quckapp/export-service
     tag: latest
   service:
     type: ClusterIP
@@ -1030,7 +1030,7 @@ integrationService:
   name: integration-service
   replicaCount: 2
   image:
-    repository: quikapp/integration-service
+    repository: quckapp/integration-service
     tag: latest
   service:
     type: ClusterIP
@@ -1062,7 +1062,7 @@ sentimentService:
   name: sentiment-service
   replicaCount: 2
   image:
-    repository: quikapp/sentiment-service
+    repository: quckapp/sentiment-service
     tag: latest
   service:
     type: ClusterIP
@@ -1091,7 +1091,7 @@ insightsService:
   name: insights-service
   replicaCount: 2
   image:
-    repository: quikapp/insights-service
+    repository: quckapp/insights-service
     tag: latest
   service:
     type: ClusterIP
@@ -1123,7 +1123,7 @@ smartReplyService:
   name: smart-reply-service
   replicaCount: 2
   image:
-    repository: quikapp/smart-reply-service
+    repository: quckapp/smart-reply-service
     tag: latest
   service:
     type: ClusterIP
@@ -1178,7 +1178,7 @@ swaggerUi:
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /$2
     hosts:
-      - host: api.quikapp.local
+      - host: api.quckapp.local
         paths:
           - path: /docs(/|$)(.*)
             pathType: Prefix

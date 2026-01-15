@@ -1,15 +1,15 @@
 # =============================================================================
-# QUIKAPP NAMESPACE
+# QUCKAPP NAMESPACE
 # =============================================================================
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: quikapp
+  name: quckapp
   labels:
-    app.kubernetes.io/name: quikapp
+    app.kubernetes.io/name: quckapp
     app.kubernetes.io/managed-by: kubectl
   annotations:
-    description: "QuikApp microservices namespace"
+    description: "QuckApp microservices namespace"
 ---
 # =============================================================================
 # RESOURCE QUOTAS
@@ -17,8 +17,8 @@ metadata:
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: quikapp-quota
-  namespace: quikapp
+  name: quckapp-quota
+  namespace: quckapp
 spec:
   hard:
     requests.cpu: "50"
@@ -37,8 +37,8 @@ spec:
 apiVersion: v1
 kind: LimitRange
 metadata:
-  name: quikapp-limits
-  namespace: quikapp
+  name: quckapp-limits
+  namespace: quckapp
 spec:
   limits:
     # Default limits for containers

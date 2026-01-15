@@ -40,8 +40,8 @@ parameters:
       - live
 
 variables:
-  - group: QuikApp-Global-Variables
-  - group: QuikApp-Python-Variables
+  - group: QuckApp-Global-Variables
+  - group: QuckApp-Python-Variables
   - name: techStack
     value: 'python'
 

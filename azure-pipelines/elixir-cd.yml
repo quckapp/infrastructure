@@ -38,8 +38,8 @@ parameters:
       - live
 
 variables:
-  - group: QuikApp-Global-Variables
-  - group: QuikApp-Elixir-Variables
+  - group: QuckApp-Global-Variables
+  - group: QuckApp-Elixir-Variables
   - name: techStack
     value: 'elixir'
 

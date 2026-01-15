@@ -12,7 +12,7 @@
 resource "aws_iam_role" "replication" {
   count = var.enable_replication ? 1 : 0
 
-  name = "quikapp-s3-replication-${var.environment}"
+  name = "quckapp-s3-replication-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -28,7 +28,7 @@ resource "aws_iam_role" "replication" {
   })
 
   tags = merge(var.tags, {
-    Name        = "QuikApp S3 Replication Role"
+    Name        = "QuckApp S3 Replication Role"
     Environment = var.environment
   })
 }
@@ -36,7 +36,7 @@ resource "aws_iam_role" "replication" {
 resource "aws_iam_role_policy" "replication" {
   count = var.enable_replication ? 1 : 0
 
-  name = "quikapp-s3-replication-policy-${var.environment}"
+  name = "quckapp-s3-replication-policy-${var.environment}"
   role = aws_iam_role.replication[0].id
 
   policy = jsonencode({

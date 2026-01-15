@@ -10,7 +10,7 @@
     {
       "gridPos": { "h": 2, "w": 24, "x": 0, "y": 0 },
       "id": 1,
-      "options": { "content": "# Microservices Metrics\nDetailed metrics for all 32 QuikApp microservices", "mode": "markdown" },
+      "options": { "content": "# Microservices Metrics\nDetailed metrics for all 32 QuckApp microservices", "mode": "markdown" },
       "type": "text"
     },
     {
@@ -195,12 +195,12 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["quikapp", "microservices"],
+  "tags": ["quckapp", "microservices"],
   "templating": { "list": [] },
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "QuikApp Microservices",
-  "uid": "quikapp-microservices",
+  "title": "QuckApp Microservices",
+  "uid": "quckapp-microservices",
   "version": 1
 }

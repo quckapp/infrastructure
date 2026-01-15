@@ -5,11 +5,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notification-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: notification-service
     app.kubernetes.io/component: backend
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: nestjs
 spec:
   replicas: 2
@@ -21,7 +21,7 @@ spec:
       labels:
         app.kubernetes.io/name: notification-service
         app.kubernetes.io/component: backend
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: nestjs
         app.kubernetes.io/uses-broker: "true"
         app.kubernetes.io/uses-external-api: "true"
@@ -29,13 +29,13 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "3000"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: notification-service
-          image: quikapp.azurecr.io/notification-service:latest
+          image: quckapp.azurecr.io/notification-service:latest
           ports:
             - name: http
               containerPort: 3000
@@ -43,7 +43,7 @@ spec:
             - name: NODE_ENV
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: NODE_ENV
             - name: PORT
               value: "3000"
@@ -51,50 +51,50 @@ spec:
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: MONGODB_URI
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: REDIS_PASSWORD
             # Kafka
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             # Firebase Push Notifications
             - name: FIREBASE_PROJECT_ID
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: FIREBASE_PROJECT_ID
             - name: FIREBASE_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: FIREBASE_PRIVATE_KEY
             - name: FIREBASE_CLIENT_EMAIL
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: FIREBASE_CLIENT_EMAIL
             # Twilio SMS
             - name: TWILIO_ACCOUNT_SID
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: TWILIO_ACCOUNT_SID
             - name: TWILIO_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-external-secrets
+                  name: quckapp-external-secrets
                   key: TWILIO_AUTH_TOKEN
             # Monitoring
             - name: OTEL_SERVICE_NAME
@@ -134,7 +134,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notification-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -148,7 +148,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: notification-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -171,11 +171,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: realtime-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: realtime-service
     app.kubernetes.io/component: websocket
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: nestjs
 spec:
   replicas: 3
@@ -187,20 +187,20 @@ spec:
       labels:
         app.kubernetes.io/name: realtime-service
         app.kubernetes.io/component: websocket
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: nestjs
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "3000"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: realtime-service
-          image: quikapp.azurecr.io/realtime-service:latest
+          image: quckapp.azurecr.io/realtime-service:latest
           ports:
             - name: http
               containerPort: 3000
@@ -210,7 +210,7 @@ spec:
             - name: NODE_ENV
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: NODE_ENV
             - name: HTTP_PORT
               value: "3000"
@@ -220,30 +220,30 @@ spec:
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: REDIS_PASSWORD
             # JWT for WebSocket auth
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-jwt-secrets
+                  name: quckapp-jwt-secrets
                   key: JWT_SECRET
             # Kafka for events
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             # CORS
             - name: CORS_ORIGIN
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: CORS_ORIGIN
             # Monitoring
             - name: OTEL_SERVICE_NAME
@@ -292,7 +292,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: realtime-service
-  namespace: quikapp
+  namespace: quckapp
   annotations:
     # Enable sticky sessions for WebSocket
     service.kubernetes.io/topology-aware-hints: auto
@@ -316,7 +316,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: realtime-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -342,7 +342,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: realtime-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 2
   selector:

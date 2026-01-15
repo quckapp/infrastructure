@@ -1,13 +1,13 @@
-# QuikApp Production Environment Values
-# Usage: helm install quikapp ./quikapp -f values-production.yaml
+# QuckApp Production Environment Values
+# Usage: helm install quckapp ./quckapp -f values-production.yaml
 
 global:
   environment: production
   imagePullPolicy: IfNotPresent
-  namespace: quikapp
-  domain: quikapp.io
+  namespace: quckapp
+  domain: quckapp.io
   tlsEnabled: true
-  tlsSecretName: quikapp-production-tls
+  tlsSecretName: quckapp-production-tls
 
   # Production resources
   resources:

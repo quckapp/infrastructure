@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "quikapp.name" -}}
+{{- define "quckapp.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -9,7 +9,7 @@ Expand the name of the chart.
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
-{{- define "quikapp.fullname" -}}
+{{- define "quckapp.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -25,50 +25,50 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "quikapp.chart" -}}
+{{- define "quckapp.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "quikapp.labels" -}}
-helm.sh/chart: {{ include "quikapp.chart" . }}
-{{ include "quikapp.selectorLabels" . }}
+{{- define "quckapp.labels" -}}
+helm.sh/chart: {{ include "quckapp.chart" . }}
+{{ include "quckapp.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-app.kubernetes.io/part-of: quikapp
+app.kubernetes.io/part-of: quckapp
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "quikapp.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "quikapp.name" . }}
+{{- define "quckapp.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "quckapp.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Service labels for a specific microservice
 */}}
-{{- define "quikapp.serviceLabels" -}}
-helm.sh/chart: {{ include "quikapp.chart" .root }}
+{{- define "quckapp.serviceLabels" -}}
+helm.sh/chart: {{ include "quckapp.chart" .root }}
 app.kubernetes.io/name: {{ .serviceName }}
 app.kubernetes.io/instance: {{ .root.Release.Name }}
 {{- if .root.Chart.AppVersion }}
 app.kubernetes.io/version: {{ .root.Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .root.Release.Service }}
-app.kubernetes.io/part-of: quikapp
+app.kubernetes.io/part-of: quckapp
 app.kubernetes.io/component: {{ .component | default "backend" }}
 {{- end }}
 
 {{/*
 Service selector labels for a specific microservice
 */}}
-{{- define "quikapp.serviceSelectorLabels" -}}
+{{- define "quckapp.serviceSelectorLabels" -}}
 app.kubernetes.io/name: {{ .serviceName }}
 app.kubernetes.io/instance: {{ .root.Release.Name }}
 {{- end }}
@@ -76,9 +76,9 @@ app.kubernetes.io/instance: {{ .root.Release.Name }}
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "quikapp.serviceAccountName" -}}
+{{- define "quckapp.serviceAccountName" -}}
 {{- if .Values.global.serviceAccount.create }}
-{{- default (include "quikapp.fullname" .) .Values.global.serviceAccount.name }}
+{{- default (include "quckapp.fullname" .) .Values.global.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.global.serviceAccount.name }}
 {{- end }}
@@ -87,7 +87,7 @@ Create the name of the service account to use
 {{/*
 Generate image pull secrets
 */}}
-{{- define "quikapp.imagePullSecrets" -}}
+{{- define "quckapp.imagePullSecrets" -}}
 {{- if .Values.global.imagePullSecrets }}
 imagePullSecrets:
 {{- range .Values.global.imagePullSecrets }}
@@ -99,7 +99,7 @@ imagePullSecrets:
 {{/*
 Generate the full image name for a service
 */}}
-{{- define "quikapp.image" -}}
+{{- define "quckapp.image" -}}
 {{- $registry := .root.Values.global.imageRegistry | default "" -}}
 {{- $repository := .image.repository -}}
 {{- $tag := .image.tag | default "latest" -}}
@@ -113,7 +113,7 @@ Generate the full image name for a service
 {{/*
 Generate resource limits and requests
 */}}
-{{- define "quikapp.resources" -}}
+{{- define "quckapp.resources" -}}
 {{- if .resources }}
 resources:
   {{- if .resources.requests }}
@@ -143,7 +143,7 @@ resources:
 {{/*
 Generate health check probes
 */}}
-{{- define "quikapp.probes" -}}
+{{- define "quckapp.probes" -}}
 {{- if .healthCheck }}
 livenessProbe:
   httpGet:
@@ -175,7 +175,7 @@ startupProbe:
 {{/*
 Generate environment variables from env map
 */}}
-{{- define "quikapp.env" -}}
+{{- define "quckapp.env" -}}
 {{- if .env }}
 env:
 {{- range $key, $value := .env }}
@@ -188,7 +188,7 @@ env:
 {{/*
 Generate environment variables from secrets and configmaps
 */}}
-{{- define "quikapp.envFrom" -}}
+{{- define "quckapp.envFrom" -}}
 {{- if .envFrom }}
 envFrom:
 {{- toYaml .envFrom | nindent 2 }}
@@ -198,7 +198,7 @@ envFrom:
 {{/*
 Pod security context
 */}}
-{{- define "quikapp.podSecurityContext" -}}
+{{- define "quckapp.podSecurityContext" -}}
 {{- if .securityContext }}
 securityContext:
   {{- toYaml .securityContext | nindent 2 }}
@@ -211,7 +211,7 @@ securityContext:
 {{/*
 Container security context
 */}}
-{{- define "quikapp.containerSecurityContext" -}}
+{{- define "quckapp.containerSecurityContext" -}}
 {{- if .containerSecurityContext }}
 securityContext:
   {{- toYaml .containerSecurityContext | nindent 2 }}
@@ -224,14 +224,14 @@ securityContext:
 {{/*
 Namespace
 */}}
-{{- define "quikapp.namespace" -}}
+{{- define "quckapp.namespace" -}}
 {{- .Values.global.namespace | default .Release.Namespace -}}
 {{- end }}
 
 {{/*
 Generate tracing environment variables
 */}}
-{{- define "quikapp.tracingEnv" -}}
+{{- define "quckapp.tracingEnv" -}}
 {{- if .global.tracing.enabled }}
 - name: OTEL_EXPORTER_OTLP_ENDPOINT
   value: {{ .global.tracing.endpoint | quote }}
@@ -242,14 +242,14 @@ Generate tracing environment variables
 - name: OTEL_SERVICE_NAME
   value: {{ .serviceName | quote }}
 - name: OTEL_RESOURCE_ATTRIBUTES
-  value: "service.name={{ .serviceName }},service.namespace=quikapp,deployment.environment={{ .global.environment }}"
+  value: "service.name={{ .serviceName }},service.namespace=quckapp,deployment.environment={{ .global.environment }}"
 {{- end }}
 {{- end }}
 
 {{/*
 Generate logging environment variables
 */}}
-{{- define "quikapp.loggingEnv" -}}
+{{- define "quckapp.loggingEnv" -}}
 - name: LOG_LEVEL
   value: {{ .global.logging.level | quote }}
 - name: LOG_FORMAT
@@ -259,7 +259,7 @@ Generate logging environment variables
 {{/*
 Common annotations for deployments
 */}}
-{{- define "quikapp.deploymentAnnotations" -}}
+{{- define "quckapp.deploymentAnnotations" -}}
 checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
 checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
 {{- end }}
@@ -267,7 +267,7 @@ checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha25
 {{/*
 Pod annotations including Prometheus scrape config
 */}}
-{{- define "quikapp.podAnnotations" -}}
+{{- define "quckapp.podAnnotations" -}}
 prometheus.io/scrape: "true"
 prometheus.io/port: {{ .port | quote }}
 prometheus.io/path: {{ .metricsPath | default "/metrics" | quote }}

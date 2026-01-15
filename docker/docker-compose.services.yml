@@ -1,5 +1,5 @@
 # =============================================================================
-# QUIKAPP - APPLICATION SERVICES DOCKER COMPOSE
+# QUCKAPP - APPLICATION SERVICES DOCKER COMPOSE
 # =============================================================================
 # All application services for local development
 # Usage: docker compose -f docker-compose.infra.yml -f docker-compose.services.yml up
@@ -15,12 +15,12 @@ services:
     build:
       context: ../../services/nestjs/backend-gateway
       dockerfile: ../../infrastructure/docker/dockerfiles/nestjs/Dockerfile
-    container_name: quikapp-backend-gateway
+    container_name: quckapp-backend-gateway
     restart: unless-stopped
     environment:
       NODE_ENV: development
       PORT: 3000
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
@@ -40,7 +40,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 30s
@@ -52,12 +52,12 @@ services:
     build:
       context: ../../services/nestjs/auth-service
       dockerfile: ../../infrastructure/docker/dockerfiles/nestjs/Dockerfile
-    container_name: quikapp-auth-service
+    container_name: quckapp-auth-service
     restart: unless-stopped
     environment:
       NODE_ENV: development
       PORT: 3001
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       JWT_EXPIRATION: 3600
@@ -71,7 +71,7 @@ services:
       - postgres
       - redis
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # USER & WORKSPACE MANAGEMENT
@@ -82,12 +82,12 @@ services:
     build:
       context: ../../services/nestjs/user-service
       dockerfile: ../../infrastructure/docker/dockerfiles/nestjs/Dockerfile
-    container_name: quikapp-user-service
+    container_name: quckapp-user-service
     restart: unless-stopped
     environment:
       NODE_ENV: development
       PORT: 3002
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       MINIO_ENDPOINT: minio:9000
@@ -102,21 +102,21 @@ services:
       - kafka
       - minio
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Workspace Service (Spring Boot) - Workspace management
   workspace-service:
     build:
       context: ../../services/spring-boot/workspace-service
       dockerfile: ../../infrastructure/docker/dockerfiles/springboot/Dockerfile
-    container_name: quikapp-workspace-service
+    container_name: quckapp-workspace-service
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: 3003
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quikapp
-      SPRING_DATASOURCE_USERNAME: quikapp
-      SPRING_DATASOURCE_PASSWORD: quikapp_secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quckapp
+      SPRING_DATASOURCE_USERNAME: quckapp
+      SPRING_DATASOURCE_PASSWORD: quckapp_secret
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
@@ -129,7 +129,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # MESSAGING & CHANNELS
@@ -140,14 +140,14 @@ services:
     build:
       context: ../../services/spring-boot/channel-service
       dockerfile: ../../infrastructure/docker/dockerfiles/springboot/Dockerfile
-    container_name: quikapp-channel-service
+    container_name: quckapp-channel-service
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: 3004
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quikapp
-      SPRING_DATASOURCE_USERNAME: quikapp
-      SPRING_DATASOURCE_PASSWORD: quikapp_secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quckapp
+      SPRING_DATASOURCE_USERNAME: quckapp
+      SPRING_DATASOURCE_PASSWORD: quckapp_secret
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
@@ -160,19 +160,19 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Message Service (Go) - High-performance message handling
   message-service:
     build:
       context: ../../services/go/message-service
       dockerfile: ../../infrastructure/docker/dockerfiles/go/Dockerfile
-    container_name: quikapp-message-service
+    container_name: quckapp-message-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 3005
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       ELASTICSEARCH_URL: http://elasticsearch:9200
@@ -185,19 +185,19 @@ services:
       - kafka
       - elasticsearch
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Thread Service (Go) - Thread management
   thread-service:
     build:
       context: ../../services/go/thread-service
       dockerfile: ../../infrastructure/docker/dockerfiles/go/Dockerfile
-    container_name: quikapp-thread-service
+    container_name: quckapp-thread-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 3006
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
@@ -208,7 +208,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # FILE & MEDIA SERVICES
@@ -219,18 +219,18 @@ services:
     build:
       context: ../../services/go/file-service
       dockerfile: ../../infrastructure/docker/dockerfiles/go/Dockerfile
-    container_name: quikapp-file-service
+    container_name: quckapp-file-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 3007
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       MINIO_ENDPOINT: minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      MINIO_BUCKET: quikapp-files
+      MINIO_BUCKET: quckapp-files
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "3007:3007"
@@ -240,19 +240,19 @@ services:
       - kafka
       - minio
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Media Service (Go) - Media processing
   media-service:
     build:
       context: ../../services/go/media-service
       dockerfile: ../../infrastructure/docker/dockerfiles/go/Dockerfile
-    container_name: quikapp-media-service
+    container_name: quckapp-media-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 3008
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       MINIO_ENDPOINT: minio:9000
@@ -267,7 +267,7 @@ services:
       - kafka
       - minio
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # SEARCH & NOTIFICATIONS
@@ -278,7 +278,7 @@ services:
     build:
       context: ../../services/go/search-service
       dockerfile: ../../infrastructure/docker/dockerfiles/go/Dockerfile
-    container_name: quikapp-search-service
+    container_name: quckapp-search-service
     restart: unless-stopped
     environment:
       ENV: development
@@ -294,19 +294,19 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Notification Service (NestJS) - Push notifications
   notification-service:
     build:
       context: ../../services/nestjs/notification-service
       dockerfile: ../../infrastructure/docker/dockerfiles/nestjs/Dockerfile
-    container_name: quikapp-notification-service
+    container_name: quckapp-notification-service
     restart: unless-stopped
     environment:
       NODE_ENV: development
       PORT: 3010
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       FCM_PROJECT_ID: ${FCM_PROJECT_ID:-}
@@ -322,7 +322,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # REALTIME & PRESENCE (Elixir)
@@ -335,17 +335,17 @@ services:
       dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
       args:
         APP_NAME: realtime_service
-    container_name: quikapp-realtime-service
+    container_name: quckapp-realtime-service
     restart: unless-stopped
     environment:
       MIX_ENV: dev
       PORT: 4000
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
       PHX_HOST: localhost
-      RELEASE_COOKIE: ${ERLANG_COOKIE:-quikapp_dev_cookie}
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "4000:4000"
@@ -355,7 +355,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Presence Service (Elixir) - User presence tracking
   presence-service:
@@ -364,16 +364,16 @@ services:
       dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
       args:
         APP_NAME: presence_service
-    container_name: quikapp-presence-service
+    container_name: quckapp-presence-service
     restart: unless-stopped
     environment:
       MIX_ENV: dev
       PORT: 4001
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
-      RELEASE_COOKIE: ${ERLANG_COOKIE:-quikapp_dev_cookie}
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "4001:4001"
@@ -382,7 +382,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # VOICE & VIDEO (Elixir)
@@ -395,16 +395,16 @@ services:
       dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
       args:
         APP_NAME: call_service
-    container_name: quikapp-call-service
+    container_name: quckapp-call-service
     restart: unless-stopped
     environment:
       MIX_ENV: dev
       PORT: 4002
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
-      RELEASE_COOKIE: ${ERLANG_COOKIE:-quikapp_dev_cookie}
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "4002:4002"
@@ -413,7 +413,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Huddle Service (Elixir) - Quick audio rooms
   huddle-service:
@@ -422,16 +422,16 @@ services:
       dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
       args:
         APP_NAME: huddle_service
-    container_name: quikapp-huddle-service
+    container_name: quckapp-huddle-service
     restart: unless-stopped
     environment:
       MIX_ENV: dev
       PORT: 4003
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
-      RELEASE_COOKIE: ${ERLANG_COOKIE:-quikapp_dev_cookie}
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "4003:4003"
@@ -440,7 +440,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # ANALYTICS & ML (Python)
@@ -451,17 +451,17 @@ services:
     build:
       context: ../../services/python/analytics-service
       dockerfile: ../../infrastructure/docker/dockerfiles/python/Dockerfile
-    container_name: quikapp-analytics-service
+    container_name: quckapp-analytics-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 8000
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       CLICKHOUSE_HOST: clickhouse
       CLICKHOUSE_PORT: 9000
-      CLICKHOUSE_USER: quikapp
+      CLICKHOUSE_USER: quckapp
       CLICKHOUSE_PASSWORD: clickhouse_secret
-      CLICKHOUSE_DB: quikapp_analytics
+      CLICKHOUSE_DB: quckapp_analytics
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
@@ -473,19 +473,19 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ML Service (Python/FastAPI) - Machine learning
   ml-service:
     build:
       context: ../../services/python/ml-service
       dockerfile: ../../infrastructure/docker/dockerfiles/python/Dockerfile
-    container_name: quikapp-ml-service
+    container_name: quckapp-ml-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 8001
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       MODEL_PATH: /app/models
@@ -499,19 +499,19 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Moderation Service (Python/FastAPI) - Content moderation
   moderation-service:
     build:
       context: ../../services/python/moderation-service
       dockerfile: ../../infrastructure/docker/dockerfiles/python/Dockerfile
-    container_name: quikapp-moderation-service
+    container_name: quckapp-moderation-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 8002
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       ML_SERVICE_URL: http://ml-service:8001
@@ -524,19 +524,19 @@ services:
       - kafka
       - ml-service
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Sentiment Service (Python/FastAPI) - Sentiment analysis
   sentiment-service:
     build:
       context: ../../services/python/sentiment-service
       dockerfile: ../../infrastructure/docker/dockerfiles/python/Dockerfile
-    container_name: quikapp-sentiment-service
+    container_name: quckapp-sentiment-service
     restart: unless-stopped
     environment:
       ENV: development
       PORT: 8003
-      DATABASE_URL: postgresql://quikapp:quikapp_secret@postgres:5432/quikapp
+      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       ML_SERVICE_URL: http://ml-service:8001
@@ -549,7 +549,7 @@ services:
       - kafka
       - ml-service
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # ADMIN & SECURITY (Spring Boot)
@@ -560,14 +560,14 @@ services:
     build:
       context: ../../services/spring-boot/permission-service
       dockerfile: ../../infrastructure/docker/dockerfiles/springboot/Dockerfile
-    container_name: quikapp-permission-service
+    container_name: quckapp-permission-service
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: 3011
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quikapp
-      SPRING_DATASOURCE_USERNAME: quikapp
-      SPRING_DATASOURCE_PASSWORD: quikapp_secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quckapp
+      SPRING_DATASOURCE_USERNAME: quckapp
+      SPRING_DATASOURCE_PASSWORD: quckapp_secret
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
@@ -578,22 +578,22 @@ services:
       - postgres
       - redis
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Audit Service (Spring Boot) - Audit logging
   audit-service:
     build:
       context: ../../services/spring-boot/audit-service
       dockerfile: ../../infrastructure/docker/dockerfiles/springboot/Dockerfile
-    container_name: quikapp-audit-service
+    container_name: quckapp-audit-service
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: 3012
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quikapp
-      SPRING_DATASOURCE_USERNAME: quikapp
-      SPRING_DATASOURCE_PASSWORD: quikapp_secret
-      SPRING_DATA_MONGODB_URI: mongodb://admin:admin_secret@mongodb:27017/quikapp?authSource=admin
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quckapp
+      SPRING_DATASOURCE_USERNAME: quckapp
+      SPRING_DATASOURCE_PASSWORD: quckapp_secret
+      SPRING_DATA_MONGODB_URI: mongodb://admin:admin_secret@mongodb:27017/quckapp?authSource=admin
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
@@ -603,21 +603,21 @@ services:
       - mongodb
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # Admin Service (Spring Boot) - Admin dashboard API
   admin-service:
     build:
       context: ../../services/spring-boot/admin-service
       dockerfile: ../../infrastructure/docker/dockerfiles/springboot/Dockerfile
-    container_name: quikapp-admin-service
+    container_name: quckapp-admin-service
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: dev
       SERVER_PORT: 3013
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quikapp
-      SPRING_DATASOURCE_USERNAME: quikapp
-      SPRING_DATASOURCE_PASSWORD: quikapp_secret
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quckapp
+      SPRING_DATASOURCE_USERNAME: quckapp
+      SPRING_DATASOURCE_PASSWORD: quckapp_secret
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
@@ -630,7 +630,7 @@ services:
       - redis
       - kafka
     networks:
-      - quikapp-network
+      - quckapp-network
 
 # =============================================================================
 # VOLUMES
@@ -643,6 +643,6 @@ volumes:
 # NETWORKS
 # =============================================================================
 networks:
-  quikapp-network:
+  quckapp-network:
     external: true
-    name: quikapp-network
+    name: quckapp-network

@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Lambda Module for Media Processing
+# QuckApp Lambda Module for Media Processing
 # =============================================================================
 # Creates Lambda functions for:
 # - Thumbnail generation (images)
@@ -35,9 +35,9 @@ locals {
   })
 
   # Function names
-  thumbnail_function_name  = "quikapp-thumbnail-generator-${var.environment}"
-  video_thumb_function_name = "quikapp-video-thumbnail-${var.environment}"
-  optimizer_function_name  = "quikapp-image-optimizer-${var.environment}"
+  thumbnail_function_name  = "quckapp-thumbnail-generator-${var.environment}"
+  video_thumb_function_name = "quckapp-video-thumbnail-${var.environment}"
+  optimizer_function_name  = "quckapp-image-optimizer-${var.environment}"
 }
 
 # -----------------------------------------------------------------------------
@@ -115,7 +115,7 @@ resource "aws_lambda_function" "thumbnail_generator" {
   }
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Thumbnail Generator"
+    Name    = "QuckApp Thumbnail Generator"
     Purpose = "thumbnail-generation"
   })
 
@@ -205,7 +205,7 @@ resource "aws_lambda_function" "video_thumbnail" {
   }
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Video Thumbnail"
+    Name    = "QuckApp Video Thumbnail"
     Purpose = "video-thumbnail"
   })
 
@@ -275,7 +275,7 @@ resource "aws_lambda_function" "image_optimizer" {
   }
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Image Optimizer"
+    Name    = "QuckApp Image Optimizer"
     Purpose = "image-optimization"
   })
 

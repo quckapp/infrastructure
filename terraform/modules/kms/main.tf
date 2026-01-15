@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp KMS Encryption Module
+# QuckApp KMS Encryption Module
 # =============================================================================
 # Creates KMS keys for encrypting:
 # - S3 media objects (server-side encryption)
@@ -35,7 +35,7 @@ locals {
 # -----------------------------------------------------------------------------
 
 resource "aws_kms_key" "s3_media" {
-  description             = "QuikApp S3 media encryption key - ${var.environment}"
+  description             = "QuckApp S3 media encryption key - ${var.environment}"
   deletion_window_in_days = var.key_deletion_window_days
   enable_key_rotation     = var.enable_key_rotation
   multi_region            = var.enable_multi_region
@@ -141,13 +141,13 @@ resource "aws_kms_key" "s3_media" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp S3 Media Key"
+    Name    = "QuckApp S3 Media Key"
     Purpose = "s3-encryption"
   })
 }
 
 resource "aws_kms_alias" "s3_media" {
-  name          = "alias/quikapp-s3-media-${var.environment}"
+  name          = "alias/quckapp-s3-media-${var.environment}"
   target_key_id = aws_kms_key.s3_media.key_id
 }
 
@@ -158,7 +158,7 @@ resource "aws_kms_alias" "s3_media" {
 resource "aws_kms_key" "app_secrets" {
   count = var.create_secrets_key ? 1 : 0
 
-  description             = "QuikApp application secrets encryption key - ${var.environment}"
+  description             = "QuckApp application secrets encryption key - ${var.environment}"
   deletion_window_in_days = var.key_deletion_window_days
   enable_key_rotation     = var.enable_key_rotation
   multi_region            = var.enable_multi_region
@@ -228,7 +228,7 @@ resource "aws_kms_key" "app_secrets" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Application Secrets Key"
+    Name    = "QuckApp Application Secrets Key"
     Purpose = "secrets-encryption"
   })
 }
@@ -236,7 +236,7 @@ resource "aws_kms_key" "app_secrets" {
 resource "aws_kms_alias" "app_secrets" {
   count = var.create_secrets_key ? 1 : 0
 
-  name          = "alias/quikapp-secrets-${var.environment}"
+  name          = "alias/quckapp-secrets-${var.environment}"
   target_key_id = aws_kms_key.app_secrets[0].key_id
 }
 
@@ -256,14 +256,14 @@ resource "aws_kms_replica_key" "s3_media_replica" {
 
   provider = aws.replica
 
-  description             = "QuikApp S3 media encryption key replica - ${var.environment}"
+  description             = "QuckApp S3 media encryption key replica - ${var.environment}"
   primary_key_arn         = aws_kms_key.s3_media.arn
   deletion_window_in_days = var.key_deletion_window_days
 
   policy = aws_kms_key.s3_media.policy
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp S3 Media Key Replica"
+    Name    = "QuckApp S3 Media Key Replica"
     Purpose = "s3-encryption-replica"
   })
 }
@@ -273,6 +273,6 @@ resource "aws_kms_alias" "s3_media_replica" {
 
   provider = aws.replica
 
-  name          = "alias/quikapp-s3-media-${var.environment}"
+  name          = "alias/quckapp-s3-media-${var.environment}"
   target_key_id = aws_kms_replica_key.s3_media_replica[0].key_id
 }

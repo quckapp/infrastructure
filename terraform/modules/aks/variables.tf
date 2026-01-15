@@ -439,6 +439,6 @@ variable "default_tags" {
   type        = map(string)
   default = {
     ManagedBy = "Terraform"
-    Project   = "QuikApp"
+    Project   = "QuckApp"
   }
 }

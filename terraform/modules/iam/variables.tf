@@ -76,7 +76,7 @@ variable "eks_oidc_provider" {
 variable "kubernetes_namespace" {
   description = "Kubernetes namespace for service accounts"
   type        = string
-  default     = "quikapp"
+  default     = "quckapp"
 }
 
 # -----------------------------------------------------------------------------

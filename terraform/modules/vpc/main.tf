@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp VPC Module
+# QuckApp VPC Module
 # =============================================================================
 # Creates VPC networking infrastructure for:
 # - VPC with public/private/database subnets
@@ -31,7 +31,7 @@ locals {
     ManagedBy   = "terraform"
   })
 
-  vpc_name = "quikapp-${var.environment}"
+  vpc_name = "quckapp-${var.environment}"
 
   # Calculate subnet CIDRs based on VPC CIDR
   # Default: 10.0.0.0/16 -> 256 /24 subnets available

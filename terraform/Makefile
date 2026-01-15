@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Terraform Makefile
+# QuckApp Terraform Makefile
 # =============================================================================
 # Usage:
 #   make help              - Show available commands
@@ -49,7 +49,7 @@ NC := \033[0m # No Color
 
 help: ## Show this help message
 	@echo ""
-	@echo "$(BLUE)QuikApp Terraform Commands$(NC)"
+	@echo "$(BLUE)QuckApp Terraform Commands$(NC)"
 	@echo "$(BLUE)===========================$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Backend Commands:$(NC)"

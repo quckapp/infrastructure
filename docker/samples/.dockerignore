@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Docker Ignore File
+# QuckApp Docker Ignore File
 # Prevents unnecessary files from being added to Docker build context
 # =============================================================================
 

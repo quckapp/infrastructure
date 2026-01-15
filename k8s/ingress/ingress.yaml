@@ -1,5 +1,5 @@
 # =============================================================================
-# QUIKAPP INGRESS CONFIGURATION
+# QUCKAPP INGRESS CONFIGURATION
 # =============================================================================
 # NGINX Ingress Controller with TLS termination
 # =============================================================================
@@ -22,8 +22,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: quikapp-api-ingress
-  namespace: quikapp
+  name: quckapp-api-ingress
+  namespace: quckapp
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -54,11 +54,11 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - api.quikapp.io
-        - "*.api.quikapp.io"
-      secretName: quikapp-api-tls
+        - api.quckapp.io
+        - "*.api.quckapp.io"
+      secretName: quckapp-api-tls
   rules:
-    - host: api.quikapp.io
+    - host: api.quckapp.io
       http:
         paths:
           # Main API Gateway
@@ -76,8 +76,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: quikapp-websocket-ingress
-  namespace: quikapp
+  name: quckapp-websocket-ingress
+  namespace: quckapp
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -88,7 +88,7 @@ metadata:
     # Sticky sessions
     nginx.ingress.kubernetes.io/affinity: "cookie"
     nginx.ingress.kubernetes.io/affinity-mode: "persistent"
-    nginx.ingress.kubernetes.io/session-cookie-name: "QUIKAPP_WS_AFFINITY"
+    nginx.ingress.kubernetes.io/session-cookie-name: "QUCKAPP_WS_AFFINITY"
     nginx.ingress.kubernetes.io/session-cookie-expires: "172800"
     nginx.ingress.kubernetes.io/session-cookie-max-age: "172800"
     nginx.ingress.kubernetes.io/session-cookie-samesite: "Strict"
@@ -103,10 +103,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - ws.quikapp.io
-      secretName: quikapp-ws-tls
+        - ws.quckapp.io
+      secretName: quckapp-ws-tls
   rules:
-    - host: ws.quikapp.io
+    - host: ws.quckapp.io
       http:
         paths:
           # Socket.io realtime service
@@ -140,8 +140,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: quikapp-admin-ingress
-  namespace: quikapp
+  name: quckapp-admin-ingress
+  namespace: quckapp
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
@@ -149,18 +149,18 @@ metadata:
     nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
     # Basic auth
     nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: quikapp-admin-auth
-    nginx.ingress.kubernetes.io/auth-realm: "QuikApp Admin"
+    nginx.ingress.kubernetes.io/auth-secret: quckapp-admin-auth
+    nginx.ingress.kubernetes.io/auth-realm: "QuckApp Admin"
     # TLS
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - admin.quikapp.io
-      secretName: quikapp-admin-tls
+        - admin.quckapp.io
+      secretName: quckapp-admin-tls
   rules:
-    - host: admin.quikapp.io
+    - host: admin.quckapp.io
       http:
         paths:
           - path: /
@@ -181,7 +181,7 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: devops@quikapp.io
+    email: devops@quckapp.io
     privateKeySecretRef:
       name: letsencrypt-staging-key
     solvers:
@@ -196,7 +196,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: devops@quikapp.io
+    email: devops@quckapp.io
     privateKeySecretRef:
       name: letsencrypt-prod-key
     solvers:

@@ -10,7 +10,7 @@
     {
       "gridPos": { "h": 2, "w": 24, "x": 0, "y": 0 },
       "id": 1,
-      "options": { "content": "# Distributed Tracing\nJaeger traces across all QuikApp microservices", "mode": "markdown" },
+      "options": { "content": "# Distributed Tracing\nJaeger traces across all QuckApp microservices", "mode": "markdown" },
       "type": "text"
     },
     {
@@ -167,12 +167,12 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["quikapp", "tracing", "jaeger"],
+  "tags": ["quckapp", "tracing", "jaeger"],
   "templating": { "list": [] },
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "QuikApp Tracing",
-  "uid": "quikapp-tracing",
+  "title": "QuckApp Tracing",
+  "uid": "quckapp-tracing",
   "version": 1
 }

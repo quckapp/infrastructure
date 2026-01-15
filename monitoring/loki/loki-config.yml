@@ -1,4 +1,4 @@
-# QuikApp Loki Configuration
+# QuckApp Loki Configuration
 # Centralized log aggregation for all microservices
 
 auth_enabled: false

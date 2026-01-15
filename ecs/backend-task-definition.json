@@ -1,5 +1,5 @@
 {
-  "family": "quckchat-backend",
+  "family": "quckapp-backend",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
@@ -21,7 +21,7 @@
         {"name": "NODE_ENV", "value": "production"},
         {"name": "PORT", "value": "3000"},
         {"name": "USE_SPRING_AUTH", "value": "true"},
-        {"name": "SPRING_AUTH_SERVICE_URL", "value": "http://auth-service.quckchat.local:8081/api/auth"}
+        {"name": "SPRING_AUTH_SERVICE_URL", "value": "http://auth-service.quckapp.local:8081/api/auth"}
       ],
       "secrets": [
         {"name": "MONGODB_URI", "valueFrom": "${MONGODB_URI_SECRET_ARN}"},
@@ -36,7 +36,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/quckchat-backend",
+          "awslogs-group": "/ecs/quckapp-backend",
           "awslogs-region": "${AWS_REGION}",
           "awslogs-stream-prefix": "ecs"
         }

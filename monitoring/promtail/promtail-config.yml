@@ -1,4 +1,4 @@
-# QuikApp Promtail Configuration
+# QuckApp Promtail Configuration
 # Collects logs from all Docker containers
 
 server:
@@ -10,7 +10,7 @@ positions:
 
 clients:
   - url: http://loki:3100/loki/api/v1/push
-    tenant_id: quikapp
+    tenant_id: quckapp
     batchwait: 1s
     batchsize: 1048576
     timeout: 10s
@@ -29,11 +29,11 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: network
-            values: ["quikapp-network"]
+            values: ["quckapp-network"]
     relabel_configs:
-      # Keep only containers with quikapp prefix or in quikapp network
+      # Keep only containers with quckapp prefix or in quckapp network
       - source_labels: ['__meta_docker_container_name']
-        regex: '/(quikapp-.*)'
+        regex: '/(quckapp-.*)'
         action: keep
       # Extract container name
       - source_labels: ['__meta_docker_container_name']
@@ -41,7 +41,7 @@ scrape_configs:
         target_label: container
       # Extract service name from container name
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)'
+        regex: '/quckapp-(.*)'
         target_label: service
       # Add container ID
       - source_labels: ['__meta_docker_container_id']
@@ -59,7 +59,7 @@ scrape_configs:
       # Add namespace label
       - action: replace
         target_label: namespace
-        replacement: quikapp
+        replacement: quckapp
 
     pipeline_stages:
       # Parse Docker JSON logs
@@ -122,10 +122,10 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: name
-            values: ["quikapp-auth-service", "quikapp-user-service", "quikapp-permission-service", "quikapp-audit-service", "quikapp-admin-service"]
+            values: ["quckapp-auth-service", "quckapp-user-service", "quckapp-permission-service", "quckapp-audit-service", "quckapp-admin-service"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)-service'
+        regex: '/quckapp-(.*)-service'
         target_label: service
       - action: replace
         target_label: stack
@@ -153,10 +153,10 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: name
-            values: ["quikapp-backend-gateway", "quikapp-notification-service", "quikapp-realtime-service"]
+            values: ["quckapp-backend-gateway", "quckapp-notification-service", "quckapp-realtime-service"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)'
+        regex: '/quckapp-(.*)'
         target_label: service
       - action: replace
         target_label: stack
@@ -188,10 +188,10 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: name
-            values: ["quikapp-presence-service", "quikapp-call-service", "quikapp-message-service", "quikapp-notification-orchestrator", "quikapp-huddle-service", "quikapp-event-broadcast-service"]
+            values: ["quckapp-presence-service", "quckapp-call-service", "quckapp-message-service", "quckapp-notification-orchestrator", "quckapp-huddle-service", "quckapp-event-broadcast-service"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)'
+        regex: '/quckapp-(.*)'
         target_label: service
       - action: replace
         target_label: stack
@@ -214,10 +214,10 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: name
-            values: ["quikapp-media-service", "quikapp-file-service", "quikapp-workspace-service", "quikapp-channel-service", "quikapp-search-service", "quikapp-thread-service", "quikapp-bookmark-service", "quikapp-reminder-service", "quikapp-attachment-service", "quikapp-cdn-service"]
+            values: ["quckapp-media-service", "quckapp-file-service", "quckapp-workspace-service", "quckapp-channel-service", "quckapp-search-service", "quckapp-thread-service", "quckapp-bookmark-service", "quckapp-reminder-service", "quckapp-attachment-service", "quckapp-cdn-service"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)'
+        regex: '/quckapp-(.*)'
         target_label: service
       - action: replace
         target_label: stack
@@ -249,10 +249,10 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: name
-            values: ["quikapp-analytics-service", "quikapp-ml-service", "quikapp-moderation-service", "quikapp-export-service", "quikapp-integration-service", "quikapp-sentiment-service", "quikapp-insights-service", "quikapp-smart-reply-service"]
+            values: ["quckapp-analytics-service", "quckapp-ml-service", "quckapp-moderation-service", "quckapp-export-service", "quckapp-integration-service", "quckapp-sentiment-service", "quckapp-insights-service", "quckapp-smart-reply-service"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)'
+        regex: '/quckapp-(.*)'
         target_label: service
       - action: replace
         target_label: stack
@@ -284,10 +284,10 @@ scrape_configs:
         refresh_interval: 5s
         filters:
           - name: name
-            values: ["quikapp-mongodb", "quikapp-mysql", "quikapp-postgres", "quikapp-redis", "quikapp-elasticsearch", "quikapp-kafka", "quikapp-zookeeper", "quikapp-minio", "quikapp-nginx"]
+            values: ["quckapp-mongodb", "quckapp-mysql", "quckapp-postgres", "quckapp-redis", "quckapp-elasticsearch", "quckapp-kafka", "quckapp-zookeeper", "quckapp-minio", "quckapp-nginx"]
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
-        regex: '/quikapp-(.*)'
+        regex: '/quckapp-(.*)'
         target_label: service
       - action: replace
         target_label: stack

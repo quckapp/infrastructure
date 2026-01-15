@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp ElastiCache Module
+# QuckApp ElastiCache Module
 # =============================================================================
 # Creates ElastiCache infrastructure for:
 # - Redis clusters (standalone and replication groups)
@@ -35,7 +35,7 @@ locals {
     ManagedBy   = "terraform"
   })
 
-  identifier = var.identifier != null ? var.identifier : "quikapp-${var.environment}"
+  identifier = var.identifier != null ? var.identifier : "quckapp-${var.environment}"
 
   # Determine engine type
   is_redis     = var.engine == "redis"

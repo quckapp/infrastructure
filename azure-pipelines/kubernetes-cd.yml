@@ -1,7 +1,7 @@
 # =============================================================================
 # KUBERNETES DEPLOYMENT PIPELINE
 # =============================================================================
-# Deploy QuikApp microservices to AKS using Kustomize
+# Deploy QuckApp microservices to AKS using Kustomize
 # =============================================================================
 
 trigger: none
@@ -55,33 +55,33 @@ parameters:
     default: 0
 
 variables:
-  - group: quikapp-common
-  - group: quikapp-${{ parameters.environment }}
-  - group: quikapp-kubernetes-common
+  - group: quckapp-common
+  - group: quckapp-${{ parameters.environment }}
+  - group: quckapp-kubernetes-common
   - ${{ if in(parameters.environment, 'dev', 'qa') }}:
-    - group: quikapp-kubernetes-nonprod
+    - group: quckapp-kubernetes-nonprod
   - ${{ if in(parameters.environment, 'uat1', 'uat2', 'uat3', 'staging') }}:
-    - group: quikapp-kubernetes-preprod
+    - group: quckapp-kubernetes-preprod
   - ${{ if in(parameters.environment, 'prod', 'live') }}:
-    - group: quikapp-kubernetes-prod
+    - group: quckapp-kubernetes-prod
 
   - name: kubernetesServiceConnection
     ${{ if eq(parameters.environment, 'dev') }}:
-      value: 'quikapp-aks-dev'
+      value: 'quckapp-aks-dev'
     ${{ elseif eq(parameters.environment, 'qa') }}:
-      value: 'quikapp-aks-qa'
+      value: 'quckapp-aks-qa'
     ${{ elseif in(parameters.environment, 'uat1', 'uat2', 'uat3') }}:
-      value: 'quikapp-aks-uat'
+      value: 'quckapp-aks-uat'
     ${{ elseif eq(parameters.environment, 'staging') }}:
-      value: 'quikapp-aks-staging'
+      value: 'quckapp-aks-staging'
     ${{ elseif in(parameters.environment, 'prod', 'live') }}:
-      value: 'quikapp-aks-prod'
+      value: 'quckapp-aks-prod'
 
   - name: namespace
     ${{ if eq(parameters.environment, 'live') }}:
-      value: 'quikapp'
+      value: 'quckapp'
     ${{ else }}:
-      value: 'quikapp-${{ parameters.environment }}'
+      value: 'quckapp-${{ parameters.environment }}'
 
   - name: kustomizeOverlay
     ${{ if in(parameters.environment, 'dev') }}:
@@ -207,8 +207,8 @@ stages:
               displayName: 'Approve Production Deployment'
               inputs:
                 notifyUsers: |
-                  platform-team@quikapp.io
-                  devops@quikapp.io
+                  platform-team@quckapp.io
+                  devops@quckapp.io
                 instructions: |
                   Please review and approve deployment to ${{ parameters.environment }}
 
@@ -225,7 +225,7 @@ stages:
           dependsOn: WaitForApproval
         pool:
           vmImage: 'ubuntu-latest'
-        environment: 'quikapp-${{ parameters.environment }}'
+        environment: 'quckapp-${{ parameters.environment }}'
         strategy:
           runOnce:
             deploy:
@@ -248,7 +248,7 @@ stages:
                       echo "=== Updating image tags to ${{ parameters.imageTag }} ==="
 
                       # Update all image tags in the manifest
-                      sed -i 's|quikapp.azurecr.io/\([^:]*\):[^"]*|quikapp.azurecr.io/\1:${{ parameters.imageTag }}|g' \
+                      sed -i 's|quckapp.azurecr.io/\([^:]*\):[^"]*|quckapp.azurecr.io/\1:${{ parameters.imageTag }}|g' \
                         $(Pipeline.Workspace)/manifests-${{ parameters.environment }}/baked-manifests.yaml
 
                       echo "Image tags updated successfully"
@@ -286,7 +286,7 @@ stages:
         displayName: 'Rollback to Previous Version'
         pool:
           vmImage: 'ubuntu-latest'
-        environment: 'quikapp-${{ parameters.environment }}'
+        environment: 'quckapp-${{ parameters.environment }}'
         strategy:
           runOnce:
             deploy:

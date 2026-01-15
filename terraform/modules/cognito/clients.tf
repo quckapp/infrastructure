@@ -9,7 +9,7 @@
 resource "aws_cognito_user_pool_client" "web" {
   count = var.create_web_client ? 1 : 0
 
-  name         = "quikapp-web-${var.environment}"
+  name         = "quckapp-web-${var.environment}"
   user_pool_id = aws_cognito_user_pool.main.id
 
   # Token validity
@@ -67,7 +67,7 @@ resource "aws_cognito_user_pool_client" "web" {
 resource "aws_cognito_user_pool_client" "mobile" {
   count = var.create_mobile_client ? 1 : 0
 
-  name         = "quikapp-mobile-${var.environment}"
+  name         = "quckapp-mobile-${var.environment}"
   user_pool_id = aws_cognito_user_pool.main.id
 
   # Token validity
@@ -122,7 +122,7 @@ resource "aws_cognito_user_pool_client" "mobile" {
 resource "aws_cognito_user_pool_client" "backend" {
   count = var.create_backend_client ? 1 : 0
 
-  name         = "quikapp-backend-${var.environment}"
+  name         = "quckapp-backend-${var.environment}"
   user_pool_id = aws_cognito_user_pool.main.id
 
   # Token validity
@@ -202,7 +202,7 @@ resource "aws_cognito_user_pool_client" "additional" {
 resource "aws_cognito_identity_pool" "main" {
   count = var.create_identity_pool ? 1 : 0
 
-  identity_pool_name               = "quikapp_${var.environment}"
+  identity_pool_name               = "quckapp_${var.environment}"
   allow_unauthenticated_identities = var.allow_unauthenticated_identities
   allow_classic_flow               = var.allow_classic_flow
 
@@ -239,7 +239,7 @@ resource "aws_cognito_identity_pool" "main" {
   openid_connect_provider_arns = var.openid_connect_provider_arns
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp Identity Pool"
+    Name = "QuckApp Identity Pool"
   })
 }
 
@@ -274,7 +274,7 @@ data "aws_iam_policy_document" "identity_pool_authenticated_assume" {
 resource "aws_iam_role" "identity_pool_authenticated" {
   count = var.create_identity_pool && var.create_identity_pool_roles ? 1 : 0
 
-  name               = "quikapp-cognito-authenticated-${var.environment}"
+  name               = "quckapp-cognito-authenticated-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.identity_pool_authenticated_assume[0].json
 
   tags = local.common_tags
@@ -356,7 +356,7 @@ data "aws_iam_policy_document" "identity_pool_unauthenticated_assume" {
 resource "aws_iam_role" "identity_pool_unauthenticated" {
   count = var.create_identity_pool && var.allow_unauthenticated_identities && var.create_identity_pool_roles ? 1 : 0
 
-  name               = "quikapp-cognito-unauthenticated-${var.environment}"
+  name               = "quckapp-cognito-unauthenticated-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.identity_pool_unauthenticated_assume[0].json
 
   tags = local.common_tags

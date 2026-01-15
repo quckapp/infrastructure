@@ -1,11 +1,11 @@
 # =============================================================================
-# QuikApp Worker Dockerfile (Standalone)
+# QuckApp Worker Dockerfile (Standalone)
 # =============================================================================
 # Alternative standalone Dockerfile for the Worker service.
 # Use if you prefer separate Dockerfiles per service.
 #
 # Build:
-#   docker build -f docker/Dockerfile.worker -t quikapp/worker .
+#   docker build -f docker/Dockerfile.worker -t quckapp/worker .
 # =============================================================================
 
 FROM node:20-alpine AS base
@@ -37,12 +37,12 @@ RUN npm run build && npm prune --production
 # -----------------------------------------------------------------------------
 FROM base AS production
 
-LABEL org.opencontainers.image.title="QuikApp Worker"
+LABEL org.opencontainers.image.title="QuckApp Worker"
 LABEL org.opencontainers.image.version="1.0.0"
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 quikapp
+    adduser --system --uid 1001 quckapp
 
 WORKDIR /app
 
@@ -52,15 +52,15 @@ ENV WORKER_TYPE=media-processing
 ENV WORKER_CONCURRENCY=5
 
 # Copy application
-COPY --from=builder --chown=quikapp:nodejs /app/dist ./dist
-COPY --from=builder --chown=quikapp:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=quikapp:nodejs /app/package.json ./
+COPY --from=builder --chown=quckapp:nodejs /app/dist ./dist
+COPY --from=builder --chown=quckapp:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=quckapp:nodejs /app/package.json ./
 
 # Setup runtime directories
 RUN mkdir -p processing .cache /tmp && \
-    chown -R quikapp:nodejs processing .cache /tmp
+    chown -R quckapp:nodejs processing .cache /tmp
 
-USER quikapp
+USER quckapp
 
 EXPOSE 9090
 

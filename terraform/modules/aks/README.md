@@ -1,6 +1,6 @@
 # Azure Kubernetes Service (AKS) Terraform Module
 
-This module provisions an Azure Kubernetes Service (AKS) cluster with production-ready configurations for QuikApp environments.
+This module provisions an Azure Kubernetes Service (AKS) cluster with production-ready configurations for QuckApp environments.
 
 ## Features
 
@@ -24,8 +24,8 @@ This module provisions an Azure Kubernetes Service (AKS) cluster with production
 module "aks_dev" {
   source = "./modules/aks"
 
-  cluster_name        = "aks-quikapp-dev"
-  resource_group_name = "rg-quikapp-dev"
+  cluster_name        = "aks-quckapp"
+  resource_group_name = "rg-quckapp"
   location            = "eastus"
   environment         = "dev"
 
@@ -36,7 +36,7 @@ module "aks_dev" {
   system_node_pool_max_count = 3
 
   tags = {
-    Project = "QuikApp"
+    Project = "QuckApp"
     Team    = "Platform"
   }
 }
@@ -48,8 +48,8 @@ module "aks_dev" {
 module "aks_prod" {
   source = "./modules/aks"
 
-  cluster_name        = "aks-quikapp-prod"
-  resource_group_name = "rg-quikapp-prod"
+  cluster_name        = "aks-quckapp-prod"
+  resource_group_name = "rg-quckapp-prod"
   location            = "eastus"
   environment         = "prod"
   kubernetes_version  = "1.28"
@@ -89,14 +89,14 @@ module "aks_prod" {
   local_account_disabled          = true
 
   # ACR integration
-  acr_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.ContainerRegistry/registries/quikappacr"
+  acr_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.ContainerRegistry/registries/quckappacr"
 
   # Monitoring
   oms_agent_enabled          = true
   microsoft_defender_enabled = true
 
   tags = {
-    Project     = "QuikApp"
+    Project     = "QuckApp"
     Environment = "Production"
     CostCenter  = "Platform"
   }
@@ -109,8 +109,8 @@ module "aks_prod" {
 module "aks_private" {
   source = "./modules/aks"
 
-  cluster_name        = "aks-quikapp-secure"
-  resource_group_name = "rg-quikapp-secure"
+  cluster_name        = "aks-quckapp-secure"
+  resource_group_name = "rg-quckapp-secure"
   location            = "eastus"
   environment         = "prod"
 
@@ -118,8 +118,8 @@ module "aks_private" {
   private_cluster_enabled = true
 
   # Use existing VNet
-  vnet_id   = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet-quikapp"
-  subnet_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet-quikapp/subnets/aks-subnet"
+  vnet_id   = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet-quckapp"
+  subnet_id = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/virtualNetworks/vnet-quckapp/subnets/aks-subnet"
 }
 ```
 
@@ -129,8 +129,8 @@ module "aks_private" {
 module "aks_agic" {
   source = "./modules/aks"
 
-  cluster_name        = "aks-quikapp-agic"
-  resource_group_name = "rg-quikapp-agic"
+  cluster_name        = "aks-quckapp-agic"
+  resource_group_name = "rg-quckapp-agic"
   location            = "eastus"
   environment         = "staging"
 
@@ -208,8 +208,8 @@ After creating the cluster, configure Azure DevOps:
 ```bash
 # Get cluster credentials
 az aks get-credentials \
-  --resource-group rg-quikapp-dev \
-  --name aks-quikapp-dev \
+  --resource-group rg-quckapp \
+  --name aks-quckapp \
   --admin
 ```
 
@@ -218,7 +218,7 @@ In Azure DevOps:
 2. Select "Kubernetes"
 3. Choose "Azure Subscription" authentication
 4. Select the AKS cluster
-5. Name it: `QuikApp-K8s-dev`
+5. Name it: `QuckApp-K8s-dev`
 
 ### 2. Configure Pipeline Variables
 

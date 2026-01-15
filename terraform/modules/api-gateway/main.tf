@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp API Gateway Module
+# QuckApp API Gateway Module
 # =============================================================================
 # Creates API Gateway resources for:
 # - HTTP API (recommended for most use cases)
@@ -31,8 +31,8 @@ locals {
     ManagedBy   = "terraform"
   })
 
-  api_name     = "quikapp-api-${var.environment}"
-  http_api_name = "quikapp-http-api-${var.environment}"
+  api_name     = "quckapp-api-${var.environment}"
+  http_api_name = "quckapp-http-api-${var.environment}"
 }
 
 # -----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ resource "aws_apigatewayv2_api" "http_api" {
 
   name          = local.http_api_name
   protocol_type = "HTTP"
-  description   = "QuikApp HTTP API for ${var.environment}"
+  description   = "QuckApp HTTP API for ${var.environment}"
 
   # CORS configuration
   dynamic "cors_configuration" {
@@ -71,7 +71,7 @@ resource "aws_apigatewayv2_api" "http_api" {
   disable_execute_api_endpoint = var.disable_execute_api_endpoint
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp HTTP API"
+    Name = "QuckApp HTTP API"
     Type = "HTTP"
   })
 }
@@ -117,7 +117,7 @@ resource "aws_apigatewayv2_stage" "http_api" {
   stage_variables = var.stage_variables
 
   tags = merge(local.common_tags, {
-    Name  = "QuikApp HTTP API Stage - ${var.stage_name}"
+    Name  = "QuckApp HTTP API Stage - ${var.stage_name}"
     Stage = var.stage_name
   })
 }
@@ -132,7 +132,7 @@ resource "aws_cloudwatch_log_group" "http_api" {
   kms_key_id = var.logs_kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp HTTP API Logs"
+    Name = "QuckApp HTTP API Logs"
   })
 }
 
@@ -145,7 +145,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
   count = var.create_rest_api ? 1 : 0
 
   name        = local.api_name
-  description = "QuikApp REST API for ${var.environment}"
+  description = "QuckApp REST API for ${var.environment}"
 
   # Endpoint configuration
   endpoint_configuration {
@@ -166,7 +166,7 @@ resource "aws_api_gateway_rest_api" "rest_api" {
   disable_execute_api_endpoint = var.disable_execute_api_endpoint
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp REST API"
+    Name = "QuckApp REST API"
     Type = "REST"
   })
 }
@@ -228,7 +228,7 @@ resource "aws_api_gateway_stage" "rest_api" {
   variables = var.stage_variables
 
   tags = merge(local.common_tags, {
-    Name  = "QuikApp REST API Stage - ${var.stage_name}"
+    Name  = "QuckApp REST API Stage - ${var.stage_name}"
     Stage = var.stage_name
   })
 
@@ -245,7 +245,7 @@ resource "aws_cloudwatch_log_group" "rest_api" {
   kms_key_id = var.logs_kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp REST API Logs"
+    Name = "QuckApp REST API Logs"
   })
 }
 
@@ -293,7 +293,7 @@ resource "aws_apigatewayv2_domain_name" "http_api" {
   }
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp API Domain"
+    Name = "QuckApp API Domain"
   })
 }
 
@@ -328,7 +328,7 @@ resource "aws_api_gateway_domain_name" "rest_api" {
   }
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp API Domain"
+    Name = "QuckApp API Domain"
   })
 }
 
@@ -349,8 +349,8 @@ resource "aws_api_gateway_base_path_mapping" "rest_api" {
 resource "aws_api_gateway_usage_plan" "main" {
   count = var.create_rest_api && var.create_usage_plan ? 1 : 0
 
-  name        = "quikapp-usage-plan-${var.environment}"
-  description = "QuikApp API usage plan for ${var.environment}"
+  name        = "quckapp-usage-plan-${var.environment}"
+  description = "QuckApp API usage plan for ${var.environment}"
 
   api_stages {
     api_id = aws_api_gateway_rest_api.rest_api[0].id
@@ -374,7 +374,7 @@ resource "aws_api_gateway_usage_plan" "main" {
   }
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp Usage Plan"
+    Name = "QuckApp Usage Plan"
   })
 }
 
@@ -408,23 +408,23 @@ resource "aws_api_gateway_usage_plan_key" "keys" {
 resource "aws_apigatewayv2_vpc_link" "http_api" {
   count = var.create_http_api && var.create_vpc_link ? 1 : 0
 
-  name               = "quikapp-vpc-link-${var.environment}"
+  name               = "quckapp-vpc-link-${var.environment}"
   security_group_ids = var.vpc_link_security_group_ids
   subnet_ids         = var.vpc_link_subnet_ids
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp VPC Link"
+    Name = "QuckApp VPC Link"
   })
 }
 
 resource "aws_api_gateway_vpc_link" "rest_api" {
   count = var.create_rest_api && var.create_vpc_link && !var.create_http_api ? 1 : 0
 
-  name        = "quikapp-vpc-link-${var.environment}"
+  name        = "quckapp-vpc-link-${var.environment}"
   target_arns = var.vpc_link_nlb_arns
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp VPC Link"
+    Name = "QuckApp VPC Link"
   })
 }
 
@@ -446,7 +446,7 @@ resource "aws_wafv2_web_acl_association" "rest_api" {
 resource "aws_cloudwatch_metric_alarm" "http_api_5xx" {
   count = var.create_http_api && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-http-api-5xx-errors"
+  alarm_name          = "quckapp-${var.environment}-http-api-5xx-errors"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 2
   metric_name         = "5xx"
@@ -471,7 +471,7 @@ resource "aws_cloudwatch_metric_alarm" "http_api_5xx" {
 resource "aws_cloudwatch_metric_alarm" "http_api_latency" {
   count = var.create_http_api && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-http-api-high-latency"
+  alarm_name          = "quckapp-${var.environment}-http-api-high-latency"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 2
   metric_name         = "Latency"
@@ -496,7 +496,7 @@ resource "aws_cloudwatch_metric_alarm" "http_api_latency" {
 resource "aws_cloudwatch_metric_alarm" "rest_api_5xx" {
   count = var.create_rest_api && var.enable_cloudwatch_alarms ? 1 : 0
 
-  alarm_name          = "quikapp-${var.environment}-rest-api-5xx-errors"
+  alarm_name          = "quckapp-${var.environment}-rest-api-5xx-errors"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 2
   metric_name         = "5XXError"

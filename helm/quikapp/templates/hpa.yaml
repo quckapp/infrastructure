@@ -47,7 +47,7 @@ metadata:
   name: {{ $service.name }}
   namespace: {{ $.Values.global.namespace | default $.Release.Namespace }}
   labels:
-    {{- include "quikapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
+    {{- include "quckapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

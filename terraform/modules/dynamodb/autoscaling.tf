@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "dynamodb_autoscaling_assume" {
 resource "aws_iam_role" "dynamodb_autoscaling" {
   count = var.billing_mode == "PROVISIONED" && var.enable_autoscaling ? 1 : 0
 
-  name               = "quikapp-dynamodb-autoscaling-${var.environment}"
+  name               = "quckapp-dynamodb-autoscaling-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.dynamodb_autoscaling_assume[0].json
 
   tags = local.common_tags

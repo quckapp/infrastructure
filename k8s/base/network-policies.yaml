@@ -9,7 +9,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector: {}
   policyTypes:
@@ -23,7 +23,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-dns
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector: {}
   policyTypes:
@@ -46,7 +46,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-ingress-controller
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector:
     matchLabels:
@@ -69,11 +69,11 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-internal-services
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Ingress
     - Egress
@@ -81,12 +81,12 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/part-of: quikapp
+              app.kubernetes.io/part-of: quckapp
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/part-of: quikapp
+              app.kubernetes.io/part-of: quckapp
 ---
 # =============================================================================
 # ALLOW DATABASE ACCESS
@@ -95,7 +95,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-database-access
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector:
     matchLabels:
@@ -151,7 +151,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-broker-access
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector:
     matchLabels:
@@ -183,7 +183,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-external-https
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector:
     matchLabels:
@@ -202,7 +202,7 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: allow-monitoring
-  namespace: quikapp
+  namespace: quckapp
 spec:
   podSelector: {}
   policyTypes:

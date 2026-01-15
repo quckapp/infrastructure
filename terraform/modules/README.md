@@ -1,6 +1,6 @@
-# QuikApp Terraform Modules
+# QuckApp Terraform Modules
 
-Reusable Terraform modules for QuikApp AWS infrastructure.
+Reusable Terraform modules for QuckApp AWS infrastructure.
 
 ## Module Overview
 

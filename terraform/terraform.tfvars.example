@@ -1,5 +1,5 @@
 # =============================================================================
-# QUIKAPP TERRAFORM CONFIGURATION
+# QUCKAPP TERRAFORM CONFIGURATION
 # =============================================================================
 # Copy this file to terraform.tfvars and update values for your environment
 # Or use environment-specific files: terraform.tfvars.dev, terraform.tfvars.prod, etc.
@@ -9,7 +9,7 @@
 # GENERAL SETTINGS
 # =============================================================================
 
-project_name = "quikapp"
+project_name = "quckapp"
 environment  = "dev"  # local, dev, qa, uat1, uat2, uat3, staging, prod, live
 location     = "eastus"
 
@@ -155,5 +155,5 @@ enable_monitoring = true
 tags = {
   Owner       = "Platform Team"
   CostCenter  = "Engineering"
-  Application = "QuikApp"
+  Application = "QuckApp"
 }

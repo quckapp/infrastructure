@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Dev Environment - Example Variables
+# QuckApp Dev Environment - Example Variables
 # =============================================================================
 # Copy this file to dev.tfvars and customize for your environment.
 # Never commit dev.tfvars with sensitive values to version control.
@@ -44,11 +44,11 @@ cognito_web_logout_urls = [
 ]
 
 cognito_mobile_callback_urls = [
-  "quikapp://callback"
+  "quckapp://callback"
 ]
 
 cognito_mobile_logout_urls = [
-  "quikapp://logout"
+  "quckapp://logout"
 ]
 
 # -----------------------------------------------------------------------------
@@ -57,6 +57,6 @@ cognito_mobile_logout_urls = [
 
 tags = {
   Environment = "dev"
-  Project     = "QuikApp"
+  Project     = "QuckApp"
   Developer   = "YOUR_NAME"  # Replace with your name
 }

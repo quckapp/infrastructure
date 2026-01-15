@@ -46,14 +46,14 @@ metadata:
   name: {{ $service.name }}
   namespace: {{ $.Values.global.namespace | default $.Release.Namespace }}
   labels:
-    {{- include "quikapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
+    {{- include "quckapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: {{ $service.service.port | quote }}
 spec:
   type: {{ $service.service.type | default "ClusterIP" }}
   selector:
-    {{- include "quikapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 4 }}
+    {{- include "quckapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 4 }}
   ports:
     - name: http
       port: {{ $service.service.port }}

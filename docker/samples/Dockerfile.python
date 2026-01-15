@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Python Service Dockerfile
+# QuckApp Python Service Dockerfile
 # Multi-stage build with virtual environment for production
 # =============================================================================
 
@@ -74,13 +74,13 @@ ARG VERSION=dev
 ARG BUILD_DATE
 ARG GIT_COMMIT
 
-LABEL org.opencontainers.image.title="QuikApp Python Service" \
-      org.opencontainers.image.description="QuikApp microservice built with Python" \
+LABEL org.opencontainers.image.title="QuckApp Python Service" \
+      org.opencontainers.image.description="QuckApp microservice built with Python" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.vendor="QuikApp" \
-      org.opencontainers.image.source="https://github.com/quikapp/quikapp"
+      org.opencontainers.image.vendor="QuckApp" \
+      org.opencontainers.image.source="https://github.com/quckapp/quckapp"
 
 # Switch to non-root user
 USER python
@@ -136,12 +136,12 @@ ARG VERSION=dev
 ARG BUILD_DATE
 ARG GIT_COMMIT
 
-LABEL org.opencontainers.image.title="QuikApp ML Service" \
-      org.opencontainers.image.description="QuikApp ML microservice with GPU support" \
+LABEL org.opencontainers.image.title="QuckApp ML Service" \
+      org.opencontainers.image.description="QuckApp ML microservice with GPU support" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.vendor="QuikApp"
+      org.opencontainers.image.vendor="QuckApp"
 
 # Switch to non-root user
 USER python

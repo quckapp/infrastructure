@@ -1,5 +1,5 @@
 # =============================================================================
-# QUIKAPP - Grafana Dashboards Provisioning
+# QUCKAPP - Grafana Dashboards Provisioning
 # =============================================================================
 # Auto-provisions dashboards from JSON files
 # =============================================================================
@@ -7,10 +7,10 @@
 apiVersion: 1
 
 providers:
-  - name: 'QuikApp Dashboards'
+  - name: 'QuckApp Dashboards'
     orgId: 1
-    folder: 'QuikApp'
-    folderUid: 'quikapp'
+    folder: 'QuckApp'
+    folderUid: 'quckapp'
     type: file
     disableDeletion: false
     updateIntervalSeconds: 30

@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Production Environment - Example Variables
+# QuckApp Production Environment - Example Variables
 # =============================================================================
 # Copy this file to prod.tfvars and customize for your environment.
 #
@@ -24,8 +24,8 @@ create_vpc_interface_endpoints = true
 # -----------------------------------------------------------------------------
 
 cors_allowed_origins = [
-  "https://app.quikapp.com",
-  "https://www.quikapp.com"
+  "https://app.quckapp.com",
+  "https://www.quckapp.com"
 ]
 
 # -----------------------------------------------------------------------------
@@ -33,7 +33,7 @@ cors_allowed_origins = [
 # -----------------------------------------------------------------------------
 
 cdn_domain_aliases = [
-  "cdn.quikapp.com"
+  "cdn.quckapp.com"
 ]
 
 # REQUIRED: ACM certificate ARN (must be in us-east-1)
@@ -67,19 +67,19 @@ dlq_alert_email_endpoints = [
 cognito_mfa_configuration = "ON"
 
 cognito_web_callback_urls = [
-  "https://app.quikapp.com/callback"
+  "https://app.quckapp.com/callback"
 ]
 
 cognito_web_logout_urls = [
-  "https://app.quikapp.com"
+  "https://app.quckapp.com"
 ]
 
 cognito_mobile_callback_urls = [
-  "quikapp://callback"
+  "quckapp://callback"
 ]
 
 cognito_mobile_logout_urls = [
-  "quikapp://logout"
+  "quckapp://logout"
 ]
 
 # -----------------------------------------------------------------------------
@@ -123,14 +123,14 @@ api_throttling_burst_limit = 5000
 api_throttling_rate_limit  = 10000
 
 # OPTIONAL: Custom domain
-# api_custom_domain       = "api.quikapp.com"
+# api_custom_domain       = "api.quckapp.com"
 # api_acm_certificate_arn = "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERT_ID"
 
 # -----------------------------------------------------------------------------
 # CI/CD
 # -----------------------------------------------------------------------------
 
-github_repo_pattern = "repo:YOUR_ORG/quikapp:*"
+github_repo_pattern = "repo:YOUR_ORG/quckapp:*"
 
 # -----------------------------------------------------------------------------
 # Tags
@@ -138,7 +138,7 @@ github_repo_pattern = "repo:YOUR_ORG/quikapp:*"
 
 tags = {
   Environment = "prod"
-  Project     = "QuikApp"
+  Project     = "QuckApp"
   Team        = "Platform"
   CostCenter  = "Production"
 }

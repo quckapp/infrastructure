@@ -1,11 +1,11 @@
-# QuikApp Development Environment Values
-# Usage: helm install quikapp ./quikapp -f values-development.yaml
+# QuckApp Development Environment Values
+# Usage: helm install quckapp ./quckapp -f values-development.yaml
 
 global:
   environment: development
   imagePullPolicy: Always
-  namespace: quikapp-dev
-  domain: dev.quikapp.local
+  namespace: quckapp
+  domain: dev.quckapp.local
   tlsEnabled: false
 
   # Reduced resources for development

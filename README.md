@@ -1,6 +1,6 @@
-# QuikApp Infrastructure
+# QuckApp Infrastructure
 
-This directory contains all infrastructure-related configurations for deploying and operating QuikApp.
+This directory contains all infrastructure-related configurations for deploying and operating QuckApp.
 
 ## Directory Structure
 
@@ -182,11 +182,11 @@ kubectl apply -k infrastructure/k8s/overlays/dev
 
 ### Helm (`helm/`)
 
-Helm charts for deploying QuikApp to Kubernetes clusters.
+Helm charts for deploying QuckApp to Kubernetes clusters.
 
 ```
 helm/
-└── quikapp/
+└── quckapp/
     ├── Chart.yaml
     ├── values.yaml
     ├── values-development.yaml
@@ -200,10 +200,10 @@ helm/
 
 **Quick Start:**
 ```bash
-helm install quikapp infrastructure/helm/quikapp \
-  --namespace quikapp \
+helm install quckapp infrastructure/helm/quckapp \
+  --namespace quckapp \
   --create-namespace \
-  -f infrastructure/helm/quikapp/values-development.yaml
+  -f infrastructure/helm/quckapp/values-development.yaml
 ```
 
 ### Monitoring (`monitoring/`)
@@ -308,4 +308,4 @@ Terraform Plan → Approval → Terraform Apply → Cloud Resources
 | Start local infra | `cd infrastructure/docker && docker compose -f docker-compose.infra.yml up -d` |
 | Deploy to K8s dev | `kubectl apply -k infrastructure/k8s/overlays/dev` |
 | Plan Terraform | `cd infrastructure/terraform/environments/dev && terraform plan` |
-| Install Helm chart | `helm install quikapp infrastructure/helm/quikapp -n quikapp` |
+| Install Helm chart | `helm install quckapp infrastructure/helm/quckapp -n quckapp` |

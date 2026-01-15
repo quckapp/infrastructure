@@ -1,13 +1,13 @@
-# QuikApp QA Environment Values
-# Usage: helm install quikapp ./quikapp -f values-qa.yaml
+# QuckApp QA Environment Values
+# Usage: helm install quckapp ./quckapp -f values-qa.yaml
 
 global:
   environment: qa
   imagePullPolicy: Always
-  namespace: quikapp-qa
-  domain: qa.quikapp.io
+  namespace: quckapp-qa
+  domain: qa.quckapp.io
   tlsEnabled: true
-  tlsSecretName: quikapp-qa-tls
+  tlsSecretName: quckapp-qa-tls
 
   # QA resources (slightly more than dev)
   resources:

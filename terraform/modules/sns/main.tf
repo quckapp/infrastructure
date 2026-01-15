@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp SNS Module for Notifications
+# QuckApp SNS Module for Notifications
 # =============================================================================
 # Creates SNS topics for:
 # - Media processing events (completion, failure)
@@ -31,11 +31,11 @@ locals {
   })
 
   # Topic names
-  media_events_topic_name   = "quikapp-media-events-${var.environment}"
-  alerts_topic_name         = "quikapp-alerts-${var.environment}"
-  user_notifications_name   = "quikapp-user-notifications-${var.environment}"
-  dlq_alerts_topic_name     = "quikapp-dlq-alerts-${var.environment}"
-  export_complete_topic_name = "quikapp-export-complete-${var.environment}"
+  media_events_topic_name   = "quckapp-media-events-${var.environment}"
+  alerts_topic_name         = "quckapp-alerts-${var.environment}"
+  user_notifications_name   = "quckapp-user-notifications-${var.environment}"
+  dlq_alerts_topic_name     = "quckapp-dlq-alerts-${var.environment}"
+  export_complete_topic_name = "quckapp-export-complete-${var.environment}"
 }
 
 # -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ resource "aws_sns_topic" "media_events" {
   count = var.create_media_events_topic ? 1 : 0
 
   name         = local.media_events_topic_name
-  display_name = "QuikApp Media Events"
+  display_name = "QuckApp Media Events"
 
   # Encryption
   kms_master_key_id = var.kms_key_arn
@@ -76,7 +76,7 @@ resource "aws_sns_topic" "media_events" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Events Topic"
+    Name    = "QuckApp Media Events Topic"
     Purpose = "media-processing-events"
   })
 }
@@ -86,14 +86,14 @@ resource "aws_sns_topic" "media_events_fifo" {
   count = var.create_media_events_fifo_topic ? 1 : 0
 
   name                        = "${local.media_events_topic_name}.fifo"
-  display_name                = "QuikApp Media Events FIFO"
+  display_name                = "QuckApp Media Events FIFO"
   fifo_topic                  = true
   content_based_deduplication = var.fifo_content_deduplication
 
   kms_master_key_id = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Events FIFO Topic"
+    Name    = "QuckApp Media Events FIFO Topic"
     Purpose = "media-processing-events"
     Type    = "FIFO"
   })
@@ -108,12 +108,12 @@ resource "aws_sns_topic" "alerts" {
   count = var.create_alerts_topic ? 1 : 0
 
   name         = local.alerts_topic_name
-  display_name = "QuikApp Alerts"
+  display_name = "QuckApp Alerts"
 
   kms_master_key_id = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Alerts Topic"
+    Name    = "QuckApp Alerts Topic"
     Purpose = "system-alerts"
   })
 }
@@ -145,7 +145,7 @@ resource "aws_sns_topic" "user_notifications" {
   count = var.create_user_notifications_topic ? 1 : 0
 
   name         = local.user_notifications_name
-  display_name = "QuikApp User Notifications"
+  display_name = "QuckApp User Notifications"
 
   kms_master_key_id = var.kms_key_arn
 
@@ -166,7 +166,7 @@ resource "aws_sns_topic" "user_notifications" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp User Notifications Topic"
+    Name    = "QuckApp User Notifications Topic"
     Purpose = "user-notifications"
   })
 }
@@ -192,12 +192,12 @@ resource "aws_sns_topic" "dlq_alerts" {
   count = var.create_dlq_alerts_topic ? 1 : 0
 
   name         = local.dlq_alerts_topic_name
-  display_name = "QuikApp DLQ Alerts"
+  display_name = "QuckApp DLQ Alerts"
 
   kms_master_key_id = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp DLQ Alerts Topic"
+    Name    = "QuckApp DLQ Alerts Topic"
     Purpose = "dlq-alerts"
   })
 }
@@ -220,12 +220,12 @@ resource "aws_sns_topic" "export_complete" {
   count = var.create_export_complete_topic ? 1 : 0
 
   name         = local.export_complete_topic_name
-  display_name = "QuikApp Export Complete"
+  display_name = "QuckApp Export Complete"
 
   kms_master_key_id = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Export Complete Topic"
+    Name    = "QuckApp Export Complete Topic"
     Purpose = "export-notifications"
   })
 }
@@ -238,7 +238,7 @@ resource "aws_sns_topic" "export_complete" {
 resource "aws_sns_platform_application" "apns" {
   count = var.create_mobile_push_platforms && var.apns_credentials != null ? 1 : 0
 
-  name                = "quikapp-apns-${var.environment}"
+  name                = "quckapp-apns-${var.environment}"
   platform            = var.apns_use_sandbox ? "APNS_SANDBOX" : "APNS"
   platform_credential = var.apns_credentials.private_key
   platform_principal  = var.apns_credentials.certificate
@@ -253,7 +253,7 @@ resource "aws_sns_platform_application" "apns" {
 resource "aws_sns_platform_application" "fcm" {
   count = var.create_mobile_push_platforms && var.fcm_api_key != null ? 1 : 0
 
-  name                = "quikapp-fcm-${var.environment}"
+  name                = "quckapp-fcm-${var.environment}"
   platform            = "GCM"
   platform_credential = var.fcm_api_key
 

@@ -1,31 +1,31 @@
--- QuikApp PostgreSQL Initialization Script
+-- QuckApp PostgreSQL Initialization Script
 -- Creates databases for NestJS gateway services
 
 -- Create databases
-CREATE DATABASE quikapp_gateway;
-CREATE DATABASE quikapp_notifications;
+CREATE DATABASE quckapp_gateway;
+CREATE DATABASE quckapp_notifications;
 
 -- Create application user
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'quikapp') THEN
-    CREATE USER quikapp WITH PASSWORD 'quikapp123';
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'quckapp') THEN
+    CREATE USER quckapp WITH PASSWORD 'quckapp123';
   END IF;
 END
 $$;
 
 -- Grant privileges
-GRANT ALL PRIVILEGES ON DATABASE quikapp TO quikapp;
-GRANT ALL PRIVILEGES ON DATABASE quikapp_gateway TO quikapp;
-GRANT ALL PRIVILEGES ON DATABASE quikapp_notifications TO quikapp;
+GRANT ALL PRIVILEGES ON DATABASE quckapp TO quckapp;
+GRANT ALL PRIVILEGES ON DATABASE quckapp_gateway TO quckapp;
+GRANT ALL PRIVILEGES ON DATABASE quckapp_notifications TO quckapp;
 
 -- Connect to gateway database and set up schema
-\c quikapp_gateway;
-GRANT ALL ON SCHEMA public TO quikapp;
+\c quckapp_gateway;
+GRANT ALL ON SCHEMA public TO quckapp;
 
 -- Connect to notifications database and set up schema
-\c quikapp_notifications;
-GRANT ALL ON SCHEMA public TO quikapp;
+\c quckapp_notifications;
+GRANT ALL ON SCHEMA public TO quckapp;
 
 -- Log completion
-SELECT 'QuikApp PostgreSQL initialization complete' AS status;
+SELECT 'QuckApp PostgreSQL initialization complete' AS status;

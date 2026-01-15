@@ -11,7 +11,7 @@ variable "aws_region" {
 variable "project_name" {
   description = "Project name"
   type        = string
-  default     = "quikapp"
+  default     = "quckapp"
 }
 
 variable "environment" {
@@ -89,17 +89,17 @@ variable "existing_subnet_ids" {
 variable "cors_allowed_origins" {
   description = "CORS allowed origins"
   type        = list(string)
-  default     = ["https://qa.quikapp.com", "https://qa-app.quikapp.com"]
+  default     = ["https://qa.quckapp.com", "https://qa-app.quckapp.com"]
 }
 
 variable "cognito_callback_urls" {
   description = "Cognito callback URLs"
   type        = list(string)
-  default     = ["https://qa.quikapp.com/callback"]
+  default     = ["https://qa.quckapp.com/callback"]
 }
 
 variable "cognito_logout_urls" {
   description = "Cognito logout URLs"
   type        = list(string)
-  default     = ["https://qa.quikapp.com/logout"]
+  default     = ["https://qa.quckapp.com/logout"]
 }

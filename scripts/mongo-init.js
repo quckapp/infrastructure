@@ -1,4 +1,4 @@
-// QuikApp MongoDB Initialization Script
+// QuckApp MongoDB Initialization Script
 // Creates databases and indexes for all MongoDB-backed microservices
 
 // ============================================
@@ -6,7 +6,7 @@
 // ============================================
 
 // Presence Service Database
-db = db.getSiblingDB('quikapp_presence');
+db = db.getSiblingDB('quckapp_presence');
 db.createCollection('user_presence');
 db.user_presence.createIndex({ "userId": 1 }, { unique: true });
 db.user_presence.createIndex({ "status": 1 });
@@ -18,7 +18,7 @@ db.presence_subscriptions.createIndex({ "subscriberId": 1 });
 db.presence_subscriptions.createIndex({ "targetUserId": 1 });
 
 // Call Service Database
-db = db.getSiblingDB('quikapp_calls');
+db = db.getSiblingDB('quckapp_calls');
 db.createCollection('active_calls');
 db.active_calls.createIndex({ "callId": 1 }, { unique: true });
 db.active_calls.createIndex({ "channelId": 1 });
@@ -38,7 +38,7 @@ db.call_recordings.createIndex({ "callId": 1 });
 db.call_recordings.createIndex({ "createdAt": -1 });
 
 // Message Service Database
-db = db.getSiblingDB('quikapp_messages');
+db = db.getSiblingDB('quckapp_messages');
 db.createCollection('messages');
 db.messages.createIndex({ "channelId": 1, "createdAt": -1 });
 db.messages.createIndex({ "senderId": 1 });
@@ -58,7 +58,7 @@ db.typing_indicators.createIndex({ "channelId": 1 });
 db.typing_indicators.createIndex({ "expiresAt": 1 }, { expireAfterSeconds: 0 });
 
 // Notification Orchestrator Database
-db = db.getSiblingDB('quikapp_notification_orchestrator');
+db = db.getSiblingDB('quckapp_notification_orchestrator');
 db.createCollection('notification_queue');
 db.notification_queue.createIndex({ "userId": 1, "status": 1 });
 db.notification_queue.createIndex({ "priority": -1, "createdAt": 1 });
@@ -75,7 +75,7 @@ db.notification_history.createIndex({ "type": 1 });
 db.notification_history.createIndex({ "createdAt": -1 });
 
 // Huddle Service Database
-db = db.getSiblingDB('quikapp_huddles');
+db = db.getSiblingDB('quckapp_huddles');
 db.createCollection('active_huddles');
 db.active_huddles.createIndex({ "huddleId": 1 }, { unique: true });
 db.active_huddles.createIndex({ "channelId": 1 });
@@ -88,7 +88,7 @@ db.huddle_history.createIndex({ "channelId": 1 });
 db.huddle_history.createIndex({ "startedAt": -1 });
 
 // Event Broadcast Service Database
-db = db.getSiblingDB('quikapp_events');
+db = db.getSiblingDB('quckapp_events');
 db.createCollection('events');
 db.events.createIndex({ "eventId": 1 }, { unique: true });
 db.events.createIndex({ "type": 1 });
@@ -106,7 +106,7 @@ db.event_subscriptions.createIndex({ "targetType": 1, "targetId": 1 });
 // ============================================
 
 // Media Service Database
-db = db.getSiblingDB('quikapp_media');
+db = db.getSiblingDB('quckapp_media');
 db.createCollection('media');
 db.media.createIndex({ "mediaId": 1 }, { unique: true });
 db.media.createIndex({ "userId": 1 });
@@ -122,7 +122,7 @@ db.media_processing_jobs.createIndex({ "status": 1, "createdAt": 1 });
 db.media_processing_jobs.createIndex({ "priority": -1, "createdAt": 1 });
 
 // File Service Database
-db = db.getSiblingDB('quikapp_files');
+db = db.getSiblingDB('quckapp_files');
 db.createCollection('files');
 db.files.createIndex({ "fileId": 1 }, { unique: true });
 db.files.createIndex({ "userId": 1 });
@@ -143,7 +143,7 @@ db.file_shares.createIndex({ "sharedWith": 1 });
 db.file_shares.createIndex({ "expiresAt": 1 }, { expireAfterSeconds: 0 });
 
 // Attachment Service Database
-db = db.getSiblingDB('quikapp_attachments');
+db = db.getSiblingDB('quckapp_attachments');
 db.createCollection('attachments');
 db.attachments.createIndex({ "attachmentId": 1 }, { unique: true });
 db.attachments.createIndex({ "messageId": 1 });
@@ -156,7 +156,7 @@ db.attachment_previews.createIndex({ "attachmentId": 1 });
 db.attachment_previews.createIndex({ "status": 1 });
 
 // CDN Service Database
-db = db.getSiblingDB('quikapp_cdn');
+db = db.getSiblingDB('quckapp_cdn');
 db.createCollection('cdn_assets');
 db.cdn_assets.createIndex({ "assetId": 1 }, { unique: true });
 db.cdn_assets.createIndex({ "originalUrl": 1 });
@@ -169,10 +169,10 @@ db.cdn_cache_stats.createIndex({ "assetId": 1 });
 db.cdn_cache_stats.createIndex({ "lastAccessedAt": -1 });
 
 // ============================================
-// Main QuikApp Database (Shared/Legacy)
+// Main QuckApp Database (Shared/Legacy)
 // ============================================
 
-db = db.getSiblingDB('quikapp');
+db = db.getSiblingDB('quckapp');
 
 // Users collection (shared reference)
 db.createCollection('users');
@@ -195,5 +195,5 @@ db.notifications.createIndex({ "userId": 1, "read": 1 });
 db.notifications.createIndex({ "createdAt": -1 });
 db.notifications.createIndex({ "type": 1 });
 
-print('QuikApp MongoDB initialization complete');
-print('Created databases: quikapp_presence, quikapp_calls, quikapp_messages, quikapp_notification_orchestrator, quikapp_huddles, quikapp_events, quikapp_media, quikapp_files, quikapp_attachments, quikapp_cdn, quikapp');
+print('QuckApp MongoDB initialization complete');
+print('Created databases: quckapp_presence, quckapp_calls, quckapp_messages, quckapp_notification_orchestrator, quckapp_huddles, quckapp_events, quckapp_media, quckapp_files, quckapp_attachments, quckapp_cdn, quckapp');

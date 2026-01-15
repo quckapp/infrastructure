@@ -9,7 +9,7 @@
 resource "aws_iam_role" "thumbnail_generator" {
   count = var.create_thumbnail_generator ? 1 : 0
 
-  name = "quikapp-lambda-thumbnail-${var.environment}"
+  name = "quckapp-lambda-thumbnail-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -25,7 +25,7 @@ resource "aws_iam_role" "thumbnail_generator" {
   })
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp Thumbnail Generator Role"
+    Name = "QuckApp Thumbnail Generator Role"
   })
 }
 
@@ -180,7 +180,7 @@ resource "aws_iam_role_policy_attachment" "thumbnail_generator_xray" {
 resource "aws_iam_role" "video_thumbnail" {
   count = var.create_video_thumbnail ? 1 : 0
 
-  name = "quikapp-lambda-video-thumb-${var.environment}"
+  name = "quckapp-lambda-video-thumb-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -196,7 +196,7 @@ resource "aws_iam_role" "video_thumbnail" {
   })
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp Video Thumbnail Role"
+    Name = "QuckApp Video Thumbnail Role"
   })
 }
 
@@ -325,7 +325,7 @@ resource "aws_iam_role_policy_attachment" "video_thumbnail_xray" {
 resource "aws_iam_role" "image_optimizer" {
   count = var.create_image_optimizer ? 1 : 0
 
-  name = "quikapp-lambda-optimizer-${var.environment}"
+  name = "quckapp-lambda-optimizer-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -341,7 +341,7 @@ resource "aws_iam_role" "image_optimizer" {
   })
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp Image Optimizer Role"
+    Name = "QuckApp Image Optimizer Role"
   })
 }
 

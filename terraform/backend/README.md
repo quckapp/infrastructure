@@ -24,10 +24,10 @@ terraform apply
 
 | Resource | Name | Purpose |
 |----------|------|---------|
-| S3 Bucket | `quikapp-terraform-state-{account_id}` | State storage |
-| DynamoDB Table | `quikapp-terraform-locks` | State locking |
-| KMS Key | `alias/quikapp-terraform-state` | Encryption (optional) |
-| IAM Policy | `quikapp-terraform-state-access` | Access control |
+| S3 Bucket | `quckapp-terraform-state-{account_id}` | State storage |
+| DynamoDB Table | `quckapp-terraform-locks` | State locking |
+| KMS Key | `alias/quckapp-terraform-state` | Encryption (optional) |
+| IAM Policy | `quckapp-terraform-state-access` | Access control |
 
 ## After Setup
 
@@ -53,7 +53,7 @@ Edit `terraform.tfvars` to customize:
 
 ```hcl
 aws_region           = "us-east-1"
-project_name         = "quikapp"
+project_name         = "quckapp"
 use_kms_encryption   = true
 state_version_retention_days = 90
 enable_dynamodb_pitr = true

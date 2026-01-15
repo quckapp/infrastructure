@@ -95,7 +95,7 @@ steps:
     displayName: 'Login to ACR'
     condition: and(${{ parameters.condition }}, ${{ parameters.pushImage }})
     inputs:
-      containerRegistry: 'quikapp-acr-connection'
+      containerRegistry: 'quckapp-acr-connection'
       command: 'login'
 
   # Build Docker image
@@ -116,8 +116,8 @@ steps:
         --label "org.opencontainers.image.source=$(Build.Repository.Uri)" \
         --label "org.opencontainers.image.revision=$(Build.SourceVersion)" \
         --label "org.opencontainers.image.created=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-        --label "com.quikapp.service=${{ parameters.serviceName }}" \
-        --label "com.quikapp.technology=python" \
+        --label "com.quckapp.service=${{ parameters.serviceName }}" \
+        --label "com.quckapp.technology=python" \
         -f $DOCKERFILE \
         .
 

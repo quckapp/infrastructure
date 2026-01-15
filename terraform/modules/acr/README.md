@@ -1,6 +1,6 @@
 # Azure Container Registry (ACR) Terraform Module
 
-This module provisions an Azure Container Registry with production-ready configurations for QuikApp environments.
+This module provisions an Azure Container Registry with production-ready configurations for QuckApp environments.
 
 ## Features
 
@@ -23,8 +23,8 @@ This module provisions an Azure Container Registry with production-ready configu
 module "acr_dev" {
   source = "./modules/acr"
 
-  name                = "quikappdev"
-  resource_group_name = "rg-quikapp-dev"
+  name                = "quckappdev"
+  resource_group_name = "rg-quckapp"
   location            = "eastus"
   environment         = "dev"
   sku                 = "Basic"
@@ -32,7 +32,7 @@ module "acr_dev" {
   admin_enabled = true  # For easy local development
 
   tags = {
-    Project = "QuikApp"
+    Project = "QuckApp"
   }
 }
 ```
@@ -43,8 +43,8 @@ module "acr_dev" {
 module "acr_qa" {
   source = "./modules/acr"
 
-  name                = "quikappqa"
-  resource_group_name = "rg-quikapp-qa"
+  name                = "quckappqa"
+  resource_group_name = "rg-quckapp-qa"
   location            = "eastus"
   environment         = "qa"
   sku                 = "Standard"
@@ -54,13 +54,13 @@ module "acr_qa" {
   # Webhooks for CI/CD
   webhooks = {
     azure-devops = {
-      service_uri = "https://dev.azure.com/quikapp/_apis/..."
+      service_uri = "https://dev.azure.com/quckapp/_apis/..."
       actions     = ["push"]
     }
   }
 
   tags = {
-    Project = "QuikApp"
+    Project = "QuckApp"
   }
 }
 ```
@@ -71,8 +71,8 @@ module "acr_qa" {
 module "acr_prod" {
   source = "./modules/acr"
 
-  name                = "quikappprod"
-  resource_group_name = "rg-quikapp-prod"
+  name                = "quckappprod"
+  resource_group_name = "rg-quckapp-prod"
   location            = "eastus"
   environment         = "prod"
   sku                 = "Premium"
@@ -113,10 +113,10 @@ module "acr_prod" {
 
   # Diagnostics
   diagnostic_settings_enabled    = true
-  log_analytics_workspace_id     = "/subscriptions/.../workspaces/law-quikapp"
+  log_analytics_workspace_id     = "/subscriptions/.../workspaces/law-quckapp"
 
   tags = {
-    Project     = "QuikApp"
+    Project     = "QuckApp"
     Environment = "Production"
     CostCenter  = "Platform"
   }
@@ -129,8 +129,8 @@ module "acr_prod" {
 module "acr_encrypted" {
   source = "./modules/acr"
 
-  name                = "quikappencrypted"
-  resource_group_name = "rg-quikapp-secure"
+  name                = "quckappencrypted"
+  resource_group_name = "rg-quckapp-secure"
   location            = "eastus"
   environment         = "prod"
   sku                 = "Premium"
@@ -206,14 +206,14 @@ az aks update -n <aks-name> -g <rg-name> --attach-acr <acr-name>
 2. New Service Connection → Docker Registry
 3. Select "Azure Container Registry"
 4. Choose subscription and registry
-5. Name it: `ACR-QuikApp-<env>`
+5. Name it: `ACR-QuckApp-<env>`
 
 ### Pipeline Usage
 
 ```yaml
 - task: Docker@2
   inputs:
-    containerRegistry: 'ACR-QuikApp-prod'
+    containerRegistry: 'ACR-QuckApp-prod'
     repository: 'backend-gateway'
     command: 'buildAndPush'
     Dockerfile: 'services/nestjs/backend-gateway/Dockerfile'

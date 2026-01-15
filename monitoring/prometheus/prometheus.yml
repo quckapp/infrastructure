@@ -1,11 +1,11 @@
-# QuikApp Prometheus Configuration
+# QuckApp Prometheus Configuration
 # Scrapes metrics from all microservices and infrastructure
 
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    cluster: 'quikapp'
+    cluster: 'quckapp'
     env: 'development'
 
 # Alertmanager configuration

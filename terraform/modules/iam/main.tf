@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp IAM Module for S3 Access
+# QuckApp IAM Module for S3 Access
 # =============================================================================
 # Creates IAM roles and policies for:
 # - Media service (upload/download pre-signed URLs)
@@ -45,7 +45,7 @@ data "aws_region" "current" {}
 resource "aws_iam_role" "media_service" {
   count = var.create_media_service_role ? 1 : 0
 
-  name = "quikapp-media-service-${var.environment}"
+  name = "quckapp-media-service-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -67,7 +67,7 @@ resource "aws_iam_role" "media_service" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Service Role"
+    Name    = "QuckApp Media Service Role"
     Purpose = "media-service"
   })
 }
@@ -142,7 +142,7 @@ resource "aws_iam_role_policy" "media_service_s3" {
 resource "aws_iam_role" "lambda_thumbnail" {
   count = var.create_lambda_thumbnail_role ? 1 : 0
 
-  name = "quikapp-lambda-thumbnail-${var.environment}"
+  name = "quckapp-lambda-thumbnail-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -158,7 +158,7 @@ resource "aws_iam_role" "lambda_thumbnail" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Lambda Thumbnail Role"
+    Name    = "QuckApp Lambda Thumbnail Role"
     Purpose = "lambda-thumbnail"
   })
 }
@@ -236,7 +236,7 @@ resource "aws_iam_role_policy_attachment" "lambda_thumbnail_basic" {
 resource "aws_iam_role" "cdn_service" {
   count = var.create_cdn_service_role ? 1 : 0
 
-  name = "quikapp-cdn-service-${var.environment}"
+  name = "quckapp-cdn-service-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -258,7 +258,7 @@ resource "aws_iam_role" "cdn_service" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp CDN Service Role"
+    Name    = "QuckApp CDN Service Role"
     Purpose = "cdn-service"
   })
 }
@@ -321,7 +321,7 @@ resource "aws_iam_role_policy" "cdn_service_s3" {
 resource "aws_iam_role" "cicd_deployment" {
   count = var.create_cicd_role ? 1 : 0
 
-  name = "quikapp-cicd-deployment-${var.environment}"
+  name = "quckapp-cicd-deployment-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -346,7 +346,7 @@ resource "aws_iam_role" "cicd_deployment" {
   })
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp CI/CD Deployment Role"
+    Name    = "QuckApp CI/CD Deployment Role"
     Purpose = "cicd-deployment"
   })
 }

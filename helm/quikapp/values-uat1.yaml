@@ -1,14 +1,14 @@
-# QuikApp UAT1 Environment Values
+# QuckApp UAT1 Environment Values
 # Purpose: Partner/Customer Acceptance Testing - Production-like environment
-# Usage: helm install quikapp ./quikapp -f values-uat1.yaml
+# Usage: helm install quckapp ./quckapp -f values-uat1.yaml
 
 global:
   environment: uat1
   imagePullPolicy: IfNotPresent
-  namespace: quikapp-uat1
-  domain: uat1.quikapp.io
+  namespace: quckapp-uat1
+  domain: uat1.quckapp.io
   tlsEnabled: true
-  tlsSecretName: quikapp-uat1-tls
+  tlsSecretName: quckapp-uat1-tls
 
   # UAT resources (moderate)
   resources:

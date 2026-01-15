@@ -19,20 +19,20 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Integration Tests'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
         # Determine service URL based on environment
         case "${{ parameters.environment }}" in
           dev)
-            BASE_URL="https://${{ parameters.serviceName }}.dev.quikapp.io"
+            BASE_URL="https://${{ parameters.serviceName }}.dev.quckapp.io"
             ;;
           qa)
-            BASE_URL="https://${{ parameters.serviceName }}.qa.quikapp.io"
+            BASE_URL="https://${{ parameters.serviceName }}.qa.quckapp.io"
             ;;
           *)
-            BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+            BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
             ;;
         esac
 

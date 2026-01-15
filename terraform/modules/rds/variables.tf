@@ -18,7 +18,7 @@ variable "tags" {
 }
 
 variable "identifier" {
-  description = "Database identifier (defaults to quikapp-{environment})"
+  description = "Database identifier (defaults to quckapp-{environment})"
   type        = string
   default     = null
 }
@@ -132,7 +132,7 @@ variable "aurora_storage_type" {
 variable "database_name" {
   description = "Name of the database to create"
   type        = string
-  default     = "quikapp"
+  default     = "quckapp"
 }
 
 variable "port" {
@@ -154,7 +154,7 @@ variable "timezone" {
 variable "master_username" {
   description = "Master username"
   type        = string
-  default     = "quikapp_admin"
+  default     = "quckapp_admin"
 }
 
 variable "master_password" {

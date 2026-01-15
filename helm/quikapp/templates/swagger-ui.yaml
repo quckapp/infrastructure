@@ -3,9 +3,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "quikapp.fullname" . }}-swagger-ui-config
+  name: {{ include "quckapp.fullname" . }}-swagger-ui-config
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
     app.kubernetes.io/component: swagger-ui
 data:
   swagger-initializer.js: |
@@ -40,20 +40,20 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "quikapp.fullname" . }}-swagger-ui
+  name: {{ include "quckapp.fullname" . }}-swagger-ui
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
     app.kubernetes.io/component: swagger-ui
 spec:
   replicas: {{ .Values.swaggerUi.replicas }}
   selector:
     matchLabels:
-      {{- include "quikapp.selectorLabels" . | nindent 6 }}
+      {{- include "quckapp.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: swagger-ui
   template:
     metadata:
       labels:
-        {{- include "quikapp.selectorLabels" . | nindent 8 }}
+        {{- include "quckapp.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: swagger-ui
     spec:
       containers:
@@ -107,10 +107,10 @@ spec:
       volumes:
         - name: openapi-spec
           configMap:
-            name: {{ include "quikapp.fullname" . }}-openapi-spec
+            name: {{ include "quckapp.fullname" . }}-openapi-spec
         - name: swagger-config
           configMap:
-            name: {{ include "quikapp.fullname" . }}-swagger-ui-config
+            name: {{ include "quckapp.fullname" . }}-swagger-ui-config
       {{- with .Values.swaggerUi.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -119,9 +119,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "quikapp.fullname" . }}-swagger-ui
+  name: {{ include "quckapp.fullname" . }}-swagger-ui
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
     app.kubernetes.io/component: swagger-ui
 spec:
   type: {{ .Values.swaggerUi.service.type }}
@@ -131,16 +131,16 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "quikapp.selectorLabels" . | nindent 4 }}
+    {{- include "quckapp.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: swagger-ui
 {{- if .Values.swaggerUi.ingress.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "quikapp.fullname" . }}-swagger-ui
+  name: {{ include "quckapp.fullname" . }}-swagger-ui
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
     app.kubernetes.io/component: swagger-ui
   {{- with .Values.swaggerUi.ingress.annotations }}
   annotations:
@@ -170,7 +170,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "quikapp.fullname" $ }}-swagger-ui
+                name: {{ include "quckapp.fullname" $ }}-swagger-ui
                 port:
                   number: {{ $.Values.swaggerUi.service.port }}
           {{- end }}

@@ -18,7 +18,7 @@ resource "aws_lambda_function" "image_optimizer" {
 
   provider = aws.us_east_1
 
-  function_name = "quikapp-image-optimizer-${var.environment}"
+  function_name = "quckapp-image-optimizer-${var.environment}"
   description   = "Lambda@Edge function for image optimization"
   role          = aws_iam_role.lambda_edge[0].arn
   handler       = "index.handler"
@@ -31,7 +31,7 @@ resource "aws_lambda_function" "image_optimizer" {
   source_code_hash = var.image_optimizer_lambda_hash
 
   tags = merge(var.tags, {
-    Name        = "QuikApp Image Optimizer"
+    Name        = "QuckApp Image Optimizer"
     Environment = var.environment
   })
 }
@@ -45,7 +45,7 @@ resource "aws_lambda_function" "security_headers" {
 
   provider = aws.us_east_1
 
-  function_name = "quikapp-security-headers-${var.environment}"
+  function_name = "quckapp-security-headers-${var.environment}"
   description   = "Lambda@Edge function for security headers"
   role          = aws_iam_role.lambda_edge[0].arn
   handler       = "index.handler"
@@ -58,7 +58,7 @@ resource "aws_lambda_function" "security_headers" {
   source_code_hash = var.security_headers_lambda_hash
 
   tags = merge(var.tags, {
-    Name        = "QuikApp Security Headers"
+    Name        = "QuckApp Security Headers"
     Environment = var.environment
   })
 }
@@ -70,7 +70,7 @@ resource "aws_lambda_function" "security_headers" {
 resource "aws_iam_role" "lambda_edge" {
   count = var.create_image_optimizer_lambda || var.create_security_headers_lambda ? 1 : 0
 
-  name = "quikapp-lambda-edge-${var.environment}"
+  name = "quckapp-lambda-edge-${var.environment}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -140,7 +140,7 @@ resource "aws_cloudwatch_log_group" "image_optimizer" {
 
   provider = aws.us_east_1
 
-  name              = "/aws/lambda/us-east-1.quikapp-image-optimizer-${var.environment}"
+  name              = "/aws/lambda/us-east-1.quckapp-image-optimizer-${var.environment}"
   retention_in_days = var.lambda_log_retention_days
 
   tags = var.tags
@@ -151,7 +151,7 @@ resource "aws_cloudwatch_log_group" "security_headers" {
 
   provider = aws.us_east_1
 
-  name              = "/aws/lambda/us-east-1.quikapp-security-headers-${var.environment}"
+  name              = "/aws/lambda/us-east-1.quckapp-security-headers-${var.environment}"
   retention_in_days = var.lambda_log_retention_days
 
   tags = var.tags

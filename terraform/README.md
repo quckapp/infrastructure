@@ -1,6 +1,6 @@
-# QuikApp Terraform Infrastructure
+# QuckApp Terraform Infrastructure
 
-Infrastructure as Code for QuikApp using Terraform. Supports both **AWS** and **Azure** deployments.
+Infrastructure as Code for QuckApp using Terraform. Supports both **AWS** and **Azure** deployments.
 
 ## Cloud Providers
 
@@ -187,13 +187,13 @@ Features:
 module "s3" {
   source = "../../modules/s3"
 
-  project_name = "quikapp"
+  project_name = "quckapp"
   environment  = "dev"
 
   enable_versioning      = true
   transition_to_ia_days  = 90
   expiration_days        = 365
-  cors_allowed_origins   = ["https://dev.quikapp.com"]
+  cors_allowed_origins   = ["https://dev.quckapp.com"]
 }
 ```
 
@@ -215,7 +215,7 @@ Features:
 module "kms" {
   source = "../../modules/kms"
 
-  project_name        = "quikapp"
+  project_name        = "quckapp"
   environment         = "dev"
   enable_key_rotation = true
   deletion_window     = 14
@@ -234,7 +234,7 @@ Creates IAM roles and policies:
 module "iam" {
   source = "../../modules/iam"
 
-  project_name          = "quikapp"
+  project_name          = "quckapp"
   environment           = "dev"
   media_bucket_arn      = module.s3.media_bucket_arn
   thumbnails_bucket_arn = module.s3.thumbnails_bucket_arn
@@ -255,7 +255,7 @@ Creates network infrastructure:
 module "vpc" {
   source = "../../modules/vpc"
 
-  project_name         = "quikapp"
+  project_name         = "quckapp"
   environment          = "dev"
   vpc_cidr             = "10.0.0.0/16"
   availability_zones   = ["us-east-1a", "us-east-1b"]
@@ -278,7 +278,7 @@ Creates database infrastructure:
 module "rds" {
   source = "../../modules/rds"
 
-  project_name            = "quikapp"
+  project_name            = "quckapp"
   environment             = "dev"
   vpc_id                  = module.vpc.vpc_id
   subnet_ids              = module.vpc.private_subnet_ids
@@ -302,7 +302,7 @@ Creates Redis cache:
 module "elasticache" {
   source = "../../modules/elasticache"
 
-  project_name = "quikapp"
+  project_name = "quckapp"
   environment  = "dev"
   vpc_id       = module.vpc.vpc_id
   subnet_ids   = module.vpc.private_subnet_ids
@@ -324,7 +324,7 @@ Creates DynamoDB tables:
 module "dynamodb" {
   source = "../../modules/dynamodb"
 
-  project_name = "quikapp"
+  project_name = "quckapp"
   environment  = "dev"
   billing_mode = "PAY_PER_REQUEST"
   enable_pitr  = true
@@ -343,7 +343,7 @@ Creates SQS queues:
 module "sqs" {
   source = "../../modules/sqs"
 
-  project_name               = "quikapp"
+  project_name               = "quckapp"
   environment                = "dev"
   message_retention_seconds  = 345600  # 4 days
   visibility_timeout_seconds = 300
@@ -363,7 +363,7 @@ Creates SNS topics:
 module "sns" {
   source = "../../modules/sns"
 
-  project_name = "quikapp"
+  project_name = "quckapp"
   environment  = "dev"
   kms_key_arn  = module.kms.sns_key_arn
 }
@@ -382,7 +382,7 @@ Creates CDN distribution:
 module "cloudfront" {
   source = "../../modules/cloudfront"
 
-  project_name             = "quikapp"
+  project_name             = "quckapp"
   environment              = "live"
   media_bucket_arn         = module.s3.media_bucket_arn
   media_bucket_domain_name = module.s3.media_bucket_domain_name
@@ -403,10 +403,10 @@ Creates user authentication:
 module "cognito" {
   source = "../../modules/cognito"
 
-  project_name  = "quikapp"
+  project_name  = "quckapp"
   environment   = "dev"
-  callback_urls = ["https://dev.quikapp.com/callback"]
-  logout_urls   = ["https://dev.quikapp.com/logout"]
+  callback_urls = ["https://dev.quckapp.com/callback"]
+  logout_urls   = ["https://dev.quckapp.com/logout"]
 }
 ```
 
@@ -422,7 +422,7 @@ Creates HTTP API:
 module "api_gateway" {
   source = "../../modules/api-gateway"
 
-  project_name        = "quikapp"
+  project_name        = "quckapp"
   environment         = "live"
   enable_throttling   = true
   throttle_rate_limit = 10000
@@ -440,7 +440,7 @@ Creates Lambda functions:
 module "lambda" {
   source = "../../modules/lambda"
 
-  project_name = "quikapp"
+  project_name = "quckapp"
   environment  = "dev"
   vpc_id       = module.vpc.vpc_id
   subnet_ids   = module.vpc.private_subnet_ids
@@ -567,7 +567,7 @@ jobs:
 
 ```bash
 # View lock
-aws dynamodb scan --table-name quikapp-terraform-locks
+aws dynamodb scan --table-name quckapp-terraform-locks
 
 # Force unlock
 make unlock ENV=dev ID=<lock-id>
@@ -585,7 +585,7 @@ make plan ENV=dev
 ```bash
 make state-import ENV=dev \
   RESOURCE=aws_s3_bucket.media \
-  ID=quikapp-media-dev
+  ID=quckapp-media-dev
 ```
 
 ## Related Documentation
@@ -722,9 +722,9 @@ Configure remote state in Azure Storage:
 
 ```bash
 # Create storage for state
-az group create --name rg-quikapp-tfstate --location eastus
-az storage account create --name stquikapptfstate --resource-group rg-quikapp-tfstate --sku Standard_LRS
-az storage container create --name tfstate --account-name stquikapptfstate
+az group create --name rg-quckapp-tfstate --location eastus
+az storage account create --name stquckapptfstate --resource-group rg-quckapp-tfstate --sku Standard_LRS
+az storage container create --name tfstate --account-name stquckapptfstate
 
 # Uncomment backend block in versions.tf and run:
 terraform init -migrate-state

@@ -197,9 +197,9 @@ variable "eks_oidc_provider" {
 }
 
 variable "kubernetes_namespace" {
-  description = "Kubernetes namespace for QuikApp services"
+  description = "Kubernetes namespace for QuckApp services"
   type        = string
-  default     = "quikapp"
+  default     = "quckapp"
 }
 
 # -----------------------------------------------------------------------------
@@ -209,7 +209,7 @@ variable "kubernetes_namespace" {
 variable "github_repo_pattern" {
   description = "GitHub repository pattern for OIDC trust"
   type        = string
-  default     = "repo:your-org/quikapp:*"
+  default     = "repo:your-org/quckapp:*"
 }
 
 # -----------------------------------------------------------------------------
@@ -388,7 +388,7 @@ variable "sms_monthly_spend_limit" {
 variable "sms_sender_id" {
   description = "Default SMS sender ID"
   type        = string
-  default     = "QuikApp"
+  default     = "QuckApp"
 }
 
 # -----------------------------------------------------------------------------
@@ -592,25 +592,25 @@ variable "cognito_reply_to_email_address" {
 variable "cognito_web_callback_urls" {
   description = "Callback URLs for web client"
   type        = list(string)
-  default     = ["https://app.quikapp.com/callback"]
+  default     = ["https://app.quckapp.com/callback"]
 }
 
 variable "cognito_web_logout_urls" {
   description = "Logout URLs for web client"
   type        = list(string)
-  default     = ["https://app.quikapp.com"]
+  default     = ["https://app.quckapp.com"]
 }
 
 variable "cognito_mobile_callback_urls" {
   description = "Callback URLs for mobile client (deep links)"
   type        = list(string)
-  default     = ["quikapp://callback"]
+  default     = ["quckapp://callback"]
 }
 
 variable "cognito_mobile_logout_urls" {
   description = "Logout URLs for mobile client"
   type        = list(string)
-  default     = ["quikapp://logout"]
+  default     = ["quckapp://logout"]
 }
 
 variable "create_cognito_identity_pool" {
@@ -638,13 +638,13 @@ variable "create_cognito_resource_server" {
 variable "cognito_resource_server_identifier" {
   description = "Resource server identifier"
   type        = string
-  default     = "quikapp-api"
+  default     = "quckapp-api"
 }
 
 variable "cognito_resource_server_name" {
   description = "Resource server name"
   type        = string
-  default     = "QuikApp API"
+  default     = "QuckApp API"
 }
 
 variable "cognito_resource_server_scopes" {
@@ -654,9 +654,9 @@ variable "cognito_resource_server_scopes" {
     description = string
   }))
   default = [
-    { name = "read", description = "Read access to QuikApp API" },
-    { name = "write", description = "Write access to QuikApp API" },
-    { name = "admin", description = "Admin access to QuikApp API" }
+    { name = "read", description = "Read access to QuckApp API" },
+    { name = "write", description = "Write access to QuckApp API" },
+    { name = "admin", description = "Admin access to QuckApp API" }
   ]
 }
 

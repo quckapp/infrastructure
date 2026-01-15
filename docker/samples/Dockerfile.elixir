@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Elixir/Phoenix Service Dockerfile
+# QuckApp Elixir/Phoenix Service Dockerfile
 # Multi-stage build with OTP release for minimal production image
 # =============================================================================
 
@@ -117,13 +117,13 @@ ARG VERSION=dev
 ARG BUILD_DATE
 ARG GIT_COMMIT
 
-LABEL org.opencontainers.image.title="QuikApp Elixir Service" \
-      org.opencontainers.image.description="QuikApp microservice built with Elixir/Phoenix" \
+LABEL org.opencontainers.image.title="QuckApp Elixir Service" \
+      org.opencontainers.image.description="QuckApp microservice built with Elixir/Phoenix" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.vendor="QuikApp" \
-      org.opencontainers.image.source="https://github.com/quikapp/quikapp"
+      org.opencontainers.image.vendor="QuckApp" \
+      org.opencontainers.image.source="https://github.com/quckapp/quckapp"
 
 # Switch to non-root user
 USER elixir

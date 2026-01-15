@@ -11,11 +11,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: presence-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: presence-service
     app.kubernetes.io/component: realtime
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: elixir
 spec:
   replicas: 3
@@ -27,7 +27,7 @@ spec:
       labels:
         app.kubernetes.io/name: presence-service
         app.kubernetes.io/component: realtime
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: elixir
         app.kubernetes.io/uses-broker: "true"
       annotations:
@@ -35,13 +35,13 @@ spec:
         prometheus.io/port: "4000"
         prometheus.io/path: "/metrics"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: presence-service
-          image: quikapp.azurecr.io/presence-service:latest
+          image: quckapp.azurecr.io/presence-service:latest
           ports:
             - name: http
               containerPort: 4000
@@ -55,7 +55,7 @@ spec:
             - name: PORT
               value: "4000"
             - name: PHX_HOST
-              value: "presence-service.quikapp.svc.cluster.local"
+              value: "presence-service.quckapp.svc.cluster.local"
             # Erlang Distribution
             - name: RELEASE_DISTRIBUTION
               value: "name"
@@ -66,11 +66,11 @@ spec:
             - name: RELEASE_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-encryption-secrets
+                  name: quckapp-encryption-secrets
                   key: SECRET_KEY_BASE
             # Database
             - name: DATABASE_URL
-              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quikapp_presence"
+              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quckapp_presence"
             # Redis
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@$(REDIS_HOST):$(REDIS_PORT)/1"
@@ -78,22 +78,22 @@ spec:
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             # Security
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-encryption-secrets
+                  name: quckapp-encryption-secrets
                   key: SECRET_KEY_BASE
             # Monitoring
             - name: OTEL_SERVICE_NAME
               value: "presence-service"
           envFrom:
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
             - secretRef:
-                name: quikapp-database-secrets
+                name: quckapp-database-secrets
           resources:
             requests:
               cpu: "200m"
@@ -138,7 +138,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: presence-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   # Headless for Erlang clustering
@@ -163,11 +163,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: message-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: message-service
     app.kubernetes.io/component: realtime
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: elixir
 spec:
   replicas: 3
@@ -179,20 +179,20 @@ spec:
       labels:
         app.kubernetes.io/name: message-service
         app.kubernetes.io/component: realtime
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: elixir
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "4000"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: message-service
-          image: quikapp.azurecr.io/message-service:latest
+          image: quckapp.azurecr.io/message-service:latest
           ports:
             - name: http
               containerPort: 4000
@@ -206,7 +206,7 @@ spec:
             - name: PORT
               value: "4000"
             - name: PHX_HOST
-              value: "message-service.quikapp.svc.cluster.local"
+              value: "message-service.quckapp.svc.cluster.local"
             - name: RELEASE_DISTRIBUTION
               value: "name"
             - name: RELEASE_NODE
@@ -214,26 +214,26 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: DATABASE_URL
-              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quikapp_messages"
+              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quckapp_messages"
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@$(REDIS_HOST):$(REDIS_PORT)/2"
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-encryption-secrets
+                  name: quckapp-encryption-secrets
                   key: SECRET_KEY_BASE
             - name: OTEL_SERVICE_NAME
               value: "message-service"
           envFrom:
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
             - secretRef:
-                name: quikapp-database-secrets
+                name: quckapp-database-secrets
           resources:
             requests:
               cpu: "200m"
@@ -269,7 +269,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: message-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   clusterIP: None
@@ -290,11 +290,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: call-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: call-service
     app.kubernetes.io/component: realtime
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: elixir
 spec:
   replicas: 2
@@ -306,20 +306,20 @@ spec:
       labels:
         app.kubernetes.io/name: call-service
         app.kubernetes.io/component: realtime
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: elixir
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "4000"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: call-service
-          image: quikapp.azurecr.io/call-service:latest
+          image: quckapp.azurecr.io/call-service:latest
           ports:
             - name: http
               containerPort: 4000
@@ -331,28 +331,28 @@ spec:
             - name: PORT
               value: "4000"
             - name: PHX_HOST
-              value: "call-service.quikapp.svc.cluster.local"
+              value: "call-service.quckapp.svc.cluster.local"
             - name: DATABASE_URL
-              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quikapp_calls"
+              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quckapp_calls"
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@$(REDIS_HOST):$(REDIS_PORT)/3"
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-encryption-secrets
+                  name: quckapp-encryption-secrets
                   key: SECRET_KEY_BASE
             - name: OTEL_SERVICE_NAME
               value: "call-service"
           envFrom:
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
             - secretRef:
-                name: quikapp-database-secrets
+                name: quckapp-database-secrets
           resources:
             requests:
               cpu: "200m"
@@ -388,7 +388,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: call-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   clusterIP: None
@@ -409,11 +409,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: huddle-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: huddle-service
     app.kubernetes.io/component: realtime
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: elixir
 spec:
   replicas: 2
@@ -425,20 +425,20 @@ spec:
       labels:
         app.kubernetes.io/name: huddle-service
         app.kubernetes.io/component: realtime
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: elixir
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "4000"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: huddle-service
-          image: quikapp.azurecr.io/huddle-service:latest
+          image: quckapp.azurecr.io/huddle-service:latest
           ports:
             - name: http
               containerPort: 4000
@@ -450,26 +450,26 @@ spec:
             - name: PORT
               value: "4000"
             - name: DATABASE_URL
-              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quikapp_huddles"
+              value: "ecto://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/quckapp_huddles"
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@$(REDIS_HOST):$(REDIS_PORT)/4"
             - name: KAFKA_BROKERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-encryption-secrets
+                  name: quckapp-encryption-secrets
                   key: SECRET_KEY_BASE
             - name: OTEL_SERVICE_NAME
               value: "huddle-service"
           envFrom:
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
             - secretRef:
-                name: quikapp-database-secrets
+                name: quckapp-database-secrets
           resources:
             requests:
               cpu: "200m"
@@ -505,7 +505,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: huddle-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   clusterIP: None
@@ -526,7 +526,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: presence-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -546,7 +546,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: message-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -569,7 +569,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: presence-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 2
   selector:
@@ -580,7 +580,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: message-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 2
   selector:

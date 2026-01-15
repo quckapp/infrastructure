@@ -22,10 +22,10 @@ terraform {
 
   # Backend configuration - uncomment and configure for remote state
   # backend "azurerm" {
-  #   resource_group_name  = "rg-quikapp-tfstate"
-  #   storage_account_name = "stquikapptfstate"
+  #   resource_group_name  = "rg-quckapp-tfstate"
+  #   storage_account_name = "stquckapptfstate"
   #   container_name       = "tfstate"
-  #   key                  = "quikapp.terraform.tfstate"
+  #   key                  = "quckapp.terraform.tfstate"
   # }
 }
 

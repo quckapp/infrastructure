@@ -44,8 +44,8 @@ parameters:
     default: false
 
 variables:
-  - group: quikapp-common
-  - group: quikapp-kubernetes-common
+  - group: quckapp-common
+  - group: quckapp-kubernetes-common
 
   - name: allServices
     value: 'backend-gateway,auth-service,user-service,workspace-service,channel-service,thread-service,search-service,file-service,media-service,notification-service,realtime-service,presence-service,message-service,call-service,huddle-service,analytics-service,ml-service,moderation-service,sentiment-service,permission-service,audit-service,admin-service'
@@ -108,21 +108,21 @@ stages:
           - ${{ if eq(parameters.targetEnvironments[0], 'staging') }}:
             - Deploy_staging
       variables:
-        - group: quikapp-${{ targetEnv }}
+        - group: quckapp-${{ targetEnv }}
         - name: kubernetesServiceConnection
           ${{ if eq(targetEnv, 'dev') }}:
-            value: 'quikapp-aks-dev'
+            value: 'quckapp-aks-dev'
           ${{ elseif eq(targetEnv, 'qa') }}:
-            value: 'quikapp-aks-qa'
+            value: 'quckapp-aks-qa'
           ${{ elseif eq(targetEnv, 'staging') }}:
-            value: 'quikapp-aks-staging'
+            value: 'quckapp-aks-staging'
           ${{ elseif eq(targetEnv, 'prod') }}:
-            value: 'quikapp-aks-prod'
+            value: 'quckapp-aks-prod'
         - name: namespace
           ${{ if eq(targetEnv, 'prod') }}:
-            value: 'quikapp'
+            value: 'quckapp'
           ${{ else }}:
-            value: 'quikapp-${{ targetEnv }}'
+            value: 'quckapp-${{ targetEnv }}'
         - name: kustomizeOverlay
           ${{ if eq(targetEnv, 'dev') }}:
             value: 'dev'
@@ -143,7 +143,7 @@ stages:
                 displayName: 'Approve Deployment to ${{ targetEnv }}'
                 inputs:
                   notifyUsers: |
-                    platform-team@quikapp.io
+                    platform-team@quckapp.io
                   instructions: |
                     Approve promotion to ${{ targetEnv }}
 
@@ -160,7 +160,7 @@ stages:
             dependsOn: Approval_${{ targetEnv }}
           pool:
             vmImage: 'ubuntu-latest'
-          environment: 'quikapp-${{ targetEnv }}'
+          environment: 'quckapp-${{ targetEnv }}'
           strategy:
             runOnce:
               deploy:

@@ -1,11 +1,11 @@
-# QuikApp Local Development Environment Values
+# QuckApp Local Development Environment Values
 # Usage: For local Docker Compose development (not Kubernetes)
 # This file provides reference values for local development parity
 
 global:
   environment: local
   imagePullPolicy: Never
-  namespace: quikapp-local
+  namespace: quckapp-local
   domain: localhost
   tlsEnabled: false
 

@@ -42,8 +42,8 @@ parameters:
       - live
 
 variables:
-  - group: QuikApp-Global-Variables
-  - group: QuikApp-Go-Variables
+  - group: QuckApp-Global-Variables
+  - group: QuckApp-Go-Variables
   - name: techStack
     value: 'go'
 

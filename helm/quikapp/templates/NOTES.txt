@@ -1,8 +1,8 @@
 ================================================================================
-  QuikApp - Enterprise Communication Platform
+  QuckApp - Enterprise Communication Platform
 ================================================================================
 
-Congratulations! QuikApp has been deployed to your Kubernetes cluster.
+Congratulations! QuckApp has been deployed to your Kubernetes cluster.
 
 DEPLOYMENT INFO
 ---------------
@@ -11,7 +11,7 @@ DEPLOYMENT INFO
   Environment: {{ .Values.global.environment }}
   Domain:      {{ .Values.global.domain }}
 
-ACCESSING QUIKAPP
+ACCESSING QUCKAPP
 -----------------
 {{- if .Values.ingress.enabled }}
 
@@ -38,7 +38,7 @@ ACCESSING QUIKAPP
 
 {{- else }}
 
-To access QuikApp services, use port-forwarding:
+To access QuckApp services, use port-forwarding:
 
   # Backend Gateway
   kubectl port-forward svc/backend-gateway 3000:3000 -n {{ .Values.global.namespace | default .Release.Namespace }}
@@ -163,12 +163,12 @@ kubectl get endpoints -n {{ .Values.global.namespace | default .Release.Namespac
 
 NEXT STEPS
 ----------
-1. Configure secrets in quikapp-secrets (replace placeholder values)
+1. Configure secrets in quckapp-secrets (replace placeholder values)
 2. Set up DNS records pointing to your ingress controller
 3. Configure TLS certificates (if using HTTPS)
 4. Review and adjust resource limits based on your workload
 5. Set up external secret management for production
 
-For more information, visit: https://docs.quikapp.io
+For more information, visit: https://docs.quckapp.io
 
 ================================================================================

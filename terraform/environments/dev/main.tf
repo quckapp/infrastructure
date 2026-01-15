@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Dev Environment - AWS S3 Infrastructure
+# QuckApp Dev Environment - AWS S3 Infrastructure
 # =============================================================================
 
 terraform {
@@ -26,7 +26,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "QuikApp"
+      Project     = "QuckApp"
       Environment = "dev"
       ManagedBy   = "terraform"
     }
@@ -487,7 +487,7 @@ module "rds" {
   source = "../../modules/rds"
 
   environment = "dev"
-  identifier  = "quikapp-dev"
+  identifier  = "quckapp"
 
   # Engine - PostgreSQL for dev
   engine         = var.rds_engine
@@ -502,8 +502,8 @@ module "rds" {
   kms_key_arn       = module.kms.s3_media_key_arn
 
   # Database
-  database_name   = "quikapp"
-  master_username = "quikapp_admin"
+  database_name   = "quckapp"
+  master_username = "quckapp_admin"
 
   # Use Secrets Manager for password (recommended)
   manage_master_password = true
@@ -565,7 +565,7 @@ module "elasticache" {
   source = "../../modules/elasticache"
 
   environment = "dev"
-  identifier  = "quikapp-dev"
+  identifier  = "quckapp"
 
   # Engine - Redis for dev
   engine         = "redis"

@@ -14,11 +14,11 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run OWASP ZAP Scan'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
 
         echo "Running OWASP ZAP scan against: $BASE_URL"
 
@@ -36,7 +36,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Trivy Container Scan'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -55,7 +55,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Secret Scanning'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |

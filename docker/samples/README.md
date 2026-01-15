@@ -1,6 +1,6 @@
-# QuikApp Sample Dockerfiles
+# QuckApp Sample Dockerfiles
 
-Production-ready, multi-stage Dockerfiles for each technology stack used in QuikApp.
+Production-ready, multi-stage Dockerfiles for each technology stack used in QuckApp.
 
 ## Available Dockerfiles
 
@@ -29,30 +29,30 @@ All Dockerfiles include:
 
 ```bash
 # NestJS service
-docker build -f Dockerfile.nestjs -t quikapp/backend-gateway:latest \
+docker build -f Dockerfile.nestjs -t quckapp/backend-gateway:latest \
   --build-arg VERSION=1.0.0 \
   --build-arg BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
   --build-arg GIT_COMMIT=$(git rev-parse HEAD) \
   ./services/nestjs/backend-gateway
 
 # Spring Boot service
-docker build -f Dockerfile.spring -t quikapp/auth-service:latest \
+docker build -f Dockerfile.spring -t quckapp/auth-service:latest \
   --build-arg VERSION=1.0.0 \
   ./services/spring/auth-service
 
 # Elixir service
-docker build -f Dockerfile.elixir -t quikapp/message-service:latest \
+docker build -f Dockerfile.elixir -t quckapp/message-service:latest \
   --build-arg VERSION=1.0.0 \
   ./services/elixir/message-service
 
 # Go service
-docker build -f Dockerfile.go -t quikapp/workspace-service:latest \
+docker build -f Dockerfile.go -t quckapp/workspace-service:latest \
   --build-arg VERSION=1.0.0 \
   --build-arg SERVICE_NAME=workspace-service \
   ./services/go/workspace-service
 
 # Python service
-docker build -f Dockerfile.python -t quikapp/analytics-service:latest \
+docker build -f Dockerfile.python -t quckapp/analytics-service:latest \
   --build-arg VERSION=1.0.0 \
   ./services/python/analytics-service
 ```
@@ -64,7 +64,7 @@ docker build -f Dockerfile.python -t quikapp/analytics-service:latest \
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -f Dockerfile.go \
-  -t quikapp/workspace-service:latest \
+  -t quckapp/workspace-service:latest \
   --push \
   ./services/go/workspace-service
 ```
@@ -76,32 +76,32 @@ docker buildx build \
 docker run -d -p 3000:3000 \
   -e NODE_ENV=production \
   -e DATABASE_URL=postgres://... \
-  quikapp/backend-gateway:latest
+  quckapp/backend-gateway:latest
 
 # Spring Boot
 docker run -d -p 8080:8080 \
   -e SPRING_PROFILES_ACTIVE=production \
   -e JAVA_OPTS="-Xmx512m" \
-  quikapp/auth-service:latest
+  quckapp/auth-service:latest
 
 # Elixir
 docker run -d -p 4000:4000 \
   -e MIX_ENV=prod \
   -e DATABASE_URL=postgres://... \
   -e SECRET_KEY_BASE=your-secret \
-  quikapp/message-service:latest
+  quckapp/message-service:latest
 
 # Go
 docker run -d -p 8090:8090 \
   -e GIN_MODE=release \
   -e DATABASE_URL=postgres://... \
-  quikapp/workspace-service:latest
+  quckapp/workspace-service:latest
 
 # Python
 docker run -d -p 5000:5000 \
   -e FLASK_ENV=production \
   -e DATABASE_URL=postgres://... \
-  quikapp/analytics-service:latest
+  quckapp/analytics-service:latest
 ```
 
 ## Stack-Specific Notes
@@ -171,10 +171,10 @@ Key areas to customize:
 
 ```bash
 # Scan image for vulnerabilities
-trivy image quikapp/backend-gateway:latest
+trivy image quckapp/backend-gateway:latest
 
 # Scan with severity filter
-trivy image --severity HIGH,CRITICAL quikapp/backend-gateway:latest
+trivy image --severity HIGH,CRITICAL quckapp/backend-gateway:latest
 ```
 
 ## Troubleshooting

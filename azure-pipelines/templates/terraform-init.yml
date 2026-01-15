@@ -14,11 +14,11 @@ parameters:
 
   - name: backendResourceGroup
     type: string
-    default: 'rg-quikapp-tfstate'
+    default: 'rg-quckapp-tfstate'
 
   - name: backendStorageAccount
     type: string
-    default: 'stquikapptfstate'
+    default: 'stquckapptfstate'
 
   - name: backendContainer
     type: string
@@ -26,7 +26,7 @@ parameters:
 
   - name: backendKey
     type: string
-    default: 'quikapp.tfstate'
+    default: 'quckapp.tfstate'
 
 steps:
   - task: AzureCLI@2

@@ -1,18 +1,18 @@
 // =============================================================================
-// QUIKAPP - MongoDB Initialization Script
+// QUCKAPP - MongoDB Initialization Script
 // =============================================================================
 // Creates initial database, collections, and indexes
 // =============================================================================
 
-// Switch to quikapp database
-db = db.getSiblingDB('quikapp');
+// Switch to quckapp database
+db = db.getSiblingDB('quckapp');
 
 // Create application user
 db.createUser({
-    user: 'quikapp',
-    pwd: 'quikapp_secret',
+    user: 'quckapp',
+    pwd: 'quckapp_secret',
     roles: [
-        { role: 'readWrite', db: 'quikapp' }
+        { role: 'readWrite', db: 'quckapp' }
     ]
 });
 
@@ -87,4 +87,4 @@ db.file_metadata.createIndex({ uploader_id: 1 });
 db.file_metadata.createIndex({ content_type: 1 });
 db.file_metadata.createIndex({ 'metadata.tags': 1 });
 
-print('QuikApp MongoDB initialization complete');
+print('QuckApp MongoDB initialization complete');

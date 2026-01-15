@@ -1,6 +1,6 @@
-# QuikApp - Local Development with Docker
+# QuckApp - Local Development with Docker
 
-This directory contains Docker Compose configurations for running QuikApp locally.
+This directory contains Docker Compose configurations for running QuckApp locally.
 
 ## Prerequisites
 
@@ -221,28 +221,28 @@ docker compose -f docker-compose.infra.yml logs --tail=100 postgres
 
 ```bash
 # Connect via psql
-docker exec -it quikapp-postgres psql -U quikapp -d quikapp
+docker exec -it quckapp-postgres psql -U quckapp -d quckapp
 
 # From host
-psql postgresql://quikapp:quikapp_secret@localhost:5432/quikapp
+psql postgresql://quckapp:quckapp_secret@localhost:5432/quckapp
 ```
 
 ### MongoDB
 
 ```bash
-docker exec -it quikapp-mongodb mongosh -u admin -p admin_secret --authenticationDatabase admin
+docker exec -it quckapp-mongodb mongosh -u admin -p admin_secret --authenticationDatabase admin
 ```
 
 ### Redis
 
 ```bash
-docker exec -it quikapp-redis redis-cli -a redis_secret
+docker exec -it quckapp-redis redis-cli -a redis_secret
 ```
 
 ### ClickHouse
 
 ```bash
-docker exec -it quikapp-clickhouse clickhouse-client --user quikapp --password clickhouse_secret
+docker exec -it quckapp-clickhouse clickhouse-client --user quckapp --password clickhouse_secret
 ```
 
 ## Monitoring Access
@@ -279,7 +279,7 @@ Add these to your application's `.env`:
 
 ```bash
 # Database
-DATABASE_URL=postgresql://quikapp:quikapp_secret@localhost:5432/quikapp
+DATABASE_URL=postgresql://quckapp:quckapp_secret@localhost:5432/quckapp
 
 # Redis
 REDIS_URL=redis://:redis_secret@localhost:6379
@@ -311,20 +311,20 @@ lsof -i :5432                 # Mac/Linux
 
 ```bash
 # Verify PostgreSQL is ready
-docker exec quikapp-postgres pg_isready -U quikapp
+docker exec quckapp-postgres pg_isready -U quckapp
 
 # Check network
-docker network inspect quikapp-network
+docker network inspect quckapp-network
 ```
 
 ### Kafka Issues
 
 ```bash
 # Check broker status
-docker exec quikapp-kafka kafka-broker-api-versions --bootstrap-server localhost:9092
+docker exec quckapp-kafka kafka-broker-api-versions --bootstrap-server localhost:9092
 
 # List topics
-docker exec quikapp-kafka kafka-topics --bootstrap-server localhost:9092 --list
+docker exec quckapp-kafka kafka-topics --bootstrap-server localhost:9092 --list
 ```
 
 ### Memory Issues
@@ -346,11 +346,11 @@ docker volume prune -f
 
 ## Network Architecture
 
-All services communicate through the `quikapp-network` bridge network:
+All services communicate through the `quckapp-network` bridge network:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        quikapp-network                               │
+│                        quckapp-network                               │
 │                                                                      │
 │  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐      │
 │  │ Gateway  │────│   Auth   │    │   User   │    │Workspace │      │

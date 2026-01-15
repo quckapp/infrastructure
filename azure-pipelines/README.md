@@ -1,6 +1,6 @@
 # Azure DevOps CD Pipelines
 
-This directory contains Azure DevOps CD (Continuous Deployment) pipelines for QuikApp microservices.
+This directory contains Azure DevOps CD (Continuous Deployment) pipelines for QuckApp microservices.
 
 ## Environment Progression
 
@@ -61,12 +61,12 @@ In Azure DevOps Project Settings → Service Connections, create:
 
 | Name | Type | Purpose |
 |------|------|---------|
-| `QuikApp-local` | Azure Resource Manager | Local resources |
-| `QuikApp-dev` | Azure Resource Manager | Dev subscription |
-| `QuikApp-qa` | Azure Resource Manager | QA subscription |
-| `QuikApp-uat` | Azure Resource Manager | UAT subscription |
-| `QuikApp-staging` | Azure Resource Manager | Staging subscription |
-| `QuikApp-production` | Azure Resource Manager | Production subscription |
+| `QuckApp-local` | Azure Resource Manager | Local resources |
+| `QuckApp` | Azure Resource Manager | Dev subscription |
+| `QuckApp-qa` | Azure Resource Manager | QA subscription |
+| `QuckApp-uat` | Azure Resource Manager | UAT subscription |
+| `QuckApp-staging` | Azure Resource Manager | Staging subscription |
+| `QuckApp-production` | Azure Resource Manager | Production subscription |
 | `GitHubServiceConnection` | GitHub | Repository access |
 | `ACR-ServiceConnection` | Docker Registry | Container registry |
 
@@ -80,26 +80,26 @@ Create the following variable groups in **Pipelines → Library → Variable gro
 
 | Variable Group | Source | Description |
 |----------------|--------|-------------|
-| `QuikApp-Global-Variables` | - | Shared across all environments |
-| `QuikApp-Local-Variables` | `.env.local.example` | Local Docker development |
-| `QuikApp-Dev-Variables` | `.env.dev.example` | Development environment |
-| `QuikApp-QA-Variables` | `.env.qa.example` | QA testing environment |
-| `QuikApp-UAT1-Variables` | `.env.uat.example` | Partner acceptance testing |
-| `QuikApp-UAT2-Variables` | `.env.uat.example` | Internal QA testing |
-| `QuikApp-UAT3-Variables` | `.env.uat.example` | Performance/Load testing |
-| `QuikApp-Staging-Variables` | `.env.staging.example` | Pre-production |
-| `QuikApp-Live-Variables` | `.env.production.example` | Production |
-| `QuikApp-SpringBoot-Variables` | - | Spring Boot tech stack |
-| `QuikApp-NestJS-Variables` | - | NestJS tech stack |
-| `QuikApp-Elixir-Variables` | - | Elixir tech stack |
-| `QuikApp-Go-Variables` | - | Go tech stack |
-| `QuikApp-Python-Variables` | - | Python tech stack |
+| `QuckApp-Global-Variables` | - | Shared across all environments |
+| `QuckApp-Local-Variables` | `.env.local.example` | Local Docker development |
+| `QuckApp-Variables` | `.env.dev.example` | Development environment |
+| `QuckApp-QA-Variables` | `.env.qa.example` | QA testing environment |
+| `QuckApp-UAT1-Variables` | `.env.uat.example` | Partner acceptance testing |
+| `QuckApp-UAT2-Variables` | `.env.uat.example` | Internal QA testing |
+| `QuckApp-UAT3-Variables` | `.env.uat.example` | Performance/Load testing |
+| `QuckApp-Staging-Variables` | `.env.staging.example` | Pre-production |
+| `QuckApp-Live-Variables` | `.env.production.example` | Production |
+| `QuckApp-SpringBoot-Variables` | - | Spring Boot tech stack |
+| `QuckApp-NestJS-Variables` | - | NestJS tech stack |
+| `QuckApp-Elixir-Variables` | - | Elixir tech stack |
+| `QuckApp-Go-Variables` | - | Go tech stack |
+| `QuckApp-Python-Variables` | - | Python tech stack |
 
 #### 2.2 Creating a Variable Group
 
 1. Navigate to **Pipelines → Library**
 2. Click **+ Variable group**
-3. Enter the variable group name (e.g., `QuikApp-Dev-Variables`)
+3. Enter the variable group name (e.g., `QuckApp-Variables`)
 4. Add variables from the corresponding section in `variable-groups.yml`
 5. Mark sensitive values as **secret** (click the lock icon)
 6. Click **Save**
@@ -212,7 +212,7 @@ For enhanced security, link sensitive variables to Azure Key Vault:
    - Edit the variable group
    - Toggle **Link secrets from an Azure key vault as variables**
    - Select your Azure subscription
-   - Select the Key Vault (e.g., `kv-quikapp`)
+   - Select the Key Vault (e.g., `kv-quckapp`)
    - Click **+ Add** and select the secrets to link
    - Click **Save**
 
@@ -222,7 +222,7 @@ For enhanced security, link sensitive variables to Azure Key Vault:
 
 #### 2.6 Tech Stack Variable Groups
 
-**QuikApp-SpringBoot-Variables:**
+**QuckApp-SpringBoot-Variables:**
 ```yaml
 javaVersion: '21'
 mavenVersion: '3.9.5'
@@ -230,14 +230,14 @@ springProfile: '$(environment)'
 jvmOpts: '-Xms256m -Xmx512m'
 ```
 
-**QuikApp-NestJS-Variables:**
+**QuckApp-NestJS-Variables:**
 ```yaml
 nodeVersion: '20'
 npmVersion: '10'
 nestCliVersion: '10'
 ```
 
-**QuikApp-Elixir-Variables:**
+**QuckApp-Elixir-Variables:**
 ```yaml
 elixirVersion: '1.15'
 otpVersion: '26'
@@ -245,14 +245,14 @@ mixEnv: 'prod'
 erlVmArgs: '+P 1000000 +Q 65536'
 ```
 
-**QuikApp-Go-Variables:**
+**QuckApp-Go-Variables:**
 ```yaml
 goVersion: '1.21'
-goPrivate: 'github.com/quikapp/*'
+goPrivate: 'github.com/quckapp/*'
 cgoEnabled: '0'
 ```
 
-**QuikApp-Python-Variables:**
+**QuckApp-Python-Variables:**
 ```yaml
 pythonVersion: '3.11'
 pipVersion: '23.3'
@@ -287,19 +287,19 @@ In Azure DevOps Pipelines → Environments, create:
 
 | Environment | Approvers | Checks |
 |-------------|-----------|--------|
-| `quikapp-local-mock` | None | None |
-| `quikapp-dev` | None | None |
-| `quikapp-qa` | QA Lead | None |
-| `quikapp-uat1` | Product Owner | None |
-| `quikapp-uat2` | Product Owner | None |
-| `quikapp-uat3` | Product Owner, Security Team | None |
-| `quikapp-staging` | Release Manager | None |
-| `quikapp-production` | CAB, Release Manager, CTO | Business hours check |
+| `quckapp-local-mock` | None | None |
+| `quckapp` | None | None |
+| `quckapp-qa` | QA Lead | None |
+| `quckapp-uat1` | Product Owner | None |
+| `quckapp-uat2` | Product Owner | None |
+| `quckapp-uat3` | Product Owner, Security Team | None |
+| `quckapp-staging` | Release Manager | None |
+| `quckapp-production` | CAB, Release Manager, CTO | Business hours check |
 
 #### Adding Approval Gates
 
 1. Navigate to **Pipelines → Environments**
-2. Select the environment (e.g., `quikapp-qa`)
+2. Select the environment (e.g., `quckapp-qa`)
 3. Click **Approvals and checks**
 4. Add **Approvals**:
    - Add approvers by email or group
@@ -308,7 +308,7 @@ In Azure DevOps Pipelines → Environments, create:
 
 #### Adding Business Hours Check (Production)
 
-1. Select `quikapp-production` environment
+1. Select `quckapp-production` environment
 2. Add **Business Hours** check
 3. Configure allowed deployment windows:
    - Monday-Thursday: 9:00 AM - 4:00 PM
@@ -430,12 +430,12 @@ Before running the pipeline, create storage for Terraform state:
 
 ```bash
 # Create resource group for state
-az group create --name rg-quikapp-tfstate --location eastus
+az group create --name rg-quckapp-tfstate --location eastus
 
 # Create storage account
 az storage account create \
-  --name stquikapptfstate \
-  --resource-group rg-quikapp-tfstate \
+  --name stquckapptfstate \
+  --resource-group rg-quckapp-tfstate \
   --location eastus \
   --sku Standard_LRS \
   --encryption-services blob
@@ -443,27 +443,27 @@ az storage account create \
 # Create container
 az storage container create \
   --name tfstate \
-  --account-name stquikapptfstate
+  --account-name stquckapptfstate
 ```
 
 #### 2. Create Terraform Variable Groups
 
 Create the following variable groups in **Pipelines → Library**:
 
-**`quikapp-terraform-common`** (Required):
+**`quckapp-terraform-common`** (Required):
 ```yaml
-azureServiceConnection: 'quikapp-azure-connection'  # Your Azure service connection name
-tfStateResourceGroup: 'rg-quikapp-tfstate'
-tfStateStorageAccount: 'stquikapptfstate'
+azureServiceConnection: 'quckapp-azure-connection'  # Your Azure service connection name
+tfStateResourceGroup: 'rg-quckapp-tfstate'
+tfStateStorageAccount: 'stquckapptfstate'
 tfStateContainer: 'tfstate'
 terraformVersion: '1.5.7'
 ```
 
 **Environment-specific groups** (Optional overrides):
-- `quikapp-terraform-dev`
-- `quikapp-terraform-qa`
-- `quikapp-terraform-staging`
-- `quikapp-terraform-prod`
+- `quckapp-terraform-dev`
+- `quckapp-terraform-qa`
+- `quckapp-terraform-staging`
+- `quckapp-terraform-prod`
 
 #### 3. Create Terraform Environments
 
@@ -592,12 +592,12 @@ After successful deployment, the pipeline displays:
 ==========================================
 KEY OUTPUTS
 ==========================================
-AKS Cluster: aks-quikapp-dev
-ACR Login Server: acrquikappdev.azurecr.io
-Key Vault URI: https://kv-quikapp-dev.vault.azure.net/
+AKS Cluster: aks-quckapp
+ACR Login Server: acrquckappdev.azurecr.io
+Key Vault URI: https://kv-quckapp.vault.azure.net/
 
 Get AKS credentials:
-az aks get-credentials --resource-group rg-quikapp-dev --name aks-quikapp-dev
+az aks get-credentials --resource-group rg-quckapp --name aks-quckapp
 ```
 
 ### Post-Deployment Steps
@@ -606,21 +606,21 @@ After infrastructure deployment:
 
 1. **Get AKS Credentials:**
    ```bash
-   az aks get-credentials --resource-group rg-quikapp-dev --name aks-quikapp-dev
+   az aks get-credentials --resource-group rg-quckapp --name aks-quckapp
    ```
 
 2. **Login to ACR:**
    ```bash
-   az acr login --name acrquikappdev
+   az acr login --name acrquckappdev
    ```
 
 3. **Verify Key Vault Access:**
    ```bash
-   az keyvault secret list --vault-name kv-quikapp-dev
+   az keyvault secret list --vault-name kv-quckapp
    ```
 
 4. **Update Application Variable Groups:**
-   Update `QuikApp-Dev-Variables` with new infrastructure values:
+   Update `QuckApp-Variables` with new infrastructure values:
    - `aksCluster`: from terraform output
    - `resourceGroup`: from terraform output
    - Key Vault secrets linked automatically
@@ -644,9 +644,9 @@ After infrastructure deployment:
 ```bash
 # View locks
 az storage blob show \
-  --account-name stquikapptfstate \
+  --account-name stquckapptfstate \
   --container-name tfstate \
-  --name quikapp-dev.tfstate
+  --name quckapp.tfstate
 
 # Force unlock (use with caution)
 terraform force-unlock <LOCK_ID>
@@ -660,7 +660,7 @@ terraform refresh -var-file=environments/dev.tfvars
 # Import existing resource
 terraform import -var-file=environments/dev.tfvars \
   module.aks[0].azurerm_kubernetes_cluster.aks \
-  /subscriptions/.../resourceGroups/.../providers/Microsoft.ContainerService/managedClusters/aks-quikapp-dev
+  /subscriptions/.../resourceGroups/.../providers/Microsoft.ContainerService/managedClusters/aks-quckapp
 ```
 
 #### Key Vault Soft-Deleted
@@ -669,10 +669,10 @@ terraform import -var-file=environments/dev.tfvars \
 az keyvault list-deleted
 
 # Recover vault
-az keyvault recover --name kv-quikapp-dev
+az keyvault recover --name kv-quckapp
 
 # Purge vault (if needed)
-az keyvault purge --name kv-quikapp-dev --location eastus
+az keyvault purge --name kv-quckapp --location eastus
 ```
 
 #### AKS Version Not Available
@@ -714,7 +714,7 @@ The Kubernetes pipelines deploy microservices to AKS using Kustomize.
 ┌─────────────────────────────────────────────────────────────────┐
 │                        AKS Cluster                               │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │                  quikapp Namespace                        │   │
+│  │                  quckapp Namespace                        │   │
 │  │                                                           │   │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐      │   │
 │  │  │  Gateway    │  │   Auth      │  │   User      │      │   │
@@ -758,36 +758,36 @@ Create Kubernetes service connections in **Project Settings → Service connecti
 
 | Service Connection | AKS Cluster | Environments |
 |-------------------|-------------|--------------|
-| `quikapp-aks-dev` | aks-quikapp-dev | dev |
-| `quikapp-aks-qa` | aks-quikapp-qa | qa |
-| `quikapp-aks-uat` | aks-quikapp-uat | uat1, uat2, uat3 |
-| `quikapp-aks-staging` | aks-quikapp-staging | staging |
-| `quikapp-aks-prod` | aks-quikapp-prod | prod, live |
+| `quckapp-aks-dev` | aks-quckapp | dev |
+| `quckapp-aks-qa` | aks-quckapp-qa | qa |
+| `quckapp-aks-uat` | aks-quckapp-uat | uat1, uat2, uat3 |
+| `quckapp-aks-staging` | aks-quckapp-staging | staging |
+| `quckapp-aks-prod` | aks-quckapp-prod | prod, live |
 
 **To create a Kubernetes service connection:**
 1. Go to **Project Settings → Service connections**
 2. Click **New service connection → Kubernetes**
 3. Select **Azure Subscription** authentication
 4. Choose your subscription and AKS cluster
-5. Set namespace to `quikapp` or environment-specific
-6. Name it (e.g., `quikapp-aks-dev`)
+5. Set namespace to `quckapp` or environment-specific
+6. Name it (e.g., `quckapp-aks-dev`)
 7. Grant access to all pipelines
 
 #### 2. Create Kubernetes Variable Groups
 
 Create the following in **Pipelines → Library**:
 
-**`quikapp-kubernetes-common`:**
+**`quckapp-kubernetes-common`:**
 ```yaml
-acrName: 'quikapp'
-acrLoginServer: 'quikapp.azurecr.io'
+acrName: 'quckapp'
+acrLoginServer: 'quckapp.azurecr.io'
 defaultImageTag: 'latest'
 kustomizeVersion: '5.0.0'
 deploymentTimeout: '600'
 healthCheckEndpoint: '/health'
 ```
 
-**`quikapp-kubernetes-nonprod`** (dev, qa):
+**`quckapp-kubernetes-nonprod`** (dev, qa):
 ```yaml
 defaultCpuRequest: '50m'
 defaultMemoryRequest: '128Mi'
@@ -796,7 +796,7 @@ defaultMaxReplicas: '3'
 cpuTargetUtilization: '80'
 ```
 
-**`quikapp-kubernetes-preprod`** (uat, staging):
+**`quckapp-kubernetes-preprod`** (uat, staging):
 ```yaml
 defaultCpuRequest: '100m'
 defaultMemoryRequest: '256Mi'
@@ -805,7 +805,7 @@ defaultMaxReplicas: '8'
 cpuTargetUtilization: '70'
 ```
 
-**`quikapp-kubernetes-prod`** (prod, live):
+**`quckapp-kubernetes-prod`** (prod, live):
 ```yaml
 defaultCpuRequest: '200m'
 defaultMemoryRequest: '512Mi'
@@ -821,14 +821,14 @@ Create environments in **Pipelines → Environments**:
 
 | Environment | Approvers | Purpose |
 |-------------|-----------|---------|
-| `quikapp-dev` | None | Auto-deploy |
-| `quikapp-qa` | QA Lead | QA approval |
-| `quikapp-uat1` | Product Owner | Partner testing |
-| `quikapp-uat2` | Product Owner | Internal QA |
-| `quikapp-uat3` | Product Owner | Load testing |
-| `quikapp-staging` | Release Manager | Pre-prod |
-| `quikapp-prod` | CAB, CTO | Production |
-| `quikapp-live` | CAB, CTO | Production alias |
+| `quckapp` | None | Auto-deploy |
+| `quckapp-qa` | QA Lead | QA approval |
+| `quckapp-uat1` | Product Owner | Partner testing |
+| `quckapp-uat2` | Product Owner | Internal QA |
+| `quckapp-uat3` | Product Owner | Load testing |
+| `quckapp-staging` | Release Manager | Pre-prod |
+| `quckapp-prod` | CAB, CTO | Production |
+| `quckapp-live` | CAB, CTO | Production alias |
 
 #### 4. Import Kubernetes Pipelines
 
@@ -989,10 +989,10 @@ The pipeline uses Kustomize overlays for environment configuration:
 
 | Environment | Overlay | Namespace | Replicas | Resources |
 |-------------|---------|-----------|----------|-----------|
-| dev | `overlays/dev` | quikapp-dev | 1 | Minimal |
-| qa | `overlays/qa` | quikapp-qa | 1-2 | Low |
-| staging | `overlays/staging` | quikapp-staging | 2 | Moderate |
-| prod | `overlays/prod` | quikapp | 3+ | Full |
+| dev | `overlays/dev` | quckapp | 1 | Minimal |
+| qa | `overlays/qa` | quckapp-qa | 1-2 | Low |
+| staging | `overlays/staging` | quckapp-staging | 2 | Moderate |
+| prod | `overlays/prod` | quckapp | 3+ | Full |
 
 ### Deployment Strategies
 
@@ -1036,58 +1036,58 @@ Post-deployment verification includes:
 #### Deployment Timeout
 ```bash
 # Check pod status
-kubectl get pods -n quikapp-dev -o wide
+kubectl get pods -n quckapp -o wide
 
 # Check deployment status
-kubectl rollout status deployment/backend-gateway -n quikapp-dev
+kubectl rollout status deployment/backend-gateway -n quckapp
 
 # View events
-kubectl get events -n quikapp-dev --sort-by=.lastTimestamp
+kubectl get events -n quckapp --sort-by=.lastTimestamp
 ```
 
 #### ImagePullBackOff
 ```bash
 # Verify image exists in ACR
-az acr repository show-tags --name quikapp --repository backend-gateway
+az acr repository show-tags --name quckapp --repository backend-gateway
 
 # Check pod details
-kubectl describe pod <pod-name> -n quikapp-dev
+kubectl describe pod <pod-name> -n quckapp
 
 # Verify ACR pull secret
-kubectl get secrets -n quikapp-dev
+kubectl get secrets -n quckapp
 ```
 
 #### CrashLoopBackOff
 ```bash
 # View pod logs
-kubectl logs -f <pod-name> -n quikapp-dev
+kubectl logs -f <pod-name> -n quckapp
 
 # View previous container logs
-kubectl logs --previous <pod-name> -n quikapp-dev
+kubectl logs --previous <pod-name> -n quckapp
 
 # Check resource constraints
-kubectl top pods -n quikapp-dev
+kubectl top pods -n quckapp
 ```
 
 #### Service Endpoints Empty
 ```bash
 # Check service selector
-kubectl describe service backend-gateway -n quikapp-dev
+kubectl describe service backend-gateway -n quckapp
 
 # Check pod labels
-kubectl get pods -n quikapp-dev --show-labels
+kubectl get pods -n quckapp --show-labels
 
 # Check endpoints
-kubectl get endpoints backend-gateway -n quikapp-dev
+kubectl get endpoints backend-gateway -n quckapp
 ```
 
 #### HPA Not Scaling
 ```bash
 # Check HPA status
-kubectl get hpa -n quikapp-dev
+kubectl get hpa -n quckapp
 
 # Describe HPA
-kubectl describe hpa backend-gateway-hpa -n quikapp-dev
+kubectl describe hpa backend-gateway-hpa -n quckapp
 
 # Check metrics server
 kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods" | jq
@@ -1096,22 +1096,22 @@ kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods" | jq
 #### Network Policy Blocking Traffic
 ```bash
 # List network policies
-kubectl get networkpolicies -n quikapp-dev
+kubectl get networkpolicies -n quckapp
 
 # Test connectivity
-kubectl exec -it <pod> -n quikapp-dev -- curl http://auth-service/health
+kubectl exec -it <pod> -n quckapp -- curl http://auth-service/health
 ```
 
 #### Rollback Issues
 ```bash
 # Check rollout history
-kubectl rollout history deployment/backend-gateway -n quikapp-dev
+kubectl rollout history deployment/backend-gateway -n quckapp
 
 # Rollback manually
-kubectl rollout undo deployment/backend-gateway -n quikapp-dev
+kubectl rollout undo deployment/backend-gateway -n quckapp
 
 # Rollback to specific revision
-kubectl rollout undo deployment/backend-gateway -n quikapp-dev --to-revision=3
+kubectl rollout undo deployment/backend-gateway -n quckapp --to-revision=3
 ```
 
 ### Best Practices
@@ -1193,29 +1193,29 @@ Create a Docker Registry service connection in **Project Settings → Service co
 1. Click **New service connection**
 2. Select **Docker Registry**
 3. Select **Azure Container Registry**
-4. Choose your subscription and ACR (quikapp)
-5. Name it `quikapp-acr-connection`
+4. Choose your subscription and ACR (quckapp)
+5. Name it `quckapp-acr-connection`
 6. Grant access to all pipelines
 
 #### 2. Create CI Variable Groups
 
 Create the following in **Pipelines → Library**:
 
-**`quikapp-ci-common`:**
+**`quckapp-ci-common`:**
 ```yaml
-acrName: 'quikapp'
-acrLoginServer: 'quikapp.azurecr.io'
-acrServiceConnection: 'quikapp-acr-connection'
+acrName: 'quckapp'
+acrLoginServer: 'quckapp.azurecr.io'
+acrServiceConnection: 'quckapp-acr-connection'
 defaultImageTag: 'latest'
 trivySeverity: 'HIGH,CRITICAL'
 ```
 
 **Tech stack variable groups** (optional overrides):
-- `quikapp-ci-springboot` - Java/Maven versions
-- `quikapp-ci-nestjs` - Node.js version
-- `quikapp-ci-go` - Go version
-- `quikapp-ci-elixir` - Elixir/OTP versions
-- `quikapp-ci-python` - Python version
+- `quckapp-ci-springboot` - Java/Maven versions
+- `quckapp-ci-nestjs` - Node.js version
+- `quckapp-ci-go` - Go version
+- `quckapp-ci-elixir` - Elixir/OTP versions
+- `quckapp-ci-python` - Python version
 
 #### 3. Import CI Pipeline
 
@@ -1360,15 +1360,15 @@ Trivy scans each image for vulnerabilities:
 ```bash
 # Verify service connection
 # Check ACR permissions
-az acr show --name quikapp --query loginServer
-az acr repository list --name quikapp
+az acr show --name quckapp --query loginServer
+az acr repository list --name quckapp
 ```
 
 #### Trivy Scan Timeout
 ```bash
 # Increase scan timeout in pipeline
 # Check image size
-docker images | grep quikapp
+docker images | grep quckapp
 ```
 
 #### No Services Detected
@@ -1383,7 +1383,7 @@ git diff --name-only HEAD~1
 #### Image Size Too Large
 ```bash
 # Check Dockerfile layers
-docker history quikapp.azurecr.io/service:tag
+docker history quckapp.azurecr.io/service:tag
 
 # Use multi-stage builds
 # Add .dockerignore

@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Live (Production) Environment
+# QuckApp Live (Production) Environment
 # =============================================================================
 # Production environment with full HA, DR, and security configurations
 # =============================================================================

@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp DynamoDB Module
+# QuckApp DynamoDB Module
 # =============================================================================
 # Creates DynamoDB tables for:
 # - Media metadata storage
@@ -32,12 +32,12 @@ locals {
   })
 
   # Table names
-  media_metadata_table_name  = "quikapp-media-metadata-${var.environment}"
-  user_sessions_table_name   = "quikapp-user-sessions-${var.environment}"
-  notifications_table_name   = "quikapp-notifications-${var.environment}"
-  export_jobs_table_name     = "quikapp-export-jobs-${var.environment}"
-  rate_limiting_table_name   = "quikapp-rate-limiting-${var.environment}"
-  conversations_table_name   = "quikapp-conversations-${var.environment}"
+  media_metadata_table_name  = "quckapp-media-metadata-${var.environment}"
+  user_sessions_table_name   = "quckapp-user-sessions-${var.environment}"
+  notifications_table_name   = "quckapp-notifications-${var.environment}"
+  export_jobs_table_name     = "quckapp-export-jobs-${var.environment}"
+  rate_limiting_table_name   = "quckapp-rate-limiting-${var.environment}"
+  conversations_table_name   = "quckapp-conversations-${var.environment}"
 }
 
 # -----------------------------------------------------------------------------
@@ -167,7 +167,7 @@ resource "aws_dynamodb_table" "media_metadata" {
   deletion_protection_enabled = var.enable_deletion_protection
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Metadata"
+    Name    = "QuckApp Media Metadata"
     Purpose = "media-metadata"
   })
 
@@ -251,7 +251,7 @@ resource "aws_dynamodb_table" "user_sessions" {
   deletion_protection_enabled = var.enable_deletion_protection
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp User Sessions"
+    Name    = "QuckApp User Sessions"
     Purpose = "user-sessions"
   })
 
@@ -339,7 +339,7 @@ resource "aws_dynamodb_table" "notifications" {
   deletion_protection_enabled = var.enable_deletion_protection
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Notifications"
+    Name    = "QuckApp Notifications"
     Purpose = "notifications"
   })
 
@@ -430,7 +430,7 @@ resource "aws_dynamodb_table" "export_jobs" {
   deletion_protection_enabled = var.enable_deletion_protection
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Export Jobs"
+    Name    = "QuckApp Export Jobs"
     Purpose = "export-jobs"
   })
 
@@ -488,7 +488,7 @@ resource "aws_dynamodb_table" "rate_limiting" {
   deletion_protection_enabled = false
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Rate Limiting"
+    Name    = "QuckApp Rate Limiting"
     Purpose = "rate-limiting"
   })
 }
@@ -551,7 +551,7 @@ resource "aws_dynamodb_table" "conversations" {
   deletion_protection_enabled = var.enable_deletion_protection
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Conversations"
+    Name    = "QuckApp Conversations"
     Purpose = "conversations"
   })
 
@@ -578,7 +578,7 @@ resource "aws_dynamodb_table_replica" "media_metadata_replica" {
   kms_key_arn           = var.replica_kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name   = "QuikApp Media Metadata Replica"
+    Name   = "QuckApp Media Metadata Replica"
     Region = var.replica_region
   })
 }
@@ -593,7 +593,7 @@ resource "aws_dynamodb_table_replica" "conversations_replica" {
   kms_key_arn           = var.replica_kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name   = "QuikApp Conversations Replica"
+    Name   = "QuckApp Conversations Replica"
     Region = var.replica_region
   })
 }

@@ -1,14 +1,14 @@
-# QuikApp UAT3 Environment Values
+# QuckApp UAT3 Environment Values
 # Purpose: Performance/Load Testing - Optimized for stress testing
-# Usage: helm install quikapp ./quikapp -f values-uat3.yaml
+# Usage: helm install quckapp ./quckapp -f values-uat3.yaml
 
 global:
   environment: uat3
   imagePullPolicy: IfNotPresent
-  namespace: quikapp-uat3
-  domain: uat3.quikapp.io
+  namespace: quckapp-uat3
+  domain: uat3.quckapp.io
   tlsEnabled: true
-  tlsSecretName: quikapp-uat3-tls
+  tlsSecretName: quckapp-uat3-tls
 
   # Higher resources for load testing
   resources:

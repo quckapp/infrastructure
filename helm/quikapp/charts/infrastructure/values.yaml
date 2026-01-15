@@ -1,4 +1,4 @@
-# QuikApp Infrastructure Components Values
+# QuckApp Infrastructure Components Values
 
 # =============================================================================
 # Redis Configuration
@@ -9,7 +9,7 @@ redis:
   auth:
     enabled: true
     password: ""
-    existingSecret: "quikapp-secrets"
+    existingSecret: "quckapp-secrets"
     existingSecretPasswordKey: "REDIS_PASSWORD"
   master:
     persistence:
@@ -37,10 +37,10 @@ mysql:
   enabled: true
   auth:
     rootPassword: ""
-    database: quikapp
-    username: quikapp
+    database: quckapp
+    username: quckapp
     password: ""
-    existingSecret: "quikapp-secrets"
+    existingSecret: "quckapp-secrets"
   primary:
     persistence:
       enabled: true
@@ -100,10 +100,10 @@ postgresql:
   enabled: true
   auth:
     postgresPassword: ""
-    database: quikapp
-    username: quikapp
+    database: quckapp
+    username: quckapp
     password: ""
-    existingSecret: "quikapp-secrets"
+    existingSecret: "quckapp-secrets"
     secretKeys:
       adminPasswordKey: "POSTGRES_PASSWORD"
       userPasswordKey: "POSTGRES_PASSWORD"
@@ -153,11 +153,11 @@ mongodb:
     enabled: true
     rootPassword: ""
     databases:
-      - quikapp
+      - quckapp
     usernames:
-      - quikapp
+      - quckapp
     passwords: []
-    existingSecret: "quikapp-secrets"
+    existingSecret: "quckapp-secrets"
   persistence:
     enabled: true
     size: 20Gi
@@ -240,7 +240,7 @@ elasticsearch:
         storage: 30Gi
   esConfig:
     elasticsearch.yml: |
-      cluster.name: "quikapp-cluster"
+      cluster.name: "quckapp-cluster"
       network.host: 0.0.0.0
       discovery.type: single-node
       xpack.security.enabled: false
@@ -257,7 +257,7 @@ minio:
   mode: standalone
   rootUser: "minioadmin"
   rootPassword: ""
-  existingSecret: "quikapp-secrets"
+  existingSecret: "quckapp-secrets"
   persistence:
     enabled: true
     size: 50Gi
@@ -269,13 +269,13 @@ minio:
       cpu: 500m
       memory: 1Gi
   buckets:
-    - name: quikapp-files
+    - name: quckapp-files
       policy: none
-    - name: quikapp-media
+    - name: quckapp-media
       policy: none
-    - name: quikapp-exports
+    - name: quckapp-exports
       policy: none
-    - name: quikapp-backups
+    - name: quckapp-backups
       policy: none
   metrics:
     serviceMonitor:

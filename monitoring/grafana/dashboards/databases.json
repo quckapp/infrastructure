@@ -141,7 +141,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 4, "y": 13 },
       "id": 22,
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "pg_database_size_bytes{datname=\"quikapp\"}", "refId": "A" }],
+      "targets": [{ "expr": "pg_database_size_bytes{datname=\"quckapp\"}", "refId": "A" }],
       "title": "Database Size",
       "type": "stat"
     },
@@ -257,12 +257,12 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["quikapp", "databases"],
+  "tags": ["quckapp", "databases"],
   "templating": { "list": [] },
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "QuikApp Databases",
-  "uid": "quikapp-databases",
+  "title": "QuckApp Databases",
+  "uid": "quckapp-databases",
   "version": 1
 }

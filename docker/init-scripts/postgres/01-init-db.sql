@@ -1,5 +1,5 @@
 -- =============================================================================
--- QuikApp PostgreSQL Initialization Script
+-- QuckApp PostgreSQL Initialization Script
 -- =============================================================================
 -- This script runs when PostgreSQL starts for the first time.
 -- It creates the initial database schema for local development.
@@ -207,15 +207,15 @@ CREATE TRIGGER update_conversations_updated_at
 -- Insert test user
 INSERT INTO users (id, email, username, full_name, email_verified, role)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', 'admin@quikapp.dev', 'admin', 'Admin User', true, 'admin'),
-    ('00000000-0000-0000-0000-000000000002', 'user@quikapp.dev', 'testuser', 'Test User', true, 'user')
+    ('00000000-0000-0000-0000-000000000001', 'admin@quckapp.dev', 'admin', 'Admin User', true, 'admin'),
+    ('00000000-0000-0000-0000-000000000002', 'user@quckapp.dev', 'testuser', 'Test User', true, 'user')
 ON CONFLICT (email) DO NOTHING;
 
 -- =============================================================================
 -- Grants
 -- =============================================================================
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO quikapp;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO quikapp;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO quckapp;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO quckapp;
 
 -- =============================================================================
 -- Complete

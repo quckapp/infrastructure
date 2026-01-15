@@ -152,7 +152,7 @@ locals {
     Project     = var.project_name
     Environment = var.environment
     ManagedBy   = "Terraform"
-    Repository  = "QuikApp"
+    Repository  = "QuckApp"
   }, var.tags)
 
   # =============================================================================

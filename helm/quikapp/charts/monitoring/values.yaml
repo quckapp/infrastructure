@@ -1,4 +1,4 @@
-# QuikApp Monitoring Stack Values
+# QuckApp Monitoring Stack Values
 
 # =============================================================================
 # Prometheus Stack (Prometheus, Alertmanager, Grafana)
@@ -32,13 +32,13 @@ kube-prometheus-stack:
       podMonitorSelectorNilUsesHelmValues: false
       ruleSelectorNilUsesHelmValues: false
       additionalScrapeConfigs:
-        # QuikApp microservices
-        - job_name: 'quikapp-services'
+        # QuckApp microservices
+        - job_name: 'quckapp-services'
           kubernetes_sd_configs:
             - role: pod
               namespaces:
                 names:
-                  - quikapp
+                  - quckapp
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
               action: keep
@@ -153,14 +153,14 @@ kube-prometheus-stack:
       dashboardproviders.yaml:
         apiVersion: 1
         providers:
-          - name: 'quikapp'
+          - name: 'quckapp'
             orgId: 1
-            folder: 'QuikApp'
+            folder: 'QuckApp'
             type: file
             disableDeletion: false
             editable: true
             options:
-              path: /var/lib/grafana/dashboards/quikapp
+              path: /var/lib/grafana/dashboards/quckapp
 
   # Node exporter
   nodeExporter:
@@ -283,7 +283,7 @@ loki-stack:
             - source_labels:
                 - __meta_kubernetes_pod_label_app_kubernetes_io_part_of
               action: keep
-              regex: quikapp
+              regex: quckapp
             - source_labels:
                 - __meta_kubernetes_pod_name
               target_label: pod

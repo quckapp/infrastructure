@@ -1,14 +1,14 @@
 -- =============================================================================
--- QUIKAPP - ClickHouse Initialization Script
+-- QUCKAPP - ClickHouse Initialization Script
 -- =============================================================================
 -- Creates analytics database schema and tables
 -- =============================================================================
 
 -- Create analytics database
-CREATE DATABASE IF NOT EXISTS quikapp_analytics;
+CREATE DATABASE IF NOT EXISTS quckapp_analytics;
 
 -- Message analytics table
-CREATE TABLE IF NOT EXISTS quikapp_analytics.message_events
+CREATE TABLE IF NOT EXISTS quckapp_analytics.message_events
 (
     event_id UUID DEFAULT generateUUIDv4(),
     event_time DateTime DEFAULT now(),
@@ -30,7 +30,7 @@ ORDER BY (workspace_id, event_date, event_time)
 TTL event_date + INTERVAL 365 DAY;
 
 -- User activity analytics
-CREATE TABLE IF NOT EXISTS quikapp_analytics.user_activity
+CREATE TABLE IF NOT EXISTS quckapp_analytics.user_activity
 (
     activity_id UUID DEFAULT generateUUIDv4(),
     activity_time DateTime DEFAULT now(),
@@ -50,7 +50,7 @@ ORDER BY (workspace_id, activity_date, user_id)
 TTL activity_date + INTERVAL 180 DAY;
 
 -- Search analytics
-CREATE TABLE IF NOT EXISTS quikapp_analytics.search_events
+CREATE TABLE IF NOT EXISTS quckapp_analytics.search_events
 (
     search_id UUID DEFAULT generateUUIDv4(),
     search_time DateTime DEFAULT now(),
@@ -70,7 +70,7 @@ ORDER BY (workspace_id, search_date, query_hash)
 TTL search_date + INTERVAL 90 DAY;
 
 -- API metrics
-CREATE TABLE IF NOT EXISTS quikapp_analytics.api_metrics
+CREATE TABLE IF NOT EXISTS quckapp_analytics.api_metrics
 (
     metric_id UUID DEFAULT generateUUIDv4(),
     metric_time DateTime DEFAULT now(),
@@ -92,7 +92,7 @@ ORDER BY (service_name, metric_date, endpoint)
 TTL metric_date + INTERVAL 30 DAY;
 
 -- File analytics
-CREATE TABLE IF NOT EXISTS quikapp_analytics.file_events
+CREATE TABLE IF NOT EXISTS quckapp_analytics.file_events
 (
     event_id UUID DEFAULT generateUUIDv4(),
     event_time DateTime DEFAULT now(),
@@ -113,7 +113,7 @@ TTL event_date + INTERVAL 365 DAY;
 -- Create materialized views for common aggregations
 
 -- Daily message counts by workspace
-CREATE MATERIALIZED VIEW IF NOT EXISTS quikapp_analytics.daily_message_counts
+CREATE MATERIALIZED VIEW IF NOT EXISTS quckapp_analytics.daily_message_counts
 ENGINE = SummingMergeTree()
 PARTITION BY toYYYYMM(event_date)
 ORDER BY (workspace_id, event_date, channel_id)
@@ -124,12 +124,12 @@ AS SELECT
     count() as message_count,
     uniqExact(user_id) as unique_users,
     sum(message_length) as total_chars
-FROM quikapp_analytics.message_events
+FROM quckapp_analytics.message_events
 WHERE event_type = 'sent'
 GROUP BY workspace_id, channel_id, event_date;
 
 -- Daily active users by workspace
-CREATE MATERIALIZED VIEW IF NOT EXISTS quikapp_analytics.daily_active_users
+CREATE MATERIALIZED VIEW IF NOT EXISTS quckapp_analytics.daily_active_users
 ENGINE = SummingMergeTree()
 PARTITION BY toYYYYMM(activity_date)
 ORDER BY (workspace_id, activity_date)
@@ -139,6 +139,6 @@ AS SELECT
     uniqExact(user_id) as dau,
     count() as total_sessions,
     sum(duration_seconds) as total_duration
-FROM quikapp_analytics.user_activity
+FROM quckapp_analytics.user_activity
 WHERE activity_type IN ('login', 'active')
 GROUP BY workspace_id, activity_date;

@@ -1,58 +1,58 @@
--- QuikApp MySQL Initialization Script
+-- QuckApp MySQL Initialization Script
 -- Creates databases for all MySQL-backed microservices
 
 -- ============================================
 -- Spring Boot Services (Authentication & Security)
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS quikapp_auth;
-CREATE DATABASE IF NOT EXISTS quikapp_users;
-CREATE DATABASE IF NOT EXISTS quikapp_permissions;
-CREATE DATABASE IF NOT EXISTS quikapp_audit;
-CREATE DATABASE IF NOT EXISTS quikapp_admin;
+CREATE DATABASE IF NOT EXISTS quckapp_auth;
+CREATE DATABASE IF NOT EXISTS quckapp_users;
+CREATE DATABASE IF NOT EXISTS quckapp_permissions;
+CREATE DATABASE IF NOT EXISTS quckapp_audit;
+CREATE DATABASE IF NOT EXISTS quckapp_admin;
 
 -- ============================================
 -- Go Services (Organization & Storage)
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS quikapp_workspaces;
-CREATE DATABASE IF NOT EXISTS quikapp_channels;
-CREATE DATABASE IF NOT EXISTS quikapp_search;
-CREATE DATABASE IF NOT EXISTS quikapp_threads;
-CREATE DATABASE IF NOT EXISTS quikapp_bookmarks;
-CREATE DATABASE IF NOT EXISTS quikapp_reminders;
+CREATE DATABASE IF NOT EXISTS quckapp_workspaces;
+CREATE DATABASE IF NOT EXISTS quckapp_channels;
+CREATE DATABASE IF NOT EXISTS quckapp_search;
+CREATE DATABASE IF NOT EXISTS quckapp_threads;
+CREATE DATABASE IF NOT EXISTS quckapp_bookmarks;
+CREATE DATABASE IF NOT EXISTS quckapp_reminders;
 
 -- ============================================
 -- Python Services (AI & Analytics)
 -- ============================================
 
-CREATE DATABASE IF NOT EXISTS quikapp_analytics;
-CREATE DATABASE IF NOT EXISTS quikapp_moderation;
-CREATE DATABASE IF NOT EXISTS quikapp_export;
-CREATE DATABASE IF NOT EXISTS quikapp_integrations;
+CREATE DATABASE IF NOT EXISTS quckapp_analytics;
+CREATE DATABASE IF NOT EXISTS quckapp_moderation;
+CREATE DATABASE IF NOT EXISTS quckapp_export;
+CREATE DATABASE IF NOT EXISTS quckapp_integrations;
 
 -- ============================================
 -- Create application user and grant privileges
 -- ============================================
 
-CREATE USER IF NOT EXISTS 'quikapp'@'%' IDENTIFIED BY 'quikapp123';
+CREATE USER IF NOT EXISTS 'quckapp'@'%' IDENTIFIED BY 'quckapp123';
 
 -- Grant privileges on all databases
-GRANT ALL PRIVILEGES ON quikapp_auth.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_users.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_permissions.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_audit.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_admin.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_workspaces.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_channels.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_search.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_threads.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_bookmarks.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_reminders.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_analytics.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_moderation.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_export.* TO 'quikapp'@'%';
-GRANT ALL PRIVILEGES ON quikapp_integrations.* TO 'quikapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_auth.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_users.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_permissions.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_audit.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_admin.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_workspaces.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_channels.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_search.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_threads.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_bookmarks.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_reminders.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_analytics.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_moderation.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_export.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_integrations.* TO 'quckapp'@'%';
 
 FLUSH PRIVILEGES;
 
@@ -60,7 +60,7 @@ FLUSH PRIVILEGES;
 -- Auth Service Schema
 -- ============================================
 
-USE quikapp_auth;
+USE quckapp_auth;
 
 CREATE TABLE IF NOT EXISTS oauth_tokens (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS otp_codes (
 -- Audit Service Schema
 -- ============================================
 
-USE quikapp_audit;
+USE quckapp_audit;
 
 CREATE TABLE IF NOT EXISTS audit_logs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 -- Workspace Service Schema
 -- ============================================
 
-USE quikapp_workspaces;
+USE quckapp_workspaces;
 
 CREATE TABLE IF NOT EXISTS workspaces (
     id VARCHAR(36) PRIMARY KEY,
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS workspace_members (
 -- Channel Service Schema
 -- ============================================
 
-USE quikapp_channels;
+USE quckapp_channels;
 
 CREATE TABLE IF NOT EXISTS channels (
     id VARCHAR(36) PRIMARY KEY,
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS channel_members (
 -- Thread Service Schema
 -- ============================================
 
-USE quikapp_threads;
+USE quckapp_threads;
 
 CREATE TABLE IF NOT EXISTS threads (
     id VARCHAR(36) PRIMARY KEY,
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS thread_participants (
 -- Bookmark Service Schema
 -- ============================================
 
-USE quikapp_bookmarks;
+USE quckapp_bookmarks;
 
 CREATE TABLE IF NOT EXISTS bookmarks (
     id VARCHAR(36) PRIMARY KEY,
@@ -259,7 +259,7 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 -- Reminder Service Schema
 -- ============================================
 
-USE quikapp_reminders;
+USE quckapp_reminders;
 
 CREATE TABLE IF NOT EXISTS reminders (
     id VARCHAR(36) PRIMARY KEY,
@@ -284,7 +284,7 @@ CREATE TABLE IF NOT EXISTS reminders (
 -- Analytics Service Schema
 -- ============================================
 
-USE quikapp_analytics;
+USE quckapp_analytics;
 
 CREATE TABLE IF NOT EXISTS usage_metrics (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -312,4 +312,4 @@ CREATE TABLE IF NOT EXISTS user_activity (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Log completion
-SELECT 'QuikApp MySQL initialization complete' AS status;
+SELECT 'QuckApp MySQL initialization complete' AS status;

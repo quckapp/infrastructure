@@ -38,11 +38,11 @@ parameters:
 
   - name: backendResourceGroup
     type: string
-    default: 'rg-quikapp-tfstate'
+    default: 'rg-quckapp-tfstate'
 
   - name: backendStorageAccount
     type: string
-    default: 'stquikapptfstate'
+    default: 'stquckapptfstate'
 
   - name: backendContainer
     type: string
@@ -57,7 +57,7 @@ stages:
     dependsOn: ${{ parameters.dependsOn }}
     condition: ${{ parameters.condition }}
     variables:
-      tfStateKey: 'quikapp-${{ parameters.environment }}.tfstate'
+      tfStateKey: 'quckapp-${{ parameters.environment }}.tfstate'
     jobs:
       - job: Plan
         displayName: 'Terraform Plan'
@@ -96,7 +96,7 @@ stages:
     dependsOn: Plan_${{ parameters.environment }}
     condition: succeeded()
     variables:
-      tfStateKey: 'quikapp-${{ parameters.environment }}.tfstate'
+      tfStateKey: 'quckapp-${{ parameters.environment }}.tfstate'
     jobs:
       - deployment: Apply
         displayName: 'Terraform Apply'

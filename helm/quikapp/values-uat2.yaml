@@ -1,14 +1,14 @@
-# QuikApp UAT2 Environment Values
+# QuckApp UAT2 Environment Values
 # Purpose: Internal QA/Testing - Higher verbosity for debugging
-# Usage: helm install quikapp ./quikapp -f values-uat2.yaml
+# Usage: helm install quckapp ./quckapp -f values-uat2.yaml
 
 global:
   environment: uat2
   imagePullPolicy: IfNotPresent
-  namespace: quikapp-uat2
-  domain: uat2.quikapp.io
+  namespace: quckapp-uat2
+  domain: uat2.quckapp.io
   tlsEnabled: true
-  tlsSecretName: quikapp-uat2-tls
+  tlsSecretName: quckapp-uat2-tls
 
   # UAT resources (moderate)
   resources:

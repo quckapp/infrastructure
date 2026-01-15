@@ -1,6 +1,6 @@
 apiVersion: v2
 name: monitoring
-description: QuikApp Monitoring Stack (Prometheus, Grafana, Loki, Jaeger)
+description: QuckApp Monitoring Stack (Prometheus, Grafana, Loki, Jaeger)
 type: application
 version: 1.0.0
 appVersion: "1.0.0"

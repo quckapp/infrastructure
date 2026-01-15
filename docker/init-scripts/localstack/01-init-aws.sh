@@ -29,8 +29,8 @@ echo ""
 echo "Creating S3 Buckets..."
 
 # Media bucket
-awslocal s3 mb s3://quikapp-media-dev --region $REGION 2>/dev/null || true
-awslocal s3api put-bucket-cors --bucket quikapp-media-dev --cors-configuration '{
+awslocal s3 mb s3://quckapp-media-dev --region $REGION 2>/dev/null || true
+awslocal s3api put-bucket-cors --bucket quckapp-media-dev --cors-configuration '{
   "CORSRules": [
     {
       "AllowedOrigins": ["http://localhost:3000", "http://localhost:5173"],
@@ -43,10 +43,10 @@ awslocal s3api put-bucket-cors --bucket quikapp-media-dev --cors-configuration '
 }'
 
 # Thumbnails bucket
-awslocal s3 mb s3://quikapp-thumbnails-dev --region $REGION 2>/dev/null || true
+awslocal s3 mb s3://quckapp-thumbnails-dev --region $REGION 2>/dev/null || true
 
 # Logs bucket
-awslocal s3 mb s3://quikapp-logs-dev --region $REGION 2>/dev/null || true
+awslocal s3 mb s3://quckapp-logs-dev --region $REGION 2>/dev/null || true
 
 echo "S3 Buckets created:"
 awslocal s3 ls
@@ -59,7 +59,7 @@ echo "Creating DynamoDB Tables..."
 
 # Media Metadata Table
 awslocal dynamodb create-table \
-  --table-name quikapp-dev-media-metadata \
+  --table-name quckapp-media-metadata \
   --attribute-definitions \
     AttributeName=mediaId,AttributeType=S \
     AttributeName=userId,AttributeType=S \
@@ -82,7 +82,7 @@ awslocal dynamodb create-table \
 
 # User Sessions Table
 awslocal dynamodb create-table \
-  --table-name quikapp-dev-user-sessions \
+  --table-name quckapp-user-sessions \
   --attribute-definitions \
     AttributeName=sessionId,AttributeType=S \
     AttributeName=userId,AttributeType=S \
@@ -94,7 +94,7 @@ awslocal dynamodb create-table \
 
 # Conversations Table
 awslocal dynamodb create-table \
-  --table-name quikapp-dev-conversations \
+  --table-name quckapp-conversations \
   --attribute-definitions \
     AttributeName=conversationId,AttributeType=S \
     AttributeName=messageId,AttributeType=S \
@@ -106,7 +106,7 @@ awslocal dynamodb create-table \
 
 # Rate Limiting Table
 awslocal dynamodb create-table \
-  --table-name quikapp-dev-rate-limits \
+  --table-name quckapp-rate-limits \
   --attribute-definitions \
     AttributeName=key,AttributeType=S \
   --key-schema \
@@ -125,18 +125,18 @@ echo "Creating SQS Queues..."
 
 # Dead Letter Queue first
 awslocal sqs create-queue \
-  --queue-name quikapp-dev-media-processing-dlq \
+  --queue-name quckapp-media-processing-dlq \
   --region $REGION 2>/dev/null || true
 
 DLQ_ARN=$(awslocal sqs get-queue-attributes \
-  --queue-url http://localhost:4566/000000000000/quikapp-dev-media-processing-dlq \
+  --queue-url http://localhost:4566/000000000000/quckapp-media-processing-dlq \
   --attribute-names QueueArn \
   --query 'Attributes.QueueArn' \
   --output text --region $REGION)
 
 # Media Processing Queue
 awslocal sqs create-queue \
-  --queue-name quikapp-dev-media-processing \
+  --queue-name quckapp-media-processing \
   --attributes '{
     "VisibilityTimeout": "360",
     "MessageRetentionPeriod": "345600",
@@ -147,13 +147,13 @@ awslocal sqs create-queue \
 
 # Thumbnail Queue
 awslocal sqs create-queue \
-  --queue-name quikapp-dev-thumbnails \
+  --queue-name quckapp-thumbnails \
   --attributes '{"VisibilityTimeout": "180"}' \
   --region $REGION 2>/dev/null || true
 
 # Notification Queue
 awslocal sqs create-queue \
-  --queue-name quikapp-dev-notifications \
+  --queue-name quckapp-notifications \
   --attributes '{"VisibilityTimeout": "60"}' \
   --region $REGION 2>/dev/null || true
 
@@ -168,17 +168,17 @@ echo "Creating SNS Topics..."
 
 # Media Events Topic
 awslocal sns create-topic \
-  --name quikapp-media-events-dev \
+  --name quckapp-media-events-dev \
   --region $REGION 2>/dev/null || true
 
 # Alerts Topic
 awslocal sns create-topic \
-  --name quikapp-alerts-dev \
+  --name quckapp-alerts-dev \
   --region $REGION 2>/dev/null || true
 
 # User Notifications Topic
 awslocal sns create-topic \
-  --name quikapp-user-notifications-dev \
+  --name quckapp-user-notifications-dev \
   --region $REGION 2>/dev/null || true
 
 echo "SNS Topics created:"
@@ -192,19 +192,19 @@ echo "Creating Secrets..."
 
 # Database credentials
 awslocal secretsmanager create-secret \
-  --name quikapp/dev/database \
-  --secret-string '{"username":"quikapp","password":"quikapp_dev","host":"postgres","port":5432,"dbname":"quikapp"}' \
+  --name quckapp/dev/database \
+  --secret-string '{"username":"quckapp","password":"quckapp_dev","host":"postgres","port":5432,"dbname":"quckapp"}' \
   --region $REGION 2>/dev/null || true
 
 # Redis credentials
 awslocal secretsmanager create-secret \
-  --name quikapp/dev/redis \
+  --name quckapp/dev/redis \
   --secret-string '{"host":"redis","port":6379}' \
   --region $REGION 2>/dev/null || true
 
 # API keys
 awslocal secretsmanager create-secret \
-  --name quikapp/dev/api-keys \
+  --name quckapp/dev/api-keys \
   --secret-string '{"jwt_secret":"dev-jwt-secret-change-in-production","api_key":"dev-api-key"}' \
   --region $REGION 2>/dev/null || true
 
@@ -218,16 +218,16 @@ echo ""
 echo "Creating KMS Keys..."
 
 awslocal kms create-key \
-  --description "QuikApp S3 media encryption key - dev" \
+  --description "QuckApp S3 media encryption key - dev" \
   --region $REGION 2>/dev/null || true
 
 awslocal kms create-alias \
-  --alias-name alias/quikapp-s3-media-dev \
+  --alias-name alias/quckapp-s3-media-dev \
   --target-key-id $(awslocal kms list-keys --region $REGION --query 'Keys[0].KeyId' --output text) \
   --region $REGION 2>/dev/null || true
 
 echo "KMS Keys created:"
-awslocal kms list-aliases --region $REGION --query 'Aliases[?starts_with(AliasName, `alias/quikapp`)].AliasName'
+awslocal kms list-aliases --region $REGION --query 'Aliases[?starts_with(AliasName, `alias/quckapp`)].AliasName'
 
 # =============================================================================
 # Summary

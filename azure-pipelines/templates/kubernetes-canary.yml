@@ -69,7 +69,7 @@ steps:
           spec:
             containers:
               - name: ${{ parameters.service }}
-                image: quikapp.azurecr.io/${{ parameters.service }}:${{ parameters.imageTag }}
+                image: quckapp.azurecr.io/${{ parameters.service }}:${{ parameters.imageTag }}
       EOF
 
       echo "Canary deployment manifest created"
@@ -145,7 +145,7 @@ steps:
       kubernetesServiceEndpoint: '${{ parameters.kubernetesServiceConnection }}'
       namespace: '${{ parameters.namespace }}'
       command: 'set'
-      arguments: 'image deployment/${{ parameters.service }} ${{ parameters.service }}=quikapp.azurecr.io/${{ parameters.service }}:${{ parameters.imageTag }}'
+      arguments: 'image deployment/${{ parameters.service }} ${{ parameters.service }}=quckapp.azurecr.io/${{ parameters.service }}:${{ parameters.imageTag }}'
 
   # Wait for main deployment rollout
   - task: Kubernetes@1

@@ -46,16 +46,16 @@ metadata:
   name: {{ $service.name }}
   namespace: {{ $.Values.global.namespace | default $.Release.Namespace }}
   labels:
-    {{- include "quikapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
+    {{- include "quckapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
   annotations:
-    description: "QuikApp {{ $service.name }} deployment"
+    description: "QuckApp {{ $service.name }} deployment"
 spec:
   {{- if not $service.autoscaling.enabled }}
   replicas: {{ $service.replicaCount | default 1 }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "quikapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 6 }}
+      {{- include "quckapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 6 }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -64,8 +64,8 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "quikapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 8 }}
-        app.kubernetes.io/part-of: quikapp
+        {{- include "quckapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 8 }}
+        app.kubernetes.io/part-of: quckapp
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: {{ $service.service.port | quote }}
@@ -77,13 +77,13 @@ spec:
         - name: {{ . }}
         {{- end }}
       {{- end }}
-      serviceAccountName: {{ include "quikapp.serviceAccountName" $ }}
+      serviceAccountName: {{ include "quckapp.serviceAccountName" $ }}
       securityContext:
         {{- toYaml $.Values.global.podSecurityContext | nindent 8 }}
       terminationGracePeriodSeconds: 30
       containers:
         - name: {{ $service.name }}
-          image: {{ include "quikapp.image" (dict "root" $ "image" $service.image) }}
+          image: {{ include "quckapp.image" (dict "root" $ "image" $service.image) }}
           imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
           ports:
             - name: http
@@ -132,7 +132,7 @@ spec:
             - name: OTEL_SERVICE_NAME
               value: {{ $service.name | quote }}
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "service.name={{ $service.name }},service.namespace=quikapp,deployment.environment={{ $.Values.global.environment }}"
+              value: "service.name={{ $service.name }},service.namespace=quckapp,deployment.environment={{ $.Values.global.environment }}"
             {{- end }}
             # Logging configuration
             - name: LOG_LEVEL
@@ -194,12 +194,12 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              {{- include "quikapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 14 }}
+              {{- include "quckapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 14 }}
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              {{- include "quikapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 14 }}
+              {{- include "quckapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 14 }}
 {{- end }}
 {{- end }}

@@ -14,11 +14,11 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Performance Tests'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
 
         echo "Running performance tests against: $BASE_URL"
 
@@ -35,11 +35,11 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Latency Tests'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+        BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
 
         echo "Running latency tests..."
 

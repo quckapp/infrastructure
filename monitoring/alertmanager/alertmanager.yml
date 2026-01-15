@@ -1,10 +1,10 @@
-# QuikApp Alertmanager Configuration
+# QuckApp Alertmanager Configuration
 
 global:
   # SMTP configuration for email alerts (configure for production)
   # smtp_smarthost: 'smtp.example.com:587'
-  # smtp_from: 'alertmanager@quikapp.com'
-  # smtp_auth_username: 'alertmanager@quikapp.com'
+  # smtp_from: 'alertmanager@quckapp.com'
+  # smtp_auth_username: 'alertmanager@quckapp.com'
   # smtp_auth_password: 'password'
 
   # Slack configuration (configure for production)
@@ -55,7 +55,7 @@ receivers:
       - url: 'http://localhost:5001/alerts/critical'
         send_resolved: true
     # email_configs:
-    #   - to: 'oncall@quikapp.com'
+    #   - to: 'oncall@quckapp.com'
     #     send_resolved: true
 
   - name: 'warning-receiver'

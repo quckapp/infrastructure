@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Go Service Dockerfile
+# QuckApp Go Service Dockerfile
 # Multi-stage build with static binary for minimal production image
 # =============================================================================
 
@@ -61,13 +61,13 @@ ARG BUILD_DATE
 ARG GIT_COMMIT
 ARG SERVICE_NAME=service
 
-LABEL org.opencontainers.image.title="QuikApp Go Service" \
-      org.opencontainers.image.description="QuikApp microservice built with Go" \
+LABEL org.opencontainers.image.title="QuckApp Go Service" \
+      org.opencontainers.image.description="QuckApp microservice built with Go" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.vendor="QuikApp" \
-      org.opencontainers.image.source="https://github.com/quikapp/quikapp"
+      org.opencontainers.image.vendor="QuckApp" \
+      org.opencontainers.image.source="https://github.com/quckapp/quckapp"
 
 # Set environment variables
 ENV TZ=UTC
@@ -116,13 +116,13 @@ ARG VERSION=dev
 ARG BUILD_DATE
 ARG GIT_COMMIT
 
-LABEL org.opencontainers.image.title="QuikApp Go Service" \
-      org.opencontainers.image.description="QuikApp microservice built with Go" \
+LABEL org.opencontainers.image.title="QuckApp Go Service" \
+      org.opencontainers.image.description="QuckApp microservice built with Go" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.created="${BUILD_DATE}" \
       org.opencontainers.image.revision="${GIT_COMMIT}" \
-      org.opencontainers.image.vendor="QuikApp" \
-      org.opencontainers.image.source="https://github.com/quikapp/quikapp"
+      org.opencontainers.image.vendor="QuckApp" \
+      org.opencontainers.image.source="https://github.com/quckapp/quckapp"
 
 # Set environment variables
 ENV TZ=UTC

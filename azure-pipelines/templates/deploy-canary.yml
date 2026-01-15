@@ -37,7 +37,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Login to AKS Cluster'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -51,7 +51,7 @@ steps:
     displayName: 'Backup Current Deployment'
     inputs:
       connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'QuikApp-K8s-${{ parameters.environment }}'
+      kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
       namespace: '${{ parameters.namespace }}'
       command: 'get'
       arguments: 'deployment/${{ parameters.serviceName }} -o yaml > $(Pipeline.Workspace)/backup-deployment.yaml'
@@ -62,7 +62,7 @@ steps:
     displayName: 'Deploy Canary'
     inputs:
       action: 'deploy'
-      kubernetesServiceConnection: 'QuikApp-K8s-${{ parameters.environment }}'
+      kubernetesServiceConnection: 'QuckApp-K8s-${{ parameters.environment }}'
       namespace: '${{ parameters.namespace }}'
       manifests: |
         $(Pipeline.Workspace)/manifests/deployment-canary.yaml
@@ -75,7 +75,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Monitor Canary (5 minutes)'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -136,7 +136,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Increase Canary Traffic to 25%'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -150,7 +150,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Monitor at 25% Traffic (3 minutes)'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -161,7 +161,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Increase Canary Traffic to 50%'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -177,7 +177,7 @@ steps:
     displayName: 'Promote Canary to Stable'
     inputs:
       action: 'promote'
-      kubernetesServiceConnection: 'QuikApp-K8s-${{ parameters.environment }}'
+      kubernetesServiceConnection: 'QuckApp-K8s-${{ parameters.environment }}'
       namespace: '${{ parameters.namespace }}'
       manifests: |
         $(Pipeline.Workspace)/manifests/deployment.yaml
@@ -190,7 +190,7 @@ steps:
     displayName: 'Scale to Target Replicas'
     inputs:
       connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'QuikApp-K8s-${{ parameters.environment }}'
+      kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
       namespace: '${{ parameters.namespace }}'
       command: 'scale'
       arguments: 'deployment/${{ parameters.serviceName }} --replicas=${{ parameters.replicas }}'
@@ -201,7 +201,7 @@ steps:
       displayName: 'Configure Horizontal Pod Autoscaler'
       inputs:
         connectionType: 'Kubernetes Service Connection'
-        kubernetesServiceEndpoint: 'QuikApp-K8s-${{ parameters.environment }}'
+        kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
         namespace: '${{ parameters.namespace }}'
         command: 'autoscale'
         arguments: |
@@ -215,7 +215,7 @@ steps:
     displayName: 'Clean Up Canary Deployment'
     inputs:
       action: 'reject'
-      kubernetesServiceConnection: 'QuikApp-K8s-${{ parameters.environment }}'
+      kubernetesServiceConnection: 'QuckApp-K8s-${{ parameters.environment }}'
       namespace: '${{ parameters.namespace }}'
       manifests: |
         $(Pipeline.Workspace)/manifests/deployment-canary.yaml
@@ -225,11 +225,11 @@ steps:
   - task: AzureCLI@2
     displayName: 'Final Health Check'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        SERVICE_URL="https://${{ parameters.serviceName }}.quikapp.io"
+        SERVICE_URL="https://${{ parameters.serviceName }}.quckapp.io"
 
         echo "Final health check at: $SERVICE_URL/health"
 

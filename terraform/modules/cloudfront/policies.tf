@@ -8,8 +8,8 @@
 
 # Media cache policy - standard media files
 resource "aws_cloudfront_cache_policy" "media" {
-  name        = "quikapp-media-cache-${var.environment}"
-  comment     = "Cache policy for QuikApp media files"
+  name        = "quckapp-media-cache-${var.environment}"
+  comment     = "Cache policy for QuckApp media files"
   default_ttl = 86400      # 1 day
   max_ttl     = 31536000   # 1 year
   min_ttl     = 1
@@ -37,8 +37,8 @@ resource "aws_cloudfront_cache_policy" "media" {
 
 # Video cache policy - optimized for streaming
 resource "aws_cloudfront_cache_policy" "video" {
-  name        = "quikapp-video-cache-${var.environment}"
-  comment     = "Cache policy for QuikApp video files"
+  name        = "quckapp-video-cache-${var.environment}"
+  comment     = "Cache policy for QuckApp video files"
   default_ttl = 86400      # 1 day
   max_ttl     = 604800     # 7 days
   min_ttl     = 1
@@ -66,8 +66,8 @@ resource "aws_cloudfront_cache_policy" "video" {
 
 # Thumbnails cache policy - aggressive caching
 resource "aws_cloudfront_cache_policy" "thumbnails" {
-  name        = "quikapp-thumbnails-cache-${var.environment}"
-  comment     = "Cache policy for QuikApp thumbnails"
+  name        = "quckapp-thumbnails-cache-${var.environment}"
+  comment     = "Cache policy for QuckApp thumbnails"
   default_ttl = 604800     # 7 days
   max_ttl     = 31536000   # 1 year
   min_ttl     = 86400      # 1 day minimum
@@ -95,8 +95,8 @@ resource "aws_cloudfront_cache_policy" "thumbnails" {
 
 # Avatars cache policy - very long cache
 resource "aws_cloudfront_cache_policy" "avatars" {
-  name        = "quikapp-avatars-cache-${var.environment}"
-  comment     = "Cache policy for QuikApp user avatars"
+  name        = "quckapp-avatars-cache-${var.environment}"
+  comment     = "Cache policy for QuckApp user avatars"
   default_ttl = 2592000    # 30 days
   max_ttl     = 31536000   # 1 year
   min_ttl     = 86400      # 1 day minimum
@@ -127,8 +127,8 @@ resource "aws_cloudfront_cache_policy" "avatars" {
 # -----------------------------------------------------------------------------
 
 resource "aws_cloudfront_origin_request_policy" "media" {
-  name    = "quikapp-media-origin-${var.environment}"
-  comment = "Origin request policy for QuikApp media"
+  name    = "quckapp-media-origin-${var.environment}"
+  comment = "Origin request policy for QuckApp media"
 
   cookies_config {
     cookie_behavior = "none"
@@ -158,8 +158,8 @@ resource "aws_cloudfront_origin_request_policy" "media" {
 # -----------------------------------------------------------------------------
 
 resource "aws_cloudfront_response_headers_policy" "security" {
-  name    = "quikapp-security-headers-${var.environment}"
-  comment = "Security headers for QuikApp CDN"
+  name    = "quckapp-security-headers-${var.environment}"
+  comment = "Security headers for QuckApp CDN"
 
   cors_config {
     access_control_allow_credentials = false
@@ -247,8 +247,8 @@ resource "aws_cloudfront_response_headers_policy" "security" {
 resource "aws_wafv2_web_acl" "cdn" {
   count = var.create_waf_web_acl ? 1 : 0
 
-  name        = "quikapp-cdn-waf-${var.environment}"
-  description = "WAF rules for QuikApp CDN"
+  name        = "quckapp-cdn-waf-${var.environment}"
+  description = "WAF rules for QuckApp CDN"
   scope       = "CLOUDFRONT"
 
   default_action {
@@ -273,7 +273,7 @@ resource "aws_wafv2_web_acl" "cdn" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "QuikAppCDNRateLimit"
+      metric_name                = "QuckAppCDNRateLimit"
       sampled_requests_enabled   = true
     }
   }
@@ -350,7 +350,7 @@ resource "aws_wafv2_web_acl" "cdn" {
 
       visibility_config {
         cloudwatch_metrics_enabled = true
-        metric_name                = "QuikAppCDNGeoBlock"
+        metric_name                = "QuckAppCDNGeoBlock"
         sampled_requests_enabled   = true
       }
     }
@@ -358,7 +358,7 @@ resource "aws_wafv2_web_acl" "cdn" {
 
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name                = "QuikAppCDNWebACL"
+    metric_name                = "QuckAppCDNWebACL"
     sampled_requests_enabled   = true
   }
 

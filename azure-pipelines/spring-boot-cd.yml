@@ -37,8 +37,8 @@ parameters:
       - live
 
 variables:
-  - group: QuikApp-Global-Variables
-  - group: QuikApp-SpringBoot-Variables
+  - group: QuckApp-Global-Variables
+  - group: QuckApp-SpringBoot-Variables
   - name: techStack
     value: 'spring-boot'
 

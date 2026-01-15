@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp SQS Module for Media Processing
+# QuckApp SQS Module for Media Processing
 # =============================================================================
 # Creates SQS queues for:
 # - Media processing (thumbnails, optimization)
@@ -31,11 +31,11 @@ locals {
   })
 
   # Queue names
-  media_processing_queue_name = "quikapp-media-processing-${var.environment}"
-  thumbnail_queue_name        = "quikapp-thumbnail-${var.environment}"
-  video_processing_queue_name = "quikapp-video-processing-${var.environment}"
-  notification_queue_name     = "quikapp-notifications-${var.environment}"
-  export_queue_name           = "quikapp-export-${var.environment}"
+  media_processing_queue_name = "quckapp-media-processing-${var.environment}"
+  thumbnail_queue_name        = "quckapp-thumbnail-${var.environment}"
+  video_processing_queue_name = "quckapp-video-processing-${var.environment}"
+  notification_queue_name     = "quckapp-notifications-${var.environment}"
+  export_queue_name           = "quckapp-export-${var.environment}"
 }
 
 # -----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ resource "aws_sqs_queue" "media_processing_dlq" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Processing DLQ"
+    Name    = "QuckApp Media Processing DLQ"
     Purpose = "dead-letter-queue"
   })
 }
@@ -92,7 +92,7 @@ resource "aws_sqs_queue" "media_processing" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Media Processing Queue"
+    Name    = "QuckApp Media Processing Queue"
     Purpose = "media-processing"
   })
 }
@@ -125,7 +125,7 @@ resource "aws_sqs_queue" "thumbnail_dlq" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Thumbnail DLQ"
+    Name    = "QuckApp Thumbnail DLQ"
     Purpose = "dead-letter-queue"
   })
 }
@@ -151,7 +151,7 @@ resource "aws_sqs_queue" "thumbnail" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name     = "QuikApp Thumbnail Queue"
+    Name     = "QuckApp Thumbnail Queue"
     Purpose  = "thumbnail-processing"
     Priority = "high"
   })
@@ -184,7 +184,7 @@ resource "aws_sqs_queue" "video_processing_dlq" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Video Processing DLQ"
+    Name    = "QuckApp Video Processing DLQ"
     Purpose = "dead-letter-queue"
   })
 }
@@ -210,7 +210,7 @@ resource "aws_sqs_queue" "video_processing" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name     = "QuikApp Video Processing Queue"
+    Name     = "QuckApp Video Processing Queue"
     Purpose  = "video-processing"
     Priority = "normal"
   })
@@ -243,7 +243,7 @@ resource "aws_sqs_queue" "notification_dlq" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Notification DLQ"
+    Name    = "QuckApp Notification DLQ"
     Purpose = "dead-letter-queue"
   })
 }
@@ -269,7 +269,7 @@ resource "aws_sqs_queue" "notification" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name     = "QuikApp Notification Queue"
+    Name     = "QuckApp Notification Queue"
     Purpose  = "notifications"
     Priority = "high"
   })
@@ -302,7 +302,7 @@ resource "aws_sqs_queue" "export_dlq" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Export DLQ"
+    Name    = "QuckApp Export DLQ"
     Purpose = "dead-letter-queue"
   })
 }
@@ -328,7 +328,7 @@ resource "aws_sqs_queue" "export" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name     = "QuikApp Export Queue"
+    Name     = "QuckApp Export Queue"
     Purpose  = "data-export"
     Priority = "low"
   })
@@ -352,7 +352,7 @@ resource "aws_sqs_queue_redrive_allow_policy" "export_dlq" {
 resource "aws_sqs_queue" "ordered_processing_dlq" {
   count = var.create_fifo_queue ? 1 : 0
 
-  name                       = "quikapp-ordered-processing-${var.environment}-dlq.fifo"
+  name                       = "quckapp-ordered-processing-${var.environment}-dlq.fifo"
   fifo_queue                 = true
   content_based_deduplication = true
 
@@ -363,7 +363,7 @@ resource "aws_sqs_queue" "ordered_processing_dlq" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Ordered Processing DLQ"
+    Name    = "QuckApp Ordered Processing DLQ"
     Purpose = "dead-letter-queue"
     Type    = "FIFO"
   })
@@ -372,7 +372,7 @@ resource "aws_sqs_queue" "ordered_processing_dlq" {
 resource "aws_sqs_queue" "ordered_processing" {
   count = var.create_fifo_queue ? 1 : 0
 
-  name                        = "quikapp-ordered-processing-${var.environment}.fifo"
+  name                        = "quckapp-ordered-processing-${var.environment}.fifo"
   fifo_queue                  = true
   content_based_deduplication = var.fifo_content_deduplication
   deduplication_scope         = var.fifo_deduplication_scope
@@ -393,7 +393,7 @@ resource "aws_sqs_queue" "ordered_processing" {
   kms_master_key_id       = var.kms_key_arn
 
   tags = merge(local.common_tags, {
-    Name    = "QuikApp Ordered Processing Queue"
+    Name    = "QuckApp Ordered Processing Queue"
     Purpose = "ordered-processing"
     Type    = "FIFO"
   })

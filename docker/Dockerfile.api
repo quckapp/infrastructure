@@ -1,11 +1,11 @@
 # =============================================================================
-# QuikApp API Dockerfile (Standalone)
+# QuckApp API Dockerfile (Standalone)
 # =============================================================================
 # Alternative standalone Dockerfile for the API service.
 # Use if you prefer separate Dockerfiles per service.
 #
 # Build:
-#   docker build -f docker/Dockerfile.api -t quikapp/api .
+#   docker build -f docker/Dockerfile.api -t quckapp/api .
 # =============================================================================
 
 FROM node:20-alpine AS base
@@ -37,12 +37,12 @@ RUN npm run build && npm prune --production
 # -----------------------------------------------------------------------------
 FROM base AS production
 
-LABEL org.opencontainers.image.title="QuikApp API"
+LABEL org.opencontainers.image.title="QuckApp API"
 LABEL org.opencontainers.image.version="1.0.0"
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 quikapp
+    adduser --system --uid 1001 quckapp
 
 WORKDIR /app
 
@@ -50,14 +50,14 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 # Copy application
-COPY --from=builder --chown=quikapp:nodejs /app/dist ./dist
-COPY --from=builder --chown=quikapp:nodejs /app/node_modules ./node_modules
-COPY --from=builder --chown=quikapp:nodejs /app/package.json ./
+COPY --from=builder --chown=quckapp:nodejs /app/dist ./dist
+COPY --from=builder --chown=quckapp:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=quckapp:nodejs /app/package.json ./
 
 # Setup runtime directories
-RUN mkdir -p .cache /tmp && chown -R quikapp:nodejs .cache /tmp
+RUN mkdir -p .cache /tmp && chown -R quckapp:nodejs .cache /tmp
 
-USER quikapp
+USER quckapp
 
 EXPOSE 3000
 

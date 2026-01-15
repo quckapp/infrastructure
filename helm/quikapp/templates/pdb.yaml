@@ -49,7 +49,7 @@ metadata:
   name: {{ $service.name }}
   namespace: {{ $.Values.global.namespace | default $.Release.Namespace }}
   labels:
-    {{- include "quikapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
+    {{- include "quckapp.serviceLabels" (dict "root" $ "serviceName" $service.name "component" "backend") | nindent 4 }}
 spec:
   {{- if $service.pdb }}
   {{- if $service.pdb.minAvailable }}
@@ -64,7 +64,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "quikapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 6 }}
+      {{- include "quckapp.serviceSelectorLabels" (dict "root" $ "serviceName" $service.name) | nindent 6 }}
 {{- end }}
 {{- end }}
 {{- end }}

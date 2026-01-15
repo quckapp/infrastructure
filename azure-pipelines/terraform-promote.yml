@@ -42,15 +42,15 @@ parameters:
 # =============================================================================
 
 variables:
-  - group: quikapp-terraform-common
+  - group: quckapp-terraform-common
   - name: terraformVersion
     value: '1.5.7'
   - name: terraformWorkingDir
     value: '$(System.DefaultWorkingDirectory)/infrastructure/terraform'
   - name: tfStateResourceGroup
-    value: 'rg-quikapp-tfstate'
+    value: 'rg-quckapp-tfstate'
   - name: tfStateStorageAccount
-    value: 'stquikapptfstate'
+    value: 'stquckapptfstate'
   - name: tfStateContainer
     value: 'tfstate'
 

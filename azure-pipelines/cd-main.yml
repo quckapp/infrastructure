@@ -41,9 +41,9 @@ parameters:
       - live
 
 variables:
-  - group: QuikApp-Global-Variables
+  - group: QuckApp-Global-Variables
   - name: acrRegistry
-    value: 'quikapp.azurecr.io'
+    value: 'quckapp.azurecr.io'
   - name: imageRepository
     value: '${{ parameters.serviceName }}'
   - name: imageTag
@@ -59,7 +59,7 @@ stages:
     jobs:
       - deployment: DeployLocalMock
         displayName: 'Deploy to Local/Mock Environment'
-        environment: 'quikapp-local-mock'
+        environment: 'quckapp-local-mock'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -69,7 +69,7 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'local'
-                    namespace: 'quikapp-mock'
+                    namespace: 'quckapp-mock'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 1
@@ -90,7 +90,7 @@ stages:
     jobs:
       - deployment: DeployDev
         displayName: 'Deploy to Dev Environment'
-        environment: 'quikapp-dev'
+        environment: 'quckapp'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -100,14 +100,14 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'dev'
-                    namespace: 'quikapp-dev'
+                    namespace: 'quckapp'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 2
                     memoryLimit: '512Mi'
                     cpuLimit: '500m'
                     aksCluster: 'aks-dev'
-                    resourceGroup: 'rg-quikapp-dev'
+                    resourceGroup: 'rg-quckapp'
 
       - job: IntegrationTests
         displayName: 'Run Integration Tests'
@@ -134,7 +134,7 @@ stages:
     jobs:
       - deployment: DeployQA
         displayName: 'Deploy to QA Environment'
-        environment: 'quikapp-qa'
+        environment: 'quckapp-qa'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -145,7 +145,7 @@ stages:
                   displayName: 'QA Lead Approval'
                   inputs:
                     notifyUsers: |
-                      qa-lead@quikapp.com
+                      qa-lead@quckapp.com
                     instructions: 'Please review and approve deployment to QA environment'
                     timeoutInMinutes: 1440  # 24 hours
             deploy:
@@ -153,14 +153,14 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'qa'
-                    namespace: 'quikapp-qa'
+                    namespace: 'quckapp-qa'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 2
                     memoryLimit: '512Mi'
                     cpuLimit: '500m'
                     aksCluster: 'aks-qa'
-                    resourceGroup: 'rg-quikapp-qa'
+                    resourceGroup: 'rg-quckapp-qa'
 
       - job: QATests
         displayName: 'Run QA Test Suite'
@@ -187,7 +187,7 @@ stages:
     jobs:
       - deployment: DeployUAT1
         displayName: 'Deploy to UAT1 Environment'
-        environment: 'quikapp-uat1'
+        environment: 'quckapp-uat1'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -198,8 +198,8 @@ stages:
                   displayName: 'Product Owner Approval (UAT1)'
                   inputs:
                     notifyUsers: |
-                      product-owner@quikapp.com
-                      partner-team@quikapp.com
+                      product-owner@quckapp.com
+                      partner-team@quckapp.com
                     instructions: |
                       UAT1 Deployment - Partner/Customer Acceptance Testing
 
@@ -211,14 +211,14 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'uat1'
-                    namespace: 'quikapp-uat1'
+                    namespace: 'quckapp-uat1'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 2
                     memoryLimit: '1Gi'
                     cpuLimit: '1000m'
                     aksCluster: 'aks-uat'
-                    resourceGroup: 'rg-quikapp-uat'
+                    resourceGroup: 'rg-quckapp-uat'
 
   # ============================================================================
   # UAT2 ENVIRONMENT (Internal QA Testing)
@@ -234,7 +234,7 @@ stages:
     jobs:
       - deployment: DeployUAT2
         displayName: 'Deploy to UAT2 Environment'
-        environment: 'quikapp-uat2'
+        environment: 'quckapp-uat2'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -245,8 +245,8 @@ stages:
                   displayName: 'Product Owner Approval (UAT2)'
                   inputs:
                     notifyUsers: |
-                      product-owner@quikapp.com
-                      internal-qa@quikapp.com
+                      product-owner@quckapp.com
+                      internal-qa@quckapp.com
                     instructions: |
                       UAT2 Deployment - Internal QA Testing
 
@@ -258,14 +258,14 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'uat2'
-                    namespace: 'quikapp-uat2'
+                    namespace: 'quckapp-uat2'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 2
                     memoryLimit: '1Gi'
                     cpuLimit: '1000m'
                     aksCluster: 'aks-uat'
-                    resourceGroup: 'rg-quikapp-uat'
+                    resourceGroup: 'rg-quckapp-uat'
 
   # ============================================================================
   # UAT3 ENVIRONMENT (Performance/Load Testing)
@@ -281,7 +281,7 @@ stages:
     jobs:
       - deployment: DeployUAT3
         displayName: 'Deploy to UAT3 Environment'
-        environment: 'quikapp-uat3'
+        environment: 'quckapp-uat3'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -292,9 +292,9 @@ stages:
                   displayName: 'Product Owner + Security Approval (UAT3)'
                   inputs:
                     notifyUsers: |
-                      product-owner@quikapp.com
-                      security-team@quikapp.com
-                      performance-team@quikapp.com
+                      product-owner@quckapp.com
+                      security-team@quckapp.com
+                      performance-team@quckapp.com
                     instructions: |
                       UAT3 Deployment - Performance/Load Testing
 
@@ -309,14 +309,14 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'uat3'
-                    namespace: 'quikapp-uat3'
+                    namespace: 'quckapp-uat3'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 3
                     memoryLimit: '1Gi'
                     cpuLimit: '1000m'
                     aksCluster: 'aks-uat'
-                    resourceGroup: 'rg-quikapp-uat'
+                    resourceGroup: 'rg-quckapp-uat'
 
       - job: SecurityTests
         displayName: 'Run Security Tests'
@@ -367,7 +367,7 @@ stages:
     jobs:
       - deployment: DeployStaging
         displayName: 'Deploy to Staging Environment'
-        environment: 'quikapp-staging'
+        environment: 'quckapp-staging'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -378,8 +378,8 @@ stages:
                   displayName: 'Release Manager Approval'
                   inputs:
                     notifyUsers: |
-                      release-manager@quikapp.com
-                      devops-team@quikapp.com
+                      release-manager@quckapp.com
+                      devops-team@quckapp.com
                     instructions: |
                       Pre-Production Deployment
 
@@ -394,14 +394,14 @@ stages:
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'staging'
-                    namespace: 'quikapp-staging'
+                    namespace: 'quckapp-staging'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 3
                     memoryLimit: '2Gi'
                     cpuLimit: '2000m'
                     aksCluster: 'aks-staging'
-                    resourceGroup: 'rg-quikapp-staging'
+                    resourceGroup: 'rg-quckapp-staging'
                     enableAutoScale: true
                     minReplicas: 3
                     maxReplicas: 10
@@ -433,7 +433,7 @@ stages:
     jobs:
       - deployment: DeployLive
         displayName: 'Deploy to Production'
-        environment: 'quikapp-production'
+        environment: 'quckapp-production'
         pool:
           vmImage: 'ubuntu-latest'
         strategy:
@@ -444,10 +444,10 @@ stages:
                   displayName: 'CAB + Release Manager Approval'
                   inputs:
                     notifyUsers: |
-                      cab@quikapp.com
-                      release-manager@quikapp.com
-                      cto@quikapp.com
-                      ops-team@quikapp.com
+                      cab@quckapp.com
+                      release-manager@quckapp.com
+                      cto@quckapp.com
+                      ops-team@quckapp.com
                     instructions: |
                       PRODUCTION DEPLOYMENT APPROVAL
 
@@ -470,14 +470,14 @@ stages:
                 - template: templates/deploy-canary.yml
                   parameters:
                     environment: 'live'
-                    namespace: 'quikapp-prod'
+                    namespace: 'quckapp-prod'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
                     replicas: 5
                     memoryLimit: '4Gi'
                     cpuLimit: '4000m'
                     aksCluster: 'aks-prod'
-                    resourceGroup: 'rg-quikapp-prod'
+                    resourceGroup: 'rg-quckapp-prod'
                     enableAutoScale: true
                     minReplicas: 5
                     maxReplicas: 50
@@ -487,7 +487,7 @@ stages:
                 - task: AzureCLI@2
                   displayName: 'Monitor Canary Metrics'
                   inputs:
-                    azureSubscription: 'QuikApp-Production'
+                    azureSubscription: 'QuckApp-Production'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
                     inlineScript: |
@@ -510,7 +510,7 @@ stages:
                     displayName: 'Ops Team Post-Deployment Verification'
                     inputs:
                       notifyUsers: |
-                        ops-team@quikapp.com
+                        ops-team@quckapp.com
                       instructions: |
                         Post-Deployment Verification
 
@@ -545,7 +545,7 @@ stages:
               targetType: 'inline'
               script: |
                 $body = @{
-                  "text" = "QuikApp Deployment Complete - ${{ parameters.serviceName }}"
+                  "text" = "QuckApp Deployment Complete - ${{ parameters.serviceName }}"
                   "blocks" = @(
                     @{
                       "type" = "header"

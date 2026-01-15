@@ -3,7 +3,7 @@
 # =============================================================================
 
 variable "aws_region" { type = string; default = "us-east-1" }
-variable "project_name" { type = string; default = "quikapp" }
+variable "project_name" { type = string; default = "quckapp" }
 variable "environment" { type = string; default = "staging" }
 variable "cost_center" { type = string; default = "engineering" }
 
@@ -24,19 +24,19 @@ variable "existing_subnet_ids" { type = list(string); default = [] }
 # Application
 variable "cors_allowed_origins" {
   type    = list(string)
-  default = ["https://staging.quikapp.com", "https://staging-app.quikapp.com"]
+  default = ["https://staging.quckapp.com", "https://staging-app.quckapp.com"]
 }
 
 variable "cognito_callback_urls" {
   type    = list(string)
-  default = ["https://staging.quikapp.com/callback"]
+  default = ["https://staging.quckapp.com/callback"]
 }
 
 variable "cognito_logout_urls" {
   type    = list(string)
-  default = ["https://staging.quikapp.com/logout"]
+  default = ["https://staging.quckapp.com/logout"]
 }
 
 # CloudFront
 variable "acm_certificate_arn" { type = string; default = "" }
-variable "cloudfront_aliases" { type = list(string); default = ["cdn-staging.quikapp.com"] }
+variable "cloudfront_aliases" { type = list(string); default = ["cdn-staging.quckapp.com"] }

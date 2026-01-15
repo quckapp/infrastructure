@@ -5,15 +5,15 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 metadata:
-  name: quikapp-base
+  name: quckapp-base
 
 # Common labels applied to all resources
 commonLabels:
-  app.kubernetes.io/part-of: quikapp
+  app.kubernetes.io/part-of: quckapp
   app.kubernetes.io/managed-by: kustomize
 
 # Namespace for all resources
-namespace: quikapp
+namespace: quckapp
 
 # Base resources
 resources:
@@ -47,54 +47,54 @@ resources:
 
 # ConfigMap generator for common configuration
 configMapGenerator:
-  - name: quikapp-version
+  - name: quckapp-version
     literals:
       - VERSION=latest
       - BUILD_DATE=unknown
 
 # Image configuration (overridden per environment)
 images:
-  - name: quikapp.azurecr.io/backend-gateway
+  - name: quckapp.azurecr.io/backend-gateway
     newTag: latest
-  - name: quikapp.azurecr.io/auth-service
+  - name: quckapp.azurecr.io/auth-service
     newTag: latest
-  - name: quikapp.azurecr.io/user-service
+  - name: quckapp.azurecr.io/user-service
     newTag: latest
-  - name: quikapp.azurecr.io/workspace-service
+  - name: quckapp.azurecr.io/workspace-service
     newTag: latest
-  - name: quikapp.azurecr.io/channel-service
+  - name: quckapp.azurecr.io/channel-service
     newTag: latest
-  - name: quikapp.azurecr.io/thread-service
+  - name: quckapp.azurecr.io/thread-service
     newTag: latest
-  - name: quikapp.azurecr.io/search-service
+  - name: quckapp.azurecr.io/search-service
     newTag: latest
-  - name: quikapp.azurecr.io/file-service
+  - name: quckapp.azurecr.io/file-service
     newTag: latest
-  - name: quikapp.azurecr.io/media-service
+  - name: quckapp.azurecr.io/media-service
     newTag: latest
-  - name: quikapp.azurecr.io/notification-service
+  - name: quckapp.azurecr.io/notification-service
     newTag: latest
-  - name: quikapp.azurecr.io/realtime-service
+  - name: quckapp.azurecr.io/realtime-service
     newTag: latest
-  - name: quikapp.azurecr.io/presence-service
+  - name: quckapp.azurecr.io/presence-service
     newTag: latest
-  - name: quikapp.azurecr.io/message-service
+  - name: quckapp.azurecr.io/message-service
     newTag: latest
-  - name: quikapp.azurecr.io/call-service
+  - name: quckapp.azurecr.io/call-service
     newTag: latest
-  - name: quikapp.azurecr.io/huddle-service
+  - name: quckapp.azurecr.io/huddle-service
     newTag: latest
-  - name: quikapp.azurecr.io/analytics-service
+  - name: quckapp.azurecr.io/analytics-service
     newTag: latest
-  - name: quikapp.azurecr.io/ml-service
+  - name: quckapp.azurecr.io/ml-service
     newTag: latest
-  - name: quikapp.azurecr.io/moderation-service
+  - name: quckapp.azurecr.io/moderation-service
     newTag: latest
-  - name: quikapp.azurecr.io/sentiment-service
+  - name: quckapp.azurecr.io/sentiment-service
     newTag: latest
-  - name: quikapp.azurecr.io/permission-service
+  - name: quckapp.azurecr.io/permission-service
     newTag: latest
-  - name: quikapp.azurecr.io/audit-service
+  - name: quckapp.azurecr.io/audit-service
     newTag: latest
-  - name: quikapp.azurecr.io/admin-service
+  - name: quckapp.azurecr.io/admin-service
     newTag: latest

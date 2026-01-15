@@ -11,7 +11,7 @@ steps:
   - task: AzureCLI@2
     displayName: 'Emergency Rollback'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
@@ -26,10 +26,10 @@ steps:
         # Determine namespace based on environment
         case "${{ parameters.environment }}" in
           live|production)
-            NAMESPACE="quikapp-prod"
+            NAMESPACE="quckapp-prod"
             ;;
           *)
-            NAMESPACE="quikapp-${{ parameters.environment }}"
+            NAMESPACE="quckapp-${{ parameters.environment }}"
             ;;
         esac
 
@@ -53,17 +53,17 @@ steps:
   - task: AzureCLI@2
     displayName: 'Verify Service Health Post-Rollback'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
         # Determine service URL
         case "${{ parameters.environment }}" in
           live|production)
-            SERVICE_URL="https://${{ parameters.serviceName }}.quikapp.io"
+            SERVICE_URL="https://${{ parameters.serviceName }}.quckapp.io"
             ;;
           *)
-            SERVICE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+            SERVICE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
             ;;
         esac
 

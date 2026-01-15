@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp CloudFront CDN Module
+# QuckApp CloudFront CDN Module
 # =============================================================================
 # Creates CloudFront distribution for media delivery with:
 # - Origin Access Control (OAC) for S3
@@ -41,8 +41,8 @@ locals {
 # -----------------------------------------------------------------------------
 
 resource "aws_cloudfront_origin_access_control" "media" {
-  name                              = "quikapp-media-oac-${var.environment}"
-  description                       = "OAC for QuikApp media bucket"
+  name                              = "quckapp-media-oac-${var.environment}"
+  description                       = "OAC for QuckApp media bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -51,8 +51,8 @@ resource "aws_cloudfront_origin_access_control" "media" {
 resource "aws_cloudfront_origin_access_control" "thumbnails" {
   count = var.thumbnails_bucket_domain_name != null ? 1 : 0
 
-  name                              = "quikapp-thumbnails-oac-${var.environment}"
-  description                       = "OAC for QuikApp thumbnails bucket"
+  name                              = "quckapp-thumbnails-oac-${var.environment}"
+  description                       = "OAC for QuckApp thumbnails bucket"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
@@ -65,7 +65,7 @@ resource "aws_cloudfront_origin_access_control" "thumbnails" {
 resource "aws_cloudfront_distribution" "media" {
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "QuikApp Media CDN - ${var.environment}"
+  comment             = "QuckApp Media CDN - ${var.environment}"
   default_root_object = ""
   price_class         = var.price_class
   http_version        = "http2and3"
@@ -285,7 +285,7 @@ resource "aws_cloudfront_distribution" "media" {
   }
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp Media CDN"
+    Name = "QuckApp Media CDN"
   })
 
   depends_on = [
@@ -303,15 +303,15 @@ resource "aws_cloudfront_distribution" "media" {
 resource "aws_cloudfront_public_key" "media" {
   count = var.enable_signed_urls ? 1 : 0
 
-  name        = "quikapp-media-key-${var.environment}"
-  comment     = "Public key for QuikApp media signed URLs"
+  name        = "quckapp-media-key-${var.environment}"
+  comment     = "Public key for QuckApp media signed URLs"
   encoded_key = var.cloudfront_public_key_pem
 }
 
 resource "aws_cloudfront_key_group" "media" {
   count = var.enable_signed_urls ? 1 : 0
 
-  name    = "quikapp-media-keygroup-${var.environment}"
-  comment = "Key group for QuikApp media signed URLs"
+  name    = "quckapp-media-keygroup-${var.environment}"
+  comment = "Key group for QuckApp media signed URLs"
   items   = [aws_cloudfront_public_key.media[0].id]
 }

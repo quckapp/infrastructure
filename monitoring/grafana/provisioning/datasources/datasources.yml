@@ -1,4 +1,4 @@
-# QuikApp Grafana Datasources Configuration
+# QuckApp Grafana Datasources Configuration
 
 apiVersion: 1
 
@@ -19,7 +19,7 @@ datasources:
     type: elasticsearch
     access: proxy
     url: http://elasticsearch:9200
-    database: "quikapp-*"
+    database: "quckapp-*"
     editable: false
     jsonData:
       esVersion: "8.0.0"

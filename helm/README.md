@@ -1,6 +1,6 @@
-# QuikApp Helm Charts
+# QuckApp Helm Charts
 
-Kubernetes Helm charts for deploying QuikApp - an enterprise communication platform with 32 microservices.
+Kubernetes Helm charts for deploying QuckApp - an enterprise communication platform with 32 microservices.
 
 ## Prerequisites
 
@@ -27,38 +27,38 @@ helm repo update
 ### Update Dependencies
 
 ```bash
-cd helm/quikapp
+cd helm/quckapp
 helm dependency build
 cd charts/infrastructure && helm dependency build && cd ../..
 cd charts/monitoring && helm dependency build && cd ../..
 ```
 
-### Install QuikApp
+### Install QuckApp
 
 #### Development Environment
 
 ```bash
-helm install quikapp ./quikapp \
-  -f quikapp/values-development.yaml \
-  --namespace quikapp-dev \
+helm install quckapp ./quckapp \
+  -f quckapp/values-development.yaml \
+  --namespace quckapp \
   --create-namespace
 ```
 
 #### Staging Environment
 
 ```bash
-helm install quikapp ./quikapp \
-  -f quikapp/values-staging.yaml \
-  --namespace quikapp-staging \
+helm install quckapp ./quckapp \
+  -f quckapp/values-staging.yaml \
+  --namespace quckapp-staging \
   --create-namespace
 ```
 
 #### Production Environment
 
 ```bash
-helm install quikapp ./quikapp \
-  -f quikapp/values-production.yaml \
-  --namespace quikapp \
+helm install quckapp ./quckapp \
+  -f quckapp/values-production.yaml \
+  --namespace quckapp \
   --create-namespace
 ```
 
@@ -69,8 +69,8 @@ helm install quikapp ./quikapp \
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `global.environment` | Environment name | `development` |
-| `global.namespace` | Kubernetes namespace | `quikapp` |
-| `global.domain` | Domain for ingress | `quikapp.local` |
+| `global.namespace` | Kubernetes namespace | `quckapp` |
+| `global.domain` | Domain for ingress | `quckapp.local` |
 | `global.tlsEnabled` | Enable TLS | `false` |
 | `global.imagePullPolicy` | Image pull policy | `IfNotPresent` |
 
@@ -115,7 +115,7 @@ Each microservice supports the following configuration:
 ## Architecture
 
 ```
-quikapp/
+quckapp/
 ├── Chart.yaml           # Main chart definition
 ├── values.yaml          # Default values
 ├── values-development.yaml
@@ -184,16 +184,16 @@ quikapp/
 
 ## Secrets Management
 
-For production, replace the placeholder values in `quikapp-secrets`:
+For production, replace the placeholder values in `quckapp-secrets`:
 
 ```bash
-kubectl create secret generic quikapp-secrets \
+kubectl create secret generic quckapp-secrets \
   --from-literal=JWT_SECRET='your-jwt-secret' \
   --from-literal=MYSQL_PASSWORD='your-mysql-password' \
   --from-literal=POSTGRES_PASSWORD='your-postgres-password' \
   --from-literal=MONGODB_PASSWORD='your-mongodb-password' \
   --from-literal=REDIS_PASSWORD='your-redis-password' \
-  -n quikapp
+  -n quckapp
 ```
 
 Or use external secret management:
@@ -205,42 +205,42 @@ Or use external secret management:
 ## Upgrade
 
 ```bash
-helm upgrade quikapp ./quikapp \
-  -f quikapp/values-production.yaml \
-  --namespace quikapp
+helm upgrade quckapp ./quckapp \
+  -f quckapp/values-production.yaml \
+  --namespace quckapp
 ```
 
 ## Uninstall
 
 ```bash
-helm uninstall quikapp --namespace quikapp
+helm uninstall quckapp --namespace quckapp
 ```
 
 ## Troubleshooting
 
 ### Check pod status
 ```bash
-kubectl get pods -n quikapp
+kubectl get pods -n quckapp
 ```
 
 ### View logs
 ```bash
-kubectl logs -f deployment/backend-gateway -n quikapp
+kubectl logs -f deployment/backend-gateway -n quckapp
 ```
 
 ### Check events
 ```bash
-kubectl get events -n quikapp --sort-by=.metadata.creationTimestamp
+kubectl get events -n quckapp --sort-by=.metadata.creationTimestamp
 ```
 
 ### Validate templates
 ```bash
-helm template quikapp ./quikapp -f quikapp/values-development.yaml
+helm template quckapp ./quckapp -f quckapp/values-development.yaml
 ```
 
 ### Debug installation
 ```bash
-helm install quikapp ./quikapp --dry-run --debug
+helm install quckapp ./quckapp --dry-run --debug
 ```
 
 ## Contributing

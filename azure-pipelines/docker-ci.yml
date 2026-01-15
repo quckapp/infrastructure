@@ -68,13 +68,13 @@ parameters:
     default: true
 
 variables:
-  - group: quikapp-common
-  - group: quikapp-ci-common
+  - group: quckapp-common
+  - group: quckapp-ci-common
 
   - name: acrName
-    value: 'quikapp'
+    value: 'quckapp'
   - name: acrLoginServer
-    value: 'quikapp.azurecr.io'
+    value: 'quckapp.azurecr.io'
 
   # Determine image tag based on strategy
   - name: imageTag

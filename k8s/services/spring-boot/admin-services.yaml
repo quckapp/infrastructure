@@ -5,11 +5,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: permission-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: permission-service
     app.kubernetes.io/component: backend
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: spring-boot
 spec:
   replicas: 2
@@ -21,19 +21,19 @@ spec:
       labels:
         app.kubernetes.io/name: permission-service
         app.kubernetes.io/component: backend
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: spring-boot
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: permission-service
-          image: quikapp.azurecr.io/permission-service:latest
+          image: quckapp.azurecr.io/permission-service:latest
           ports:
             - name: http
               containerPort: 8080
@@ -43,30 +43,30 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://$(POSTGRES_HOST):$(POSTGRES_PORT)/quikapp_permissions"
+              value: "jdbc:postgresql://$(POSTGRES_HOST):$(POSTGRES_PORT)/quckapp_permissions"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_USERNAME
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_PASSWORD
             - name: SPRING_REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-database-config
+                  name: quckapp-database-config
                   key: REDIS_HOST
             - name: OTEL_SERVICE_NAME
               value: "permission-service"
           envFrom:
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
           resources:
             requests:
               cpu: "100m"
@@ -102,7 +102,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: permission-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -119,11 +119,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: audit-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: audit-service
     app.kubernetes.io/component: backend
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: spring-boot
 spec:
   replicas: 2
@@ -135,20 +135,20 @@ spec:
       labels:
         app.kubernetes.io/name: audit-service
         app.kubernetes.io/component: backend
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: spring-boot
         app.kubernetes.io/uses-broker: "true"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: audit-service
-          image: quikapp.azurecr.io/audit-service:latest
+          image: quckapp.azurecr.io/audit-service:latest
           ports:
             - name: http
               containerPort: 8080
@@ -158,17 +158,17 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: MONGODB_URI
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: OTEL_SERVICE_NAME
               value: "audit-service"
@@ -207,7 +207,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: audit-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -224,11 +224,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: admin-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: admin-service
     app.kubernetes.io/component: backend
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: spring-boot
 spec:
   replicas: 1
@@ -240,19 +240,19 @@ spec:
       labels:
         app.kubernetes.io/name: admin-service
         app.kubernetes.io/component: backend
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: spring-boot
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
         - name: admin-service
-          image: quikapp.azurecr.io/admin-service:latest
+          image: quckapp.azurecr.io/admin-service:latest
           ports:
             - name: http
               containerPort: 8080
@@ -262,25 +262,25 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://$(POSTGRES_HOST):$(POSTGRES_PORT)/quikapp_admin"
+              value: "jdbc:postgresql://$(POSTGRES_HOST):$(POSTGRES_PORT)/quckapp_admin"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_USERNAME
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_PASSWORD
             - name: OTEL_SERVICE_NAME
               value: "admin-service"
           envFrom:
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
           resources:
             requests:
               cpu: "100m"
@@ -316,7 +316,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: admin-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:

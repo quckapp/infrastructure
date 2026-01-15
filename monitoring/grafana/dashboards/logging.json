@@ -10,7 +10,7 @@
     {
       "gridPos": { "h": 2, "w": 24, "x": 0, "y": 0 },
       "id": 1,
-      "options": { "content": "# Centralized Logging\nLoki logs from all QuikApp microservices", "mode": "markdown" },
+      "options": { "content": "# Centralized Logging\nLoki logs from all QuckApp microservices", "mode": "markdown" },
       "type": "text"
     },
     {
@@ -26,7 +26,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 0, "y": 2 },
       "id": 2,
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(count_over_time({namespace=\"quikapp\"} [1h]))", "refId": "A" }],
+      "targets": [{ "expr": "sum(count_over_time({namespace=\"quckapp\"} [1h]))", "refId": "A" }],
       "title": "Total Logs (1h)",
       "type": "stat"
     },
@@ -43,7 +43,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 4, "y": 2 },
       "id": 3,
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(count_over_time({namespace=\"quikapp\", level=\"error\"} [1h]))", "refId": "A" }],
+      "targets": [{ "expr": "sum(count_over_time({namespace=\"quckapp\", level=\"error\"} [1h]))", "refId": "A" }],
       "title": "Error Logs (1h)",
       "type": "stat"
     },
@@ -60,7 +60,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 8, "y": 2 },
       "id": 4,
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(count_over_time({namespace=\"quikapp\", level=\"warn\"} [1h]))", "refId": "A" }],
+      "targets": [{ "expr": "sum(count_over_time({namespace=\"quckapp\", level=\"warn\"} [1h]))", "refId": "A" }],
       "title": "Warning Logs (1h)",
       "type": "stat"
     },
@@ -77,7 +77,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 12, "y": 2 },
       "id": 5,
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "count(count by (service) (count_over_time({namespace=\"quikapp\"} [5m])))", "refId": "A" }],
+      "targets": [{ "expr": "count(count by (service) (count_over_time({namespace=\"quckapp\"} [5m])))", "refId": "A" }],
       "title": "Services Logging",
       "type": "stat"
     },
@@ -94,7 +94,7 @@
       "gridPos": { "h": 4, "w": 4, "x": 16, "y": 2 },
       "id": 6,
       "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false }, "textMode": "auto" },
-      "targets": [{ "expr": "sum(rate({namespace=\"quikapp\"} [5m])) * 60", "refId": "A" }],
+      "targets": [{ "expr": "sum(rate({namespace=\"quckapp\"} [5m])) * 60", "refId": "A" }],
       "title": "Logs/min",
       "type": "stat"
     },
@@ -118,7 +118,7 @@
       "gridPos": { "h": 6, "w": 12, "x": 0, "y": 6 },
       "id": 7,
       "options": { "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "expr": "sum by (level) (count_over_time({namespace=\"quikapp\"} [$__interval]))", "legendFormat": "{{level}}", "refId": "A" }],
+      "targets": [{ "expr": "sum by (level) (count_over_time({namespace=\"quckapp\"} [$__interval]))", "legendFormat": "{{level}}", "refId": "A" }],
       "title": "Log Volume by Level",
       "type": "timeseries"
     },
@@ -136,7 +136,7 @@
       "gridPos": { "h": 6, "w": 12, "x": 12, "y": 6 },
       "id": 8,
       "options": { "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "expr": "sum by (stack) (count_over_time({namespace=\"quikapp\"} [$__interval]))", "legendFormat": "{{stack}}", "refId": "A" }],
+      "targets": [{ "expr": "sum by (stack) (count_over_time({namespace=\"quckapp\"} [$__interval]))", "legendFormat": "{{stack}}", "refId": "A" }],
       "title": "Log Volume by Stack",
       "type": "timeseries"
     },
@@ -154,7 +154,7 @@
       "gridPos": { "h": 6, "w": 24, "x": 0, "y": 12 },
       "id": 9,
       "options": { "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "right", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "expr": "sum by (service) (count_over_time({namespace=\"quikapp\", level=\"error\"} [$__interval]))", "legendFormat": "{{service}}", "refId": "A" }],
+      "targets": [{ "expr": "sum by (service) (count_over_time({namespace=\"quckapp\", level=\"error\"} [$__interval]))", "legendFormat": "{{service}}", "refId": "A" }],
       "title": "Error Logs by Service",
       "type": "timeseries"
     },
@@ -174,7 +174,7 @@
       },
       "targets": [
         {
-          "expr": "{namespace=\"quikapp\"} |= `$search`",
+          "expr": "{namespace=\"quckapp\"} |= `$search`",
           "refId": "A"
         }
       ],
@@ -191,7 +191,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 31 },
           "id": 21,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", level=\"error\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", level=\"error\"}", "refId": "A" }],
           "title": "Error Logs",
           "type": "logs"
         }
@@ -209,7 +209,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 32 },
           "id": 31,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", stack=\"spring-boot\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", stack=\"spring-boot\"}", "refId": "A" }],
           "title": "Spring Boot Logs",
           "type": "logs"
         }
@@ -227,7 +227,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 33 },
           "id": 41,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", stack=\"nestjs\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", stack=\"nestjs\"}", "refId": "A" }],
           "title": "NestJS Logs",
           "type": "logs"
         }
@@ -245,7 +245,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 34 },
           "id": 51,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", stack=\"elixir\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", stack=\"elixir\"}", "refId": "A" }],
           "title": "Elixir Logs",
           "type": "logs"
         }
@@ -263,7 +263,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 35 },
           "id": 61,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", stack=\"go\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", stack=\"go\"}", "refId": "A" }],
           "title": "Go Logs",
           "type": "logs"
         }
@@ -281,7 +281,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 36 },
           "id": 71,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", stack=\"python\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", stack=\"python\"}", "refId": "A" }],
           "title": "Python Logs",
           "type": "logs"
         }
@@ -299,7 +299,7 @@
           "gridPos": { "h": 10, "w": 24, "x": 0, "y": 37 },
           "id": 81,
           "options": { "dedupStrategy": "none", "enableLogDetails": true, "prettifyLogMessage": true, "showCommonLabels": false, "showLabels": true, "showTime": true, "sortOrder": "Descending", "wrapLogMessage": true },
-          "targets": [{ "expr": "{namespace=\"quikapp\", stack=\"infrastructure\"}", "refId": "A" }],
+          "targets": [{ "expr": "{namespace=\"quckapp\", stack=\"infrastructure\"}", "refId": "A" }],
           "title": "Infrastructure Logs",
           "type": "logs"
         }
@@ -311,7 +311,7 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["quikapp", "logging", "loki"],
+  "tags": ["quckapp", "logging", "loki"],
   "templating": {
     "list": [
       {
@@ -330,7 +330,7 @@
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": {},
   "timezone": "",
-  "title": "QuikApp Logging",
-  "uid": "quikapp-logging",
+  "title": "QuckApp Logging",
+  "uid": "quckapp-logging",
   "version": 1
 }

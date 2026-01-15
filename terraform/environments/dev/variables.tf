@@ -33,7 +33,7 @@ variable "enable_nat_gateway" {
 variable "cors_allowed_origins" {
   description = "Allowed origins for CORS"
   type        = list(string)
-  default     = ["http://localhost:3000", "http://localhost:5173", "https://dev.quikapp.com"]
+  default     = ["http://localhost:3000", "http://localhost:5173", "https://dev.quckapp.com"]
 }
 
 variable "enable_cloudfront" {
@@ -123,13 +123,13 @@ variable "cognito_web_logout_urls" {
 variable "cognito_mobile_callback_urls" {
   description = "Callback URLs for mobile client (deep links)"
   type        = list(string)
-  default     = ["quikapp://callback", "exp://localhost:19000/--/callback"]
+  default     = ["quckapp://callback", "exp://localhost:19000/--/callback"]
 }
 
 variable "cognito_mobile_logout_urls" {
   description = "Logout URLs for mobile client"
   type        = list(string)
-  default     = ["quikapp://logout", "exp://localhost:19000/--/logout"]
+  default     = ["quckapp://logout", "exp://localhost:19000/--/logout"]
 }
 
 # -----------------------------------------------------------------------------

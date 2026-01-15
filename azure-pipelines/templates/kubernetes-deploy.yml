@@ -53,7 +53,7 @@ steps:
       # Update image tags if specified
       if [ -n "${{ parameters.imageTag }}" ]; then
         echo "Updating image tags to ${{ parameters.imageTag }}"
-        kustomize edit set image "quikapp.azurecr.io/*:${{ parameters.imageTag }}"
+        kustomize edit set image "quckapp.azurecr.io/*:${{ parameters.imageTag }}"
       fi
 
       # Build manifests
@@ -66,13 +66,13 @@ steps:
 
   # Update namespace if environment-specific
   - bash: |
-      if [ "${{ parameters.namespace }}" != "quikapp" ]; then
+      if [ "${{ parameters.namespace }}" != "quckapp" ]; then
         echo "Updating namespace to ${{ parameters.namespace }}"
-        sed -i 's/namespace: quikapp/namespace: ${{ parameters.namespace }}/g' \
+        sed -i 's/namespace: quckapp/namespace: ${{ parameters.namespace }}/g' \
           $(Pipeline.Workspace)/manifests/deployment.yaml
       fi
     displayName: 'Update Namespace'
-    condition: ne('${{ parameters.namespace }}', 'quikapp')
+    condition: ne('${{ parameters.namespace }}', 'quckapp')
 
   # Create namespace if not exists
   - task: Kubernetes@1
@@ -89,7 +89,7 @@ steps:
         metadata:
           name: ${{ parameters.namespace }}
           labels:
-            app.kubernetes.io/part-of: quikapp
+            app.kubernetes.io/part-of: quckapp
             environment: ${{ parameters.environment }}
 
   # Deploy manifests

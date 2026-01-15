@@ -19,11 +19,11 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run QA Test Suite'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
-        BASE_URL="https://${{ parameters.serviceName }}.qa.quikapp.io"
+        BASE_URL="https://${{ parameters.serviceName }}.qa.quckapp.io"
         export BASE_URL
         export TEST_ENV="qa"
 

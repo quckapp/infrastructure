@@ -1,5 +1,5 @@
 # =============================================================================
-# QUIKAPP - Grafana Datasources Provisioning
+# QUCKAPP - Grafana Datasources Provisioning
 # =============================================================================
 # Auto-provisions data sources on Grafana startup
 # =============================================================================
@@ -52,9 +52,9 @@ datasources:
     url: http://clickhouse:8123
     editable: false
     jsonData:
-      defaultDatabase: quikapp_analytics
+      defaultDatabase: quckapp_analytics
     secureJsonData:
-      username: quikapp
+      username: quckapp
       password: clickhouse_secret
 
   # PostgreSQL - Application data
@@ -64,11 +64,11 @@ datasources:
     url: postgres:5432
     editable: false
     jsonData:
-      database: quikapp
+      database: quckapp
       sslmode: disable
       maxOpenConns: 5
       maxIdleConns: 5
       connMaxLifetime: 14400
     secureJsonData:
-      user: quikapp
-      password: quikapp_secret
+      user: quckapp
+      password: quckapp_secret

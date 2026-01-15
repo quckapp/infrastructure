@@ -1,13 +1,13 @@
-# QuikApp Staging Environment Values
-# Usage: helm install quikapp ./quikapp -f values-staging.yaml
+# QuckApp Staging Environment Values
+# Usage: helm install quckapp ./quckapp -f values-staging.yaml
 
 global:
   environment: staging
   imagePullPolicy: IfNotPresent
-  namespace: quikapp-staging
-  domain: staging.quikapp.io
+  namespace: quckapp-staging
+  domain: staging.quckapp.io
   tlsEnabled: true
-  tlsSecretName: quikapp-staging-tls
+  tlsSecretName: quckapp-staging-tls
 
   # Moderate resources for staging
   resources:

@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Local Development Environment
+# QuckApp Local Development Environment
 # =============================================================================
 # This Docker Compose setup provides local alternatives to AWS services:
 #
@@ -31,31 +31,31 @@ services:
   # ===========================================================================
   postgres:
     image: postgres:16-alpine
-    container_name: quikapp-postgres
+    container_name: quckapp-postgres
     restart: unless-stopped
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-quikapp}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-quikapp_dev}
-      POSTGRES_DB: ${POSTGRES_DB:-quikapp}
+      POSTGRES_USER: ${POSTGRES_USER:-quckapp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-quckapp_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-quckapp}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-quikapp}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-quckapp}"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # Redis (ElastiCache alternative)
   # ===========================================================================
   redis:
     image: redis:7-alpine
-    container_name: quikapp-redis
+    container_name: quckapp-redis
     restart: unless-stopped
     ports:
       - "${REDIS_PORT:-6379}:6379"
@@ -72,14 +72,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # LocalStack (S3, DynamoDB, SQS, SNS, etc.)
   # ===========================================================================
   localstack:
     image: localstack/localstack:latest
-    container_name: quikapp-localstack
+    container_name: quckapp-localstack
     restart: unless-stopped
     ports:
       - "4566:4566"            # LocalStack Gateway
@@ -101,14 +101,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # MinIO (S3 alternative - optional, use if you prefer over LocalStack S3)
   # ===========================================================================
   minio:
     image: minio/minio:latest
-    container_name: quikapp-minio
+    container_name: quckapp-minio
     restart: unless-stopped
     profiles:
       - minio  # Only starts with: docker-compose --profile minio up
@@ -127,14 +127,14 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # DynamoDB Local (alternative to LocalStack DynamoDB)
   # ===========================================================================
   dynamodb-local:
     image: amazon/dynamodb-local:latest
-    container_name: quikapp-dynamodb
+    container_name: quckapp-dynamodb
     restart: unless-stopped
     profiles:
       - dynamodb  # Only starts with: docker-compose --profile dynamodb up
@@ -144,14 +144,14 @@ services:
     volumes:
       - dynamodb_data:/data
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # Keycloak (Cognito alternative - optional)
   # ===========================================================================
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    container_name: quikapp-keycloak
+    container_name: quckapp-keycloak
     restart: unless-stopped
     profiles:
       - auth  # Only starts with: docker-compose --profile auth up
@@ -161,22 +161,22 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-quikapp}
-      KC_DB_USERNAME: ${POSTGRES_USER:-quikapp}
-      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-quikapp_dev}
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-quckapp}
+      KC_DB_USERNAME: ${POSTGRES_USER:-quckapp}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-quckapp_dev}
     command: start-dev
     depends_on:
       postgres:
         condition: service_healthy
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # MailHog (Email testing)
   # ===========================================================================
   mailhog:
     image: mailhog/mailhog:latest
-    container_name: quikapp-mailhog
+    container_name: quckapp-mailhog
     restart: unless-stopped
     profiles:
       - mail  # Only starts with: docker-compose --profile mail up
@@ -184,14 +184,14 @@ services:
       - "${MAILHOG_SMTP_PORT:-1025}:1025"    # SMTP
       - "${MAILHOG_UI_PORT:-8025}:8025"       # Web UI
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # Adminer (Database UI)
   # ===========================================================================
   adminer:
     image: adminer:latest
-    container_name: quikapp-adminer
+    container_name: quckapp-adminer
     restart: unless-stopped
     profiles:
       - tools  # Only starts with: docker-compose --profile tools up
@@ -202,14 +202,14 @@ services:
     depends_on:
       - postgres
     networks:
-      - quikapp-network
+      - quckapp-network
 
   # ===========================================================================
   # Redis Commander (Redis UI)
   # ===========================================================================
   redis-commander:
     image: rediscommander/redis-commander:latest
-    container_name: quikapp-redis-commander
+    container_name: quckapp-redis-commander
     restart: unless-stopped
     profiles:
       - tools  # Only starts with: docker-compose --profile tools up
@@ -220,27 +220,27 @@ services:
     depends_on:
       - redis
     networks:
-      - quikapp-network
+      - quckapp-network
 
 # =============================================================================
 # Networks
 # =============================================================================
 networks:
-  quikapp-network:
+  quckapp-network:
     driver: bridge
-    name: quikapp-network
+    name: quckapp-network
 
 # =============================================================================
 # Volumes
 # =============================================================================
 volumes:
   postgres_data:
-    name: quikapp-postgres-data
+    name: quckapp-postgres-data
   redis_data:
-    name: quikapp-redis-data
+    name: quckapp-redis-data
   localstack_data:
-    name: quikapp-localstack-data
+    name: quckapp-localstack-data
   minio_data:
-    name: quikapp-minio-data
+    name: quckapp-minio-data
   dynamodb_data:
-    name: quikapp-dynamodb-data
+    name: quckapp-dynamodb-data

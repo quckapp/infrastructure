@@ -195,7 +195,7 @@ variable "sms_monthly_spend_limit" {
 variable "sms_sender_id" {
   description = "Default SMS sender ID (11 alphanumeric characters)"
   type        = string
-  default     = "QuikApp"
+  default     = "QuckApp"
 }
 
 variable "sms_default_type" {

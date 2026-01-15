@@ -30,13 +30,13 @@ Terraform module for creating and managing Azure Key Vault with secrets, keys, c
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-dev"
+  name                = "kv-quckapp"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "dev"
 
   tags = {
-    Application = "QuikApp"
+    Application = "QuckApp"
   }
 }
 ```
@@ -47,7 +47,7 @@ module "keyvault" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-dev"
+  name                = "kv-quckapp"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "dev"
@@ -79,7 +79,7 @@ module "keyvault" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-dev"
+  name                = "kv-quckapp"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "dev"
@@ -110,7 +110,7 @@ module "keyvault" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-prod"
+  name                = "kv-quckapp-prod"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "prod"
@@ -142,7 +142,7 @@ module "keyvault" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-prod"
+  name                = "kv-quckapp-prod"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "prod"
@@ -175,7 +175,7 @@ module "keyvault" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-legacy"
+  name                = "kv-quckapp-legacy"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "dev"
@@ -204,7 +204,7 @@ module "keyvault" {
 module "keyvault" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-prod"
+  name                = "kv-quckapp-prod"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "prod"
@@ -228,7 +228,7 @@ module "keyvault" {
 module "keyvault_prod" {
   source = "./modules/keyvault"
 
-  name                = "kv-quikapp-prod"
+  name                = "kv-quckapp-prod"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   environment         = "prod"
@@ -273,13 +273,13 @@ module "keyvault_prod" {
   # Certificate contacts
   contacts = [
     {
-      email = "security@quikapp.com"
+      email = "security@quckapp.com"
       name  = "Security Team"
     }
   ]
 
   tags = {
-    Application   = "QuikApp"
+    Application   = "QuckApp"
     CostCenter    = "Production"
     DataClass     = "Confidential"
   }
@@ -371,7 +371,7 @@ spec:
     usePodIdentity: "false"
     useVMManagedIdentity: "true"
     userAssignedIdentityID: "<AKS_KUBELET_IDENTITY_CLIENT_ID>"
-    keyvaultName: "kv-quikapp-prod"
+    keyvaultName: "kv-quckapp-prod"
     tenantId: "<TENANT_ID>"
     objects: |
       array:
@@ -411,7 +411,7 @@ spec:
 - name: Get Key Vault Secrets
   uses: Azure/get-keyvault-secrets@v1
   with:
-    keyvault: "kv-quikapp-prod"
+    keyvault: "kv-quckapp-prod"
     secrets: 'jwt-secret, mongodb-connection-string'
   id: keyvault-secrets
 
@@ -425,7 +425,7 @@ spec:
 ```csharp
 // Program.cs
 builder.Configuration.AddAzureKeyVault(
-    new Uri("https://kv-quikapp-prod.vault.azure.net/"),
+    new Uri("https://kv-quckapp-prod.vault.azure.net/"),
     new DefaultAzureCredential());
 ```
 
@@ -437,7 +437,7 @@ const { DefaultAzureCredential } = require("@azure/identity");
 
 const credential = new DefaultAzureCredential();
 const client = new SecretClient(
-  "https://kv-quikapp-prod.vault.azure.net",
+  "https://kv-quckapp-prod.vault.azure.net",
   credential
 );
 
@@ -461,36 +461,36 @@ const secret = await client.getSecret("jwt-secret");
 
 ```bash
 # Check current user/service principal permissions
-az keyvault show --name kv-quikapp-dev --query "properties.enableRbacAuthorization"
+az keyvault show --name kv-quckapp --query "properties.enableRbacAuthorization"
 
 # If using RBAC, check role assignments
 az role assignment list --scope /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.KeyVault/vaults/{kv-name}
 
 # If using access policies, check policies
-az keyvault show --name kv-quikapp-dev --query "properties.accessPolicies"
+az keyvault show --name kv-quckapp --query "properties.accessPolicies"
 ```
 
 ### Private Endpoint DNS Issues
 
 ```bash
 # Verify private endpoint is provisioned
-az network private-endpoint show --name kv-quikapp-prod-pe --resource-group quikapp-prod
+az network private-endpoint show --name kv-quckapp-prod-pe --resource-group quckapp-prod
 
 # Check DNS resolution
-nslookup kv-quikapp-prod.vault.azure.net
+nslookup kv-quckapp-prod.vault.azure.net
 
 # Verify private DNS zone link
-az network private-dns link vnet list --zone-name privatelink.vaultcore.azure.net --resource-group quikapp-prod
+az network private-dns link vnet list --zone-name privatelink.vaultcore.azure.net --resource-group quckapp-prod
 ```
 
 ### Secret Not Found
 
 ```bash
 # List all secrets
-az keyvault secret list --vault-name kv-quikapp-dev --query "[].name"
+az keyvault secret list --vault-name kv-quckapp --query "[].name"
 
 # Check secret exists and is not disabled
-az keyvault secret show --vault-name kv-quikapp-dev --name jwt-secret
+az keyvault secret show --vault-name kv-quckapp --name jwt-secret
 ```
 
 ## License

@@ -1,4 +1,4 @@
-# QuikApp OpenTelemetry Collector Configuration
+# QuckApp OpenTelemetry Collector Configuration
 # Collects traces, metrics, and logs from all microservices
 
 receivers:
@@ -55,7 +55,7 @@ processors:
         value: development
         action: upsert
       - key: service.namespace
-        value: quikapp
+        value: quckapp
         action: upsert
 
   # Attributes processor for trace enrichment
@@ -106,7 +106,7 @@ exporters:
     endpoint: 0.0.0.0:8889
     namespace: otel
     const_labels:
-      collector: quikapp
+      collector: quckapp
 
   # Logging exporter for debugging
   logging:
@@ -117,8 +117,8 @@ exporters:
   # Elasticsearch exporter for traces (optional)
   elasticsearch:
     endpoints: ["http://elasticsearch:9200"]
-    traces_index: quikapp-traces
-    logs_index: quikapp-logs
+    traces_index: quckapp-traces
+    logs_index: quckapp-logs
 
 extensions:
   # Health check extension

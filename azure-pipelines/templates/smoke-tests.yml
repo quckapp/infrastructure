@@ -11,17 +11,17 @@ steps:
   - task: AzureCLI@2
     displayName: 'Run Smoke Tests'
     inputs:
-      azureSubscription: 'QuikApp-${{ parameters.environment }}'
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
         # Determine service URL based on environment
         case "${{ parameters.environment }}" in
           live|production)
-            BASE_URL="https://${{ parameters.serviceName }}.quikapp.io"
+            BASE_URL="https://${{ parameters.serviceName }}.quckapp.io"
             ;;
           *)
-            BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quikapp.io"
+            BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
             ;;
         esac
 

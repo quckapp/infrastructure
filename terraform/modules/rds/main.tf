@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp RDS Module
+# QuckApp RDS Module
 # =============================================================================
 # Creates RDS database infrastructure for:
 # - RDS instances (MySQL, PostgreSQL, MariaDB)
@@ -35,7 +35,7 @@ locals {
     ManagedBy   = "terraform"
   })
 
-  identifier = var.identifier != null ? var.identifier : "quikapp-${var.environment}"
+  identifier = var.identifier != null ? var.identifier : "quckapp-${var.environment}"
 
   # Determine engine family for parameter groups
   engine_family = {

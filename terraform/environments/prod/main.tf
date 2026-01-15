@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Production Environment - AWS S3 Infrastructure
+# QuckApp Production Environment - AWS S3 Infrastructure
 # =============================================================================
 
 terraform {
@@ -26,7 +26,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "QuikApp"
+      Project     = "QuckApp"
       Environment = "prod"
       ManagedBy   = "terraform"
     }
@@ -40,7 +40,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "QuikApp"
+      Project     = "QuckApp"
       Environment = "prod"
       ManagedBy   = "terraform"
       Purpose     = "disaster-recovery"
@@ -55,7 +55,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "QuikApp"
+      Project     = "QuckApp"
       Environment = "prod"
       ManagedBy   = "terraform"
       Purpose     = "lambda-edge"
@@ -710,7 +710,7 @@ module "rds" {
   source = "../../modules/rds"
 
   environment = "prod"
-  identifier  = "quikapp-prod"
+  identifier  = "quckapp-prod"
 
   # Engine - Aurora PostgreSQL for production
   engine         = var.rds_engine
@@ -752,8 +752,8 @@ module "rds" {
   kms_key_arn       = module.kms.s3_media_key_arn
 
   # Database configuration
-  database_name   = "quikapp"
-  master_username = "quikapp_admin"
+  database_name   = "quckapp"
+  master_username = "quckapp_admin"
 
   # Use Secrets Manager for password (recommended)
   manage_master_password = true
@@ -831,7 +831,7 @@ module "rds" {
 
   # Aurora Global Database (optional)
   create_global_cluster        = var.enable_aurora_global
-  global_cluster_identifier    = var.enable_aurora_global ? "quikapp-global" : null
+  global_cluster_identifier    = var.enable_aurora_global ? "quckapp-global" : null
 
   # Updates
   auto_minor_version_upgrade  = true
@@ -862,7 +862,7 @@ module "elasticache" {
   source = "../../modules/elasticache"
 
   environment = "prod"
-  identifier  = "quikapp-prod"
+  identifier  = "quckapp-prod"
 
   # Engine - Redis with replication for production
   engine         = "redis"

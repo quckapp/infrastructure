@@ -35,8 +35,8 @@ parameters:
       - live
 
 variables:
-  - group: QuikApp-Global-Variables
-  - group: QuikApp-NestJS-Variables
+  - group: QuckApp-Global-Variables
+  - group: QuckApp-NestJS-Variables
   - name: techStack
     value: 'nestjs'
 

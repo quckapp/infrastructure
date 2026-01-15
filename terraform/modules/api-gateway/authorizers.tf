@@ -127,7 +127,7 @@ data "aws_iam_policy_document" "api_gateway_assume" {
 resource "aws_iam_role" "api_gateway_cloudwatch" {
   count = var.enable_access_logging ? 1 : 0
 
-  name               = "quikapp-api-gateway-cloudwatch-${var.environment}"
+  name               = "quckapp-api-gateway-cloudwatch-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.api_gateway_assume.json
 
   tags = local.common_tags
@@ -167,7 +167,7 @@ data "aws_iam_policy_document" "lambda_authorizer_assume" {
 resource "aws_iam_role" "lambda_authorizer" {
   count = var.create_lambda_authorizer_role ? 1 : 0
 
-  name               = "quikapp-api-gateway-authorizer-${var.environment}"
+  name               = "quckapp-api-gateway-authorizer-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.lambda_authorizer_assume[0].json
 
   tags = local.common_tags

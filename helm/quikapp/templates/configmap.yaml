@@ -1,13 +1,13 @@
 {{/*
-ConfigMap for QuikApp shared configuration
+ConfigMap for QuckApp shared configuration
 */}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: quikapp-config
+  name: quckapp-config
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 data:
   # Environment
   ENVIRONMENT: {{ .Values.global.environment | quote }}
@@ -86,10 +86,10 @@ ConfigMap for Spring Boot specific configuration
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: quikapp-spring-config
+  name: quckapp-spring-config
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 data:
   application.yml: |
     spring:
@@ -126,12 +126,12 @@ ConfigMap for Elixir specific configuration
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: quikapp-elixir-config
+  name: quckapp-elixir-config
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 data:
   RELEASE_DISTRIBUTION: "name"
   RELEASE_NODE: "${POD_NAME}@${POD_IP}"
-  RELEASE_COOKIE: "quikapp-cookie"
+  RELEASE_COOKIE: "quckapp-cookie"
   ERL_AFLAGS: "-kernel inet_dist_listen_min 4370 -kernel inet_dist_listen_max 4370"

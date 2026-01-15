@@ -8,11 +8,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: user-service
-  namespace: quikapp
+  namespace: quckapp
   labels:
     app.kubernetes.io/name: user-service
     app.kubernetes.io/component: backend
-    app.kubernetes.io/part-of: quikapp
+    app.kubernetes.io/part-of: quckapp
     app.kubernetes.io/technology: spring-boot
 spec:
   replicas: 2
@@ -24,7 +24,7 @@ spec:
       labels:
         app.kubernetes.io/name: user-service
         app.kubernetes.io/component: backend
-        app.kubernetes.io/part-of: quikapp
+        app.kubernetes.io/part-of: quckapp
         app.kubernetes.io/technology: spring-boot
         app.kubernetes.io/uses-broker: "true"
       annotations:
@@ -32,14 +32,14 @@ spec:
         prometheus.io/port: "8080"
         prometheus.io/path: "/actuator/prometheus"
     spec:
-      serviceAccountName: quikapp-backend-sa
+      serviceAccountName: quckapp-backend-sa
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
       containers:
         - name: user-service
-          image: quikapp.azurecr.io/user-service:latest
+          image: quckapp.azurecr.io/user-service:latest
           imagePullPolicy: Always
           ports:
             - name: http
@@ -50,32 +50,32 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-common-config
+                  name: quckapp-common-config
                   key: ENVIRONMENT
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://$(POSTGRES_HOST):$(POSTGRES_PORT)/$(POSTGRES_DATABASE)"
             - name: SPRING_DATASOURCE_USERNAME
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_USERNAME
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: quikapp-database-secrets
+                  name: quckapp-database-secrets
                   key: POSTGRES_PASSWORD
             - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
               valueFrom:
                 configMapKeyRef:
-                  name: quikapp-broker-config
+                  name: quckapp-broker-config
                   key: KAFKA_BROKERS
             - name: OTEL_SERVICE_NAME
               value: "user-service"
           envFrom:
             - configMapRef:
-                name: quikapp-common-config
+                name: quckapp-common-config
             - configMapRef:
-                name: quikapp-database-config
+                name: quckapp-database-config
           resources:
             requests:
               cpu: "200m"
@@ -111,7 +111,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: user-service
-  namespace: quikapp
+  namespace: quckapp
 spec:
   type: ClusterIP
   ports:
@@ -125,7 +125,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: user-service-hpa
-  namespace: quikapp
+  namespace: quckapp
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -145,7 +145,7 @@ apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: user-service-pdb
-  namespace: quikapp
+  namespace: quckapp
 spec:
   minAvailable: 1
   selector:

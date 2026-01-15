@@ -1,5 +1,5 @@
 {{/*
-Network policies for QuikApp microservices
+Network policies for QuckApp microservices
 */}}
 {{- if .Values.networkPolicies.enabled }}
 ---
@@ -7,14 +7,14 @@ Network policies for QuikApp microservices
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-default-deny
+  name: {{ include "quckapp.fullname" . }}-default-deny
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Ingress
     - Egress
@@ -24,14 +24,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-allow-ingress
+  name: {{ include "quckapp.fullname" . }}-allow-ingress
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Ingress
   ingress:
@@ -40,7 +40,7 @@ spec:
         - namespaceSelector:
             matchLabels:
               kubernetes.io/metadata.name: ingress-nginx
-    # Allow from within the quikapp namespace
+    # Allow from within the quckapp namespace
     - from:
         - namespaceSelector:
             matchLabels:
@@ -51,14 +51,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-allow-dns
+  name: {{ include "quckapp.fullname" . }}-allow-dns
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Egress
   egress:
@@ -78,14 +78,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-allow-infrastructure
+  name: {{ include "quckapp.fullname" . }}-allow-infrastructure
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Egress
   egress:
@@ -153,14 +153,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-allow-internal
+  name: {{ include "quckapp.fullname" . }}-allow-internal
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Ingress
     - Egress
@@ -168,26 +168,26 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/part-of: quikapp
+              app.kubernetes.io/part-of: quckapp
   egress:
     - to:
         - podSelector:
             matchLabels:
-              app.kubernetes.io/part-of: quikapp
+              app.kubernetes.io/part-of: quckapp
 
 ---
 # Allow egress to monitoring services
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-allow-monitoring
+  name: {{ include "quckapp.fullname" . }}-allow-monitoring
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Egress
   egress:
@@ -223,14 +223,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "quikapp.fullname" . }}-prometheus-scrape
+  name: {{ include "quckapp.fullname" . }}-prometheus-scrape
   namespace: {{ .Values.global.namespace | default .Release.Namespace }}
   labels:
-    {{- include "quikapp.labels" . | nindent 4 }}
+    {{- include "quckapp.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      app.kubernetes.io/part-of: quikapp
+      app.kubernetes.io/part-of: quckapp
   policyTypes:
     - Ingress
   ingress:

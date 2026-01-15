@@ -1,6 +1,6 @@
-# QuikApp Kubernetes Manifests
+# QuckApp Kubernetes Manifests
 
-This directory contains all Kubernetes manifests for deploying the QuikApp microservices platform.
+This directory contains all Kubernetes manifests for deploying the QuckApp microservices platform.
 
 ## Directory Structure
 
@@ -133,7 +133,7 @@ kubectl apply -f ingress/
 ```bash
 # Set image tags during deployment
 cd overlays/prod
-kustomize edit set image quikapp.azurecr.io/backend-gateway:v1.2.3
+kustomize edit set image quckapp.azurecr.io/backend-gateway:v1.2.3
 kubectl apply -k .
 ```
 
@@ -143,10 +143,10 @@ kubectl apply -k .
 
 ConfigMaps are defined in `base/configmap.yaml`:
 
-- `quikapp-common-config` - Common environment variables
-- `quikapp-database-config` - Database connection settings
-- `quikapp-broker-config` - Kafka/message broker config
-- `quikapp-monitoring-config` - Observability settings
+- `quckapp-common-config` - Common environment variables
+- `quckapp-database-config` - Database connection settings
+- `quckapp-broker-config` - Kafka/message broker config
+- `quckapp-monitoring-config` - Observability settings
 
 ### Secrets
 
@@ -154,24 +154,24 @@ Secrets must be created before deployment:
 
 ```bash
 # Create database secrets
-kubectl create secret generic quikapp-database-secrets \
+kubectl create secret generic quckapp-database-secrets \
   --from-literal=POSTGRES_USERNAME=admin \
   --from-literal=POSTGRES_PASSWORD=<password> \
   --from-literal=REDIS_PASSWORD=<password> \
   --from-literal=MONGODB_URI=<uri> \
-  -n quikapp
+  -n quckapp
 
 # Create JWT secrets
-kubectl create secret generic quikapp-jwt-secrets \
+kubectl create secret generic quckapp-jwt-secrets \
   --from-literal=JWT_SECRET=<secret> \
   --from-literal=JWT_REFRESH_SECRET=<secret> \
-  -n quikapp
+  -n quckapp
 
 # Create encryption secrets
-kubectl create secret generic quikapp-encryption-secrets \
+kubectl create secret generic quckapp-encryption-secrets \
   --from-literal=SECRET_KEY_BASE=<key> \
   --from-literal=ENCRYPTION_KEY=<key> \
-  -n quikapp
+  -n quckapp
 ```
 
 ### Using Azure Key Vault
@@ -180,9 +180,9 @@ The manifests support Azure Key Vault CSI driver:
 
 ```yaml
 # secrets.yaml includes SecretProviderClass for:
-- quikapp-database-secrets
-- quikapp-jwt-secrets
-- quikapp-encryption-secrets
+- quckapp-database-secrets
+- quckapp-jwt-secrets
+- quckapp-encryption-secrets
 ```
 
 ## Networking
@@ -203,17 +203,17 @@ Default policies in `base/network-policies.yaml`:
 
 Three ingress configurations:
 
-1. **API Ingress** (`api.quikapp.io`)
+1. **API Ingress** (`api.quckapp.io`)
    - Routes to backend-gateway
    - Rate limiting enabled
    - CORS configured
 
-2. **WebSocket Ingress** (`ws.quikapp.io`)
+2. **WebSocket Ingress** (`ws.quckapp.io`)
    - Sticky sessions for Socket.io
    - Long timeout for WebSocket
    - Routes to realtime-service
 
-3. **Admin Ingress** (`admin.quikapp.io`)
+3. **Admin Ingress** (`admin.quckapp.io`)
    - IP whitelist protection
    - Basic auth enabled
    - Routes to admin-service
@@ -283,9 +283,9 @@ securityContext:
 
 Three service accounts with different permissions:
 
-- `quikapp-service-account` - Full backend access
-- `quikapp-backend-sa` - Standard backend services
-- `quikapp-worker-sa` - Worker/batch services
+- `quckapp-service-account` - Full backend access
+- `quckapp-backend-sa` - Standard backend services
+- `quckapp-worker-sa` - Worker/batch services
 
 ## Environment Overlays
 
@@ -320,39 +320,39 @@ Three service accounts with different permissions:
 
 **Pods not starting:**
 ```bash
-kubectl describe pod <pod-name> -n quikapp
-kubectl logs <pod-name> -n quikapp --previous
+kubectl describe pod <pod-name> -n quckapp
+kubectl logs <pod-name> -n quckapp --previous
 ```
 
 **Network connectivity:**
 ```bash
-kubectl exec -it <pod-name> -n quikapp -- curl http://service-name/health
+kubectl exec -it <pod-name> -n quckapp -- curl http://service-name/health
 ```
 
 **Resource constraints:**
 ```bash
-kubectl top pods -n quikapp
-kubectl describe quota -n quikapp
+kubectl top pods -n quckapp
+kubectl describe quota -n quckapp
 ```
 
 ### Useful Commands
 
 ```bash
 # Check all resources
-kubectl get all -n quikapp
+kubectl get all -n quckapp
 
 # Watch deployments
-kubectl get deployments -n quikapp -w
+kubectl get deployments -n quckapp -w
 
 # Check HPA status
-kubectl get hpa -n quikapp
+kubectl get hpa -n quckapp
 
 # View network policies
-kubectl get networkpolicies -n quikapp
+kubectl get networkpolicies -n quckapp
 
 # Check ingress status
-kubectl get ingress -n quikapp
-kubectl describe ingress quikapp-api-ingress -n quikapp
+kubectl get ingress -n quckapp
+kubectl describe ingress quckapp-api-ingress -n quckapp
 ```
 
 ## Related Documentation

@@ -1,5 +1,5 @@
 # =============================================================================
-# QuikApp Cognito Module
+# QuckApp Cognito Module
 # =============================================================================
 # Creates Cognito resources for:
 # - User Pool for authentication
@@ -31,7 +31,7 @@ locals {
     ManagedBy   = "terraform"
   })
 
-  user_pool_name = "quikapp-users-${var.environment}"
+  user_pool_name = "quckapp-users-${var.environment}"
 }
 
 # -----------------------------------------------------------------------------
@@ -218,7 +218,7 @@ resource "aws_cognito_user_pool" "main" {
   deletion_protection = var.deletion_protection
 
   tags = merge(local.common_tags, {
-    Name = "QuikApp User Pool"
+    Name = "QuckApp User Pool"
   })
 }
 
@@ -230,7 +230,7 @@ resource "aws_cognito_user_pool" "main" {
 resource "aws_cognito_user_pool_domain" "main" {
   count = var.create_user_pool_domain ? 1 : 0
 
-  domain          = var.user_pool_domain_prefix != null ? var.user_pool_domain_prefix : "quikapp-${var.environment}-${data.aws_caller_identity.current.account_id}"
+  domain          = var.user_pool_domain_prefix != null ? var.user_pool_domain_prefix : "quckapp-${var.environment}-${data.aws_caller_identity.current.account_id}"
   user_pool_id    = aws_cognito_user_pool.main.id
   certificate_arn = var.user_pool_domain_certificate_arn
 }
@@ -321,7 +321,7 @@ data "aws_iam_policy_document" "sms_assume" {
 resource "aws_iam_role" "sms" {
   count = var.create_sms_role ? 1 : 0
 
-  name               = "quikapp-cognito-sms-${var.environment}"
+  name               = "quckapp-cognito-sms-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.sms_assume[0].json
 
   tags = local.common_tags

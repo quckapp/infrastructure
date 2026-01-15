@@ -114,7 +114,7 @@ variable "sms_role_arn" {
 variable "sms_external_id" {
   description = "External ID for SMS role"
   type        = string
-  default     = "quikapp-cognito-sms"
+  default     = "quckapp-cognito-sms"
 }
 
 variable "create_sms_role" {
@@ -366,13 +366,13 @@ variable "create_resource_server" {
 variable "resource_server_identifier" {
   description = "Resource server identifier"
   type        = string
-  default     = "quikapp-api"
+  default     = "quckapp-api"
 }
 
 variable "resource_server_name" {
   description = "Resource server name"
   type        = string
-  default     = "QuikApp API"
+  default     = "QuckApp API"
 }
 
 variable "resource_server_scopes" {
@@ -565,13 +565,13 @@ variable "mobile_oauth_scopes" {
 variable "mobile_callback_urls" {
   description = "Callback URLs for mobile client (deep links)"
   type        = list(string)
-  default     = ["quikapp://callback"]
+  default     = ["quckapp://callback"]
 }
 
 variable "mobile_logout_urls" {
   description = "Logout URLs for mobile client"
   type        = list(string)
-  default     = ["quikapp://logout"]
+  default     = ["quckapp://logout"]
 }
 
 variable "mobile_identity_providers" {
