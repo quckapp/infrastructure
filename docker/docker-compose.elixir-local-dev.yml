@@ -288,7 +288,8 @@ services:
       MIX_ENV: prod
       PORT: 4003
       PHX_HOST: localhost
-      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/realtime_db?authSource=admin
+      # Connect to the same database as NestJS backend-gateway for conversations
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/quckapp-gateway-local?authSource=admin
       REDIS_URL: redis://redis-elixir:6379/0
       REDIS_HOST: redis-elixir
       REDIS_PORT: 6379
