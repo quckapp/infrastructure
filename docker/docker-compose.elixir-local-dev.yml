@@ -1,0 +1,336 @@
+# =============================================================================
+# QUCKAPP - ELIXIR SERVICES (LOCAL DEV MODE)
+# =============================================================================
+# Runs Elixir services using shared Kafka/Elasticsearch from main infrastructure
+# Usage: docker compose -f docker-compose.elixir-local-dev.yml up -d
+# Prerequisites: Main infrastructure must be running (kafka, elasticsearch, etc.)
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # INFRASTRUCTURE (Elixir-specific only - MongoDB & Redis)
+  # ===========================================================================
+
+  mongodb-elixir:
+    image: mongo:7.0
+    container_name: quckapp-mongodb-elixir
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_secret
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_elixir_data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  redis-elixir:
+    image: redis:7-alpine
+    container_name: quckapp-redis-elixir
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6390:6379"
+    volumes:
+      - redis_elixir_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # ELIXIR SERVICES (Using shared Kafka & Elasticsearch)
+  # ===========================================================================
+
+  # Huddle Service
+  huddle-service:
+    image: quckapp-huddle-service:latest
+    container_name: quckapp-huddle-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4005
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/huddle_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/2
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka (same as auth/audit services)
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: huddle-service-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4005:4005"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Event Broadcast Service
+  event-broadcast-service:
+    image: quckapp-event-broadcast-service:latest
+    container_name: quckapp-event-broadcast-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4007
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/event_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/6
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: event-broadcast-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4007:4007"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Message Service (Elixir)
+  message-service-elixir:
+    image: quckapp-message-service:latest
+    container_name: quckapp-message-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4006
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/message_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/4
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: message-service-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4006:4006"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Notification Orchestrator
+  notification-orchestrator:
+    image: quckapp-notification-orchestrator:latest
+    container_name: quckapp-notification-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4004
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/notification_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/5
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: notification-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4004:4004"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Call Service
+  call-service:
+    image: quckapp-call-service:latest
+    container_name: quckapp-call-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4002
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/call_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/1
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: call-service-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4002:4002"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Presence Service
+  presence-service:
+    image: quckapp-presence-service:latest
+    container_name: quckapp-presence-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4000
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/presence_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/3
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: presence-service-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4000:4000"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Realtime Service
+  realtime-service:
+    image: quckapp-realtime-service:latest
+    container_name: quckapp-realtime-local
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4003
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb-elixir:27017/realtime_db?authSource=admin
+      REDIS_URL: redis://redis-elixir:6379/0
+      REDIS_HOST: redis-elixir
+      REDIS_PORT: 6379
+      # Shared Kafka
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_CONSUMER_GROUP: realtime-service-local
+      KAFKA_ENABLED: "true"
+      # Shared Elasticsearch
+      ELASTICSEARCH_URL: http://quckido-elasticsearch:9200
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      # Must match Spring auth-service JWT secret (decoded from Base64)
+      JWT_SECRET: local-dev-secret-key-for-testing-only-32-chars
+      RELEASE_COOKIE: quckapp_local_cookie
+    ports:
+      - "4003:4003"
+    depends_on:
+      mongodb-elixir:
+        condition: service_healthy
+      redis-elixir:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  mongodb_elixir_data:
+    driver: local
+  redis_elixir_data:
+    driver: local
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  quckapp-network:
+    external: true
+    name: quckapp-network
