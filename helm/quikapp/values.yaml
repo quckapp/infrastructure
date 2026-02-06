@@ -376,6 +376,38 @@ adminService:
   autoscaling:
     enabled: false
 
+securityService:
+  enabled: true
+  name: security-service
+  replicaCount: 2
+  image:
+    repository: quckapp/security-service
+    tag: latest
+  service:
+    type: ClusterIP
+    port: 8086
+  ingress:
+    enabled: true
+    path: /api/security
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+  env:
+    SPRING_PROFILES_ACTIVE: kubernetes
+    SERVER_PORT: "8086"
+  healthCheck:
+    path: /api/security/actuator/health
+    port: 8086
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70
+
 # -----------------------------------------------------------------------------
 # Elixir Services
 # -----------------------------------------------------------------------------

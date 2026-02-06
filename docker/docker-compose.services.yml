@@ -632,6 +632,38 @@ services:
     networks:
       - quckapp-network
 
+  # Security Service (Spring Boot) - Threat detection, WAF, audit & compliance
+  security-service:
+    build:
+      context: ../../services/security-service
+      dockerfile: Dockerfile
+    container_name: quckapp-security-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SERVER_PORT: 8086
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/quckapp_security?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-quckapp}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-quckapp_secret}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: redis_secret
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    ports:
+      - "8086:8086"
+    depends_on:
+      - redis
+      - kafka
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/api/security/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 # =============================================================================
 # VOLUMES
 # =============================================================================
