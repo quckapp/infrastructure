@@ -1,0 +1,191 @@
+# =============================================================================
+# Reusable Validation Step Template
+# =============================================================================
+# Runs lint + test for a given tech stack and list of services.
+# Used by both ci-main.yml and pr-validation.yml.
+# =============================================================================
+
+parameters:
+  - name: stack
+    type: string
+    values:
+      - nestjs
+      - springboot
+      - go
+      - elixir
+      - python
+  - name: services
+    type: string
+    default: ''
+
+steps:
+  # ---------------------------------------------------------------------------
+  # NestJS: Node 20 + npm ci + lint + test
+  # ---------------------------------------------------------------------------
+  - ${{ if eq(parameters.stack, 'nestjs') }}:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: 'Install Node.js 20'
+
+    - script: |
+        SERVICES="${{ parameters.services }}"
+        if [ -z "$SERVICES" ]; then
+          echo "No NestJS services specified, skipping."
+          exit 0
+        fi
+        FAILED=0
+        for svc in $SERVICES; do
+          echo "=========================================="
+          echo "  Testing: $svc (NestJS)"
+          echo "=========================================="
+          cd services/$svc
+          npm ci --prefer-offline
+          echo "--- Lint ---"
+          npm run lint 2>&1 || echo "Warning: lint had issues"
+          echo "--- Test ---"
+          npm test -- --passWithNoTests --forceExit || FAILED=1
+          cd ../..
+        done
+        if [ $FAILED -ne 0 ]; then
+          echo "##vso[task.logissue type=error]Some NestJS tests failed"
+          exit 1
+        fi
+      displayName: 'Lint and test NestJS services'
+
+  # ---------------------------------------------------------------------------
+  # Spring Boot: Java 17 + Maven verify
+  # ---------------------------------------------------------------------------
+  - ${{ if eq(parameters.stack, 'springboot') }}:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '17'
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
+      displayName: 'Install Java 17'
+
+    - script: |
+        SERVICES="${{ parameters.services }}"
+        if [ -z "$SERVICES" ]; then
+          echo "No Spring Boot services specified, skipping."
+          exit 0
+        fi
+        FAILED=0
+        for svc in $SERVICES; do
+          echo "=========================================="
+          echo "  Testing: $svc (Spring Boot)"
+          echo "=========================================="
+          cd services/$svc
+          echo "--- Build & Test ---"
+          ./mvnw verify -B -q || FAILED=1
+          cd ../..
+        done
+        if [ $FAILED -ne 0 ]; then
+          echo "##vso[task.logissue type=error]Some Spring Boot tests failed"
+          exit 1
+        fi
+      displayName: 'Build and test Spring Boot services'
+
+  # ---------------------------------------------------------------------------
+  # Go: Go 1.21 + vet + test with race detector
+  # ---------------------------------------------------------------------------
+  - ${{ if eq(parameters.stack, 'go') }}:
+    - task: GoTool@0
+      inputs:
+        version: '1.21'
+      displayName: 'Install Go 1.21'
+
+    - script: |
+        SERVICES="${{ parameters.services }}"
+        if [ -z "$SERVICES" ]; then
+          echo "No Go services specified, skipping."
+          exit 0
+        fi
+        FAILED=0
+        for svc in $SERVICES; do
+          echo "=========================================="
+          echo "  Testing: $svc (Go)"
+          echo "=========================================="
+          cd services/$svc
+          echo "--- Vet ---"
+          go vet ./... || FAILED=1
+          echo "--- Test ---"
+          go test -v -race -count=1 -timeout=5m ./... || FAILED=1
+          cd ../..
+        done
+        if [ $FAILED -ne 0 ]; then
+          echo "##vso[task.logissue type=error]Some Go tests failed"
+          exit 1
+        fi
+      displayName: 'Vet and test Go services'
+
+  # ---------------------------------------------------------------------------
+  # Elixir: mix deps.get + compile + test
+  # ---------------------------------------------------------------------------
+  - ${{ if eq(parameters.stack, 'elixir') }}:
+    - script: |
+        SERVICES="${{ parameters.services }}"
+        if [ -z "$SERVICES" ]; then
+          echo "No Elixir services specified, skipping."
+          exit 0
+        fi
+        FAILED=0
+        for svc in $SERVICES; do
+          echo "=========================================="
+          echo "  Testing: $svc (Elixir)"
+          echo "=========================================="
+          cd services/$svc
+          echo "--- Dependencies ---"
+          mix local.hex --force
+          mix local.rebar --force
+          mix deps.get
+          echo "--- Compile ---"
+          mix compile --warnings-as-errors || FAILED=1
+          echo "--- Test ---"
+          mix test || FAILED=1
+          cd ../..
+        done
+        if [ $FAILED -ne 0 ]; then
+          echo "##vso[task.logissue type=error]Some Elixir tests failed"
+          exit 1
+        fi
+      displayName: 'Compile and test Elixir services'
+
+  # ---------------------------------------------------------------------------
+  # Python: Python 3.12 + pip install + pytest
+  # ---------------------------------------------------------------------------
+  - ${{ if eq(parameters.stack, 'python') }}:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.12'
+      displayName: 'Install Python 3.12'
+
+    - script: |
+        SERVICES="${{ parameters.services }}"
+        if [ -z "$SERVICES" ]; then
+          echo "No Python services specified, skipping."
+          exit 0
+        fi
+        FAILED=0
+        for svc in $SERVICES; do
+          echo "=========================================="
+          echo "  Testing: $svc (Python)"
+          echo "=========================================="
+          cd services/$svc
+          echo "--- Install deps ---"
+          pip install -r requirements.txt -q
+          if [ -f "requirements-dev.txt" ]; then
+            pip install -r requirements-dev.txt -q
+          fi
+          echo "--- Lint ---"
+          pip install ruff -q
+          ruff check . 2>&1 || echo "Warning: lint had issues"
+          echo "--- Test ---"
+          python -m pytest tests/ -v --tb=short || FAILED=1
+          cd ../..
+        done
+        if [ $FAILED -ne 0 ]; then
+          echo "##vso[task.logissue type=error]Some Python tests failed"
+          exit 1
+        fi
+      displayName: 'Lint and test Python services'

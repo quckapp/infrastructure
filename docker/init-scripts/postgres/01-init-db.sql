@@ -204,12 +204,56 @@ CREATE TRIGGER update_conversations_updated_at
 -- Seed Data (for development)
 -- =============================================================================
 
--- Insert test user
+-- Insert test users (5 users with consistent UUIDs across all databases)
 INSERT INTO users (id, email, username, full_name, email_verified, role)
 VALUES
     ('00000000-0000-0000-0000-000000000001', 'admin@quckapp.dev', 'admin', 'Admin User', true, 'admin'),
-    ('00000000-0000-0000-0000-000000000002', 'user@quckapp.dev', 'testuser', 'Test User', true, 'user')
+    ('00000000-0000-0000-0000-000000000002', 'user@quckapp.dev', 'testuser', 'Test User', true, 'user'),
+    ('00000000-0000-0000-0000-000000000003', 'alice@quckapp.dev', 'alice', 'Alice Developer', true, 'user'),
+    ('00000000-0000-0000-0000-000000000004', 'bob@quckapp.dev', 'bob', 'Bob Designer', true, 'moderator'),
+    ('00000000-0000-0000-0000-000000000005', 'bot@quckapp.dev', 'quckbot', 'QuckApp Bot', true, 'user')
 ON CONFLICT (email) DO NOTHING;
+
+-- Conversations
+INSERT INTO conversations (id, type, name, last_message_at) VALUES
+    ('c0000000-0000-0000-0000-000000000001', 'direct', NULL, NOW() - INTERVAL '1 hour'),
+    ('c0000000-0000-0000-0000-000000000002', 'group', 'Project Alpha', NOW() - INTERVAL '30 minutes')
+ON CONFLICT DO NOTHING;
+
+-- Conversation participants
+INSERT INTO conversation_participants (id, conversation_id, user_id, role) VALUES
+    ('cp000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'member'),
+    ('cp000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'member'),
+    ('cp000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'owner'),
+    ('cp000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'member'),
+    ('cp000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', 'member'),
+    ('cp000000-0000-0000-0000-000000000006', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000004', 'member')
+ON CONFLICT DO NOTHING;
+
+-- Sample messages
+INSERT INTO messages (id, conversation_id, sender_id, type, content) VALUES
+    ('m0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'text', 'Hey, how is the project going?'),
+    ('m0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'text', 'Going well! Almost done with the API.'),
+    ('m0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'text', 'Welcome to Project Alpha!'),
+    ('m0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', 'text', 'Thanks! Excited to contribute.'),
+    ('m0000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'text', 'I pushed the initial code to the repo.')
+ON CONFLICT DO NOTHING;
+
+-- Notifications
+INSERT INTO notifications (id, user_id, type, title, body) VALUES
+    ('n0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'message', 'New message from testuser', 'Going well! Almost done with the API.'),
+    ('n0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'mention', 'Admin mentioned you', 'Let us sync up tomorrow.'),
+    ('n0000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000003', 'channel_invite', 'Channel Invitation', 'You were invited to #engineering'),
+    ('n0000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000004', 'workspace_invite', 'Workspace Invitation', 'You were invited to QuckApp Dev'),
+    ('n0000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001', 'system', 'Welcome to QuckApp', 'Your workspace is ready.')
+ON CONFLICT DO NOTHING;
+
+-- Media entries
+INSERT INTO media (id, user_id, type, filename, original_filename, mime_type, size_bytes, s3_key, s3_bucket, status) VALUES
+    ('md000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000003', 'photo', 'design-v2.png', 'design-v2.png', 'image/png', 2048576, 'uploads/2024/01/design-v2.png', 'quckapp-media-dev', 'ready'),
+    ('md000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'document', 'meeting-notes.pdf', 'meeting-notes.pdf', 'application/pdf', 524288, 'uploads/2024/01/meeting-notes.pdf', 'quckapp-media-dev', 'ready'),
+    ('md000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000002', 'video', 'demo.mp4', 'demo-recording.mp4', 'video/mp4', 15728640, 'uploads/2024/01/demo-recording.mp4', 'quckapp-media-dev', 'processing')
+ON CONFLICT DO NOTHING;
 
 -- =============================================================================
 -- Grants

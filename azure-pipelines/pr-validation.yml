@@ -1,0 +1,263 @@
+# =============================================================================
+# QuckApp PR Validation Pipeline
+# =============================================================================
+# Runs on pull requests to main. Detects changed services and runs
+# lint + test for affected stacks only. No Docker build or push.
+# =============================================================================
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - '*.md'
+      - 'docs/**'
+      - '.devcontainer/**'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  # ===========================================================================
+  # Stage 1: Detect Changes
+  # ===========================================================================
+  - stage: Detect_Changes
+    displayName: 'Detect Changed Services'
+    jobs:
+      - job: DetectChanges
+        displayName: 'Analyze PR diff'
+        steps:
+          - checkout: self
+            submodules: true
+            fetchDepth: 0
+
+          - script: |
+              echo "=== Detecting PR changes ==="
+              TARGET_BRANCH="origin/$(System.PullRequest.TargetBranch)"
+              CHANGED=$(git diff --name-only $TARGET_BRANCH...HEAD -- services/ 2>/dev/null || echo "")
+
+              if [ -z "$CHANGED" ]; then
+                echo "No service changes in this PR."
+                echo "##vso[task.setvariable variable=hasChanges;isOutput=true]false"
+                exit 0
+              fi
+
+              echo "##vso[task.setvariable variable=hasChanges;isOutput=true]true"
+
+              NESTJS_CHANGED=""
+              SPRING_CHANGED=""
+              GO_CHANGED=""
+              ELIXIR_CHANGED=""
+              PYTHON_CHANGED=""
+
+              NESTJS_SERVICES="backend-gateway notification-service realtime-service"
+              SPRING_SERVICES="auth-service user-service permission-service audit-service admin-service security-service"
+              GO_SERVICES="workspace-service channel-service thread-service search-service file-service media-service bookmark-service reminder-service attachment-service cdn-service"
+              ELIXIR_SERVICES="presence-service message-service call-service notification-orchestrator huddle-service event-broadcast-service"
+              PYTHON_SERVICES="analytics-service ml-service moderation-service export-service integration-service sentiment-service insights-service smart-reply-service"
+
+              CHANGED_SERVICES=$(echo "$CHANGED" | cut -d'/' -f2 | sort -u)
+
+              for svc in $CHANGED_SERVICES; do
+                if echo "$NESTJS_SERVICES" | grep -qw "$svc"; then
+                  NESTJS_CHANGED="$NESTJS_CHANGED $svc"
+                elif echo "$SPRING_SERVICES" | grep -qw "$svc"; then
+                  SPRING_CHANGED="$SPRING_CHANGED $svc"
+                elif echo "$GO_SERVICES" | grep -qw "$svc"; then
+                  GO_CHANGED="$GO_CHANGED $svc"
+                elif echo "$ELIXIR_SERVICES" | grep -qw "$svc"; then
+                  ELIXIR_CHANGED="$ELIXIR_CHANGED $svc"
+                elif echo "$PYTHON_SERVICES" | grep -qw "$svc"; then
+                  PYTHON_CHANGED="$PYTHON_CHANGED $svc"
+                fi
+              done
+
+              echo "NestJS changed:     $NESTJS_CHANGED"
+              echo "Spring changed:     $SPRING_CHANGED"
+              echo "Go changed:         $GO_CHANGED"
+              echo "Elixir changed:     $ELIXIR_CHANGED"
+              echo "Python changed:     $PYTHON_CHANGED"
+
+              echo "##vso[task.setvariable variable=nestjsChanged;isOutput=true]$NESTJS_CHANGED"
+              echo "##vso[task.setvariable variable=springChanged;isOutput=true]$SPRING_CHANGED"
+              echo "##vso[task.setvariable variable=goChanged;isOutput=true]$GO_CHANGED"
+              echo "##vso[task.setvariable variable=elixirChanged;isOutput=true]$ELIXIR_CHANGED"
+              echo "##vso[task.setvariable variable=pythonChanged;isOutput=true]$PYTHON_CHANGED"
+
+              # Also check for infrastructure/helm changes
+              INFRA_CHANGED=$(git diff --name-only $TARGET_BRANCH...HEAD -- infrastructure/ 2>/dev/null || echo "")
+              HELM_CHANGED=$(echo "$INFRA_CHANGED" | grep -c "helm\|kubernetes\|k8s" || echo "0")
+              echo "##vso[task.setvariable variable=helmChanged;isOutput=true]$HELM_CHANGED"
+            name: changes
+            displayName: 'Detect changed services in PR'
+
+  # ===========================================================================
+  # Stage 2: Validate NestJS
+  # ===========================================================================
+  - stage: Validate_NestJS
+    displayName: 'Validate NestJS Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.nestjsChanged'], '')
+      )
+    jobs:
+      - job: Validate
+        displayName: 'NestJS Lint & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/validate-step.yml
+            parameters:
+              stack: 'nestjs'
+              services: $[ dependencies.Detect_Changes.outputs['DetectChanges.changes.nestjsChanged'] ]
+
+  # ===========================================================================
+  # Stage 3: Validate Spring Boot
+  # ===========================================================================
+  - stage: Validate_SpringBoot
+    displayName: 'Validate Spring Boot Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.springChanged'], '')
+      )
+    jobs:
+      - job: Validate
+        displayName: 'Spring Boot Build & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/validate-step.yml
+            parameters:
+              stack: 'springboot'
+              services: $[ dependencies.Detect_Changes.outputs['DetectChanges.changes.springChanged'] ]
+
+  # ===========================================================================
+  # Stage 4: Validate Go
+  # ===========================================================================
+  - stage: Validate_Go
+    displayName: 'Validate Go Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.goChanged'], '')
+      )
+    jobs:
+      - job: Validate
+        displayName: 'Go Vet & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/validate-step.yml
+            parameters:
+              stack: 'go'
+              services: $[ dependencies.Detect_Changes.outputs['DetectChanges.changes.goChanged'] ]
+
+  # ===========================================================================
+  # Stage 5: Validate Elixir
+  # ===========================================================================
+  - stage: Validate_Elixir
+    displayName: 'Validate Elixir Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.elixirChanged'], '')
+      )
+    jobs:
+      - job: Validate
+        displayName: 'Elixir Compile & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/validate-step.yml
+            parameters:
+              stack: 'elixir'
+              services: $[ dependencies.Detect_Changes.outputs['DetectChanges.changes.elixirChanged'] ]
+
+  # ===========================================================================
+  # Stage 6: Validate Python
+  # ===========================================================================
+  - stage: Validate_Python
+    displayName: 'Validate Python Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.pythonChanged'], '')
+      )
+    jobs:
+      - job: Validate
+        displayName: 'Python Lint & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/validate-step.yml
+            parameters:
+              stack: 'python'
+              services: $[ dependencies.Detect_Changes.outputs['DetectChanges.changes.pythonChanged'] ]
+
+  # ===========================================================================
+  # Stage 7: Validate Helm Charts (if infrastructure changed)
+  # ===========================================================================
+  - stage: Validate_Helm
+    displayName: 'Validate Helm Charts'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        gt(dependencies.Detect_Changes.outputs['DetectChanges.changes.helmChanged'], 0)
+      )
+    jobs:
+      - job: HelmLint
+        displayName: 'Helm Lint & Template'
+        steps:
+          - checkout: self
+            submodules: true
+          - script: |
+              echo "=== Installing Helm ==="
+              curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+              echo "=== Linting Helm charts ==="
+              for chart_dir in infrastructure/kubernetes/helm/*/; do
+                if [ -f "$chart_dir/Chart.yaml" ]; then
+                  chart_name=$(basename "$chart_dir")
+                  echo "--- Linting $chart_name ---"
+                  helm lint "$chart_dir" --strict
+                  echo "--- Template validation $chart_name ---"
+                  helm template "$chart_name" "$chart_dir" > /dev/null
+                fi
+              done
+            displayName: 'Helm lint and template validation'
+
+  # ===========================================================================
+  # Stage 8: PR Summary
+  # ===========================================================================
+  - stage: PR_Summary
+    displayName: 'PR Validation Summary'
+    dependsOn:
+      - Detect_Changes
+      - Validate_NestJS
+      - Validate_SpringBoot
+      - Validate_Go
+      - Validate_Elixir
+      - Validate_Python
+      - Validate_Helm
+    condition: always()
+    jobs:
+      - job: Summary
+        displayName: 'Generate validation summary'
+        steps:
+          - script: |
+              echo "=== PR Validation Summary ==="
+              echo ""
+              echo "All applicable validations have completed."
+              echo "Check individual stage results above for details."
+            displayName: 'Print summary'

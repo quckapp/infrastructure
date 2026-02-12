@@ -853,13 +853,14 @@
 # -----------------------------------------------------------------------------
 # CI Common Variables
 # Variable Group: quckapp-ci-common
-# Used by: docker-ci.yml
+# Used by: ci-main.yml, pr-validation.yml, docker-ci.yml
 # -----------------------------------------------------------------------------
 # variables:
 #   # Azure Container Registry
 #   acrName: 'quckapp'
 #   acrLoginServer: 'quckapp.azurecr.io'
 #   acrServiceConnection: 'quckapp-acr-connection'
+#   ACR_LOGIN_SERVER: 'quckapp.azurecr.io'
 #
 #   # Build defaults
 #   defaultImageTag: 'latest'
@@ -871,6 +872,11 @@
 #
 #   # Caching
 #   enableCaching: 'true'
+#
+#   # CI Pipeline Settings
+#   ciPipelineEnabled: 'true'
+#   prValidationEnabled: 'true'
+#   buildOnlyChanged: 'true'
 
 # -----------------------------------------------------------------------------
 # Spring Boot Build Variables
