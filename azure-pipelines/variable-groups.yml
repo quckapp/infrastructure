@@ -1,0 +1,100 @@
+# =============================================================================
+# Azure DevOps Variable Groups Reference
+# =============================================================================
+# This file documents the variable groups needed in Azure DevOps.
+# Create these manually in Azure DevOps > Pipelines > Library.
+# =============================================================================
+
+# ─── Global Variables (all environments) ─────────────────────────────────────
+# Group: QuckApp-Global
+#   ACR_NAME:           Azure Container Registry name (e.g., acrquckapp)
+#   ACR_LOGIN_SERVER:   ACR login server (e.g., acrquckapp.azurecr.io)
+#   HELM_CHART_PATH:    infrastructure/helm/quikapp
+#   SLACK_WEBHOOK_URL:  Slack webhook for notifications
+
+# ─── Per-Environment Variables ────────────────────────────────────────────────
+# Group: QuckApp-Dev
+#   AKS_CLUSTER_NAME:       aks-quckapp-dev
+#   AKS_RESOURCE_GROUP:     rg-quckapp-dev
+#   AZURE_SUBSCRIPTION:     QuckApp-dev
+#   K8S_NAMESPACE:          quckapp-dev
+#   HELM_VALUES_FILE:       values-development.yaml
+#   APP_URL:                https://api.dev.quckapp.io
+
+# Group: QuckApp-QA
+#   AKS_CLUSTER_NAME:       aks-quckapp-qa
+#   AKS_RESOURCE_GROUP:     rg-quckapp-qa
+#   AZURE_SUBSCRIPTION:     QuckApp-qa
+#   K8S_NAMESPACE:          quckapp-qa
+#   HELM_VALUES_FILE:       values-qa.yaml
+#   APP_URL:                https://api.qa.quckapp.io
+
+# Group: QuckApp-UAT1
+#   AKS_CLUSTER_NAME:       aks-quckapp-uat1
+#   AKS_RESOURCE_GROUP:     rg-quckapp-uat1
+#   AZURE_SUBSCRIPTION:     QuckApp-uat1
+#   K8S_NAMESPACE:          quckapp-uat1
+#   HELM_VALUES_FILE:       values-uat1.yaml
+#   APP_URL:                https://api.uat1.quckapp.io
+
+# Group: QuckApp-UAT2
+#   AKS_CLUSTER_NAME:       aks-quckapp-uat2
+#   AKS_RESOURCE_GROUP:     rg-quckapp-uat2
+#   AZURE_SUBSCRIPTION:     QuckApp-uat2
+#   K8S_NAMESPACE:          quckapp-uat2
+#   HELM_VALUES_FILE:       values-uat2.yaml
+#   APP_URL:                https://api.uat2.quckapp.io
+
+# Group: QuckApp-UAT3
+#   AKS_CLUSTER_NAME:       aks-quckapp-uat3
+#   AKS_RESOURCE_GROUP:     rg-quckapp-uat3
+#   AZURE_SUBSCRIPTION:     QuckApp-uat3
+#   K8S_NAMESPACE:          quckapp-uat3
+#   HELM_VALUES_FILE:       values-uat3.yaml
+#   APP_URL:                https://api.uat3.quckapp.io
+
+# Group: QuckApp-Staging
+#   AKS_CLUSTER_NAME:       aks-quckapp-staging
+#   AKS_RESOURCE_GROUP:     rg-quckapp-staging
+#   AZURE_SUBSCRIPTION:     QuckApp-staging
+#   K8S_NAMESPACE:          quckapp-staging
+#   HELM_VALUES_FILE:       values-staging.yaml
+#   APP_URL:                https://api.staging.quckapp.io
+
+# Group: QuckApp-Prod
+#   AKS_CLUSTER_NAME:       aks-quckapp-prod
+#   AKS_RESOURCE_GROUP:     rg-quckapp-prod
+#   AZURE_SUBSCRIPTION:     QuckApp-prod
+#   K8S_NAMESPACE:          quckapp
+#   HELM_VALUES_FILE:       values-production.yaml
+#   APP_URL:                https://api.quckapp.io
+
+# Group: QuckApp-Live
+#   AKS_CLUSTER_NAME:       aks-quckapp-live
+#   AKS_RESOURCE_GROUP:     rg-quckapp-live
+#   AZURE_SUBSCRIPTION:     QuckApp-live
+#   K8S_NAMESPACE:          quckapp-live
+#   HELM_VALUES_FILE:       values-production.yaml
+#   APP_URL:                https://api.live.quckapp.io
+
+# ─── Azure DevOps Environments (create with approval gates) ──────────────────
+# quckapp-dev         → No approval required
+# quckapp-qa          → Approval: QA Lead
+# quckapp-uat1        → Approval: Product Owner
+# quckapp-uat2        → Approval: Product Owner
+# quckapp-uat3        → Approval: Product Owner + Security Team
+# quckapp-staging     → Approval: Release Manager + DevOps Lead
+# quckapp-production  → Approval: CAB + CTO
+# quckapp-live        → Approval: CAB + CTO + Ops Lead
+
+# ─── Service Connections Required ─────────────────────────────────────────────
+# QuckApp-ACR         → Azure Container Registry service connection
+# QuckApp-dev         → Azure Resource Manager (for dev subscription)
+# QuckApp-qa          → Azure Resource Manager (for qa subscription)
+# QuckApp-uat1        → Azure Resource Manager
+# QuckApp-uat2        → Azure Resource Manager
+# QuckApp-uat3        → Azure Resource Manager
+# QuckApp-staging     → Azure Resource Manager
+# QuckApp-prod        → Azure Resource Manager
+# QuckApp-live        → Azure Resource Manager
+# GitHubServiceConn   → GitHub service connection (for webhook triggers)

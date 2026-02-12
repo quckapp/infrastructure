@@ -1,0 +1,180 @@
+# =============================================================================
+# QuckApp Docker CI - Build All Services (Fallback/Manual)
+# =============================================================================
+# Builds all Docker images and pushes to ACR
+# This is a fallback pipeline - primary CI runs per-service in GitHub Actions
+# =============================================================================
+
+trigger: none
+pr: none
+
+parameters:
+  - name: imageTag
+    displayName: 'Image tag'
+    type: string
+    default: '$(Build.BuildId)'
+  - name: services
+    displayName: 'Services to build (comma-separated or "all")'
+    type: string
+    default: 'all'
+
+variables:
+  - group: QuckApp-Global
+  - name: acrName
+    value: '$(ACR_NAME)'
+
+stages:
+  # ===========================================================================
+  # NestJS Services
+  # ===========================================================================
+  - stage: Build_NestJS
+    displayName: 'Build NestJS Services'
+    jobs:
+      - job: Build
+        strategy:
+          matrix:
+            backend_gateway:
+              serviceName: 'backend-gateway'
+            notification_service:
+              serviceName: 'notification-service'
+            realtime_service:
+              serviceName: 'realtime-service'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/docker-build-nestjs.yml
+            parameters:
+              serviceName: $(serviceName)
+              imageTag: '${{ parameters.imageTag }}'
+
+  # ===========================================================================
+  # Spring Boot Services
+  # ===========================================================================
+  - stage: Build_SpringBoot
+    displayName: 'Build Spring Boot Services'
+    dependsOn: []
+    jobs:
+      - job: Build
+        strategy:
+          matrix:
+            auth_service:
+              serviceName: 'auth-service'
+            user_service:
+              serviceName: 'user-service'
+            permission_service:
+              serviceName: 'permission-service'
+            audit_service:
+              serviceName: 'audit-service'
+            admin_service:
+              serviceName: 'admin-service'
+            security_service:
+              serviceName: 'security-service'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/docker-build-springboot.yml
+            parameters:
+              serviceName: $(serviceName)
+              imageTag: '${{ parameters.imageTag }}'
+
+  # ===========================================================================
+  # Elixir Services
+  # ===========================================================================
+  - stage: Build_Elixir
+    displayName: 'Build Elixir Services'
+    dependsOn: []
+    jobs:
+      - job: Build
+        strategy:
+          matrix:
+            presence_service:
+              serviceName: 'presence-service'
+            message_service:
+              serviceName: 'message-service'
+            call_service:
+              serviceName: 'call-service'
+            notification_orchestrator:
+              serviceName: 'notification-orchestrator'
+            huddle_service:
+              serviceName: 'huddle-service'
+            event_broadcast_service:
+              serviceName: 'event-broadcast-service'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/docker-build-elixir.yml
+            parameters:
+              serviceName: $(serviceName)
+              imageTag: '${{ parameters.imageTag }}'
+
+  # ===========================================================================
+  # Go Services
+  # ===========================================================================
+  - stage: Build_Go
+    displayName: 'Build Go Services'
+    dependsOn: []
+    jobs:
+      - job: Build
+        strategy:
+          matrix:
+            workspace_service:
+              serviceName: 'workspace-service'
+            channel_service:
+              serviceName: 'channel-service'
+            thread_service:
+              serviceName: 'thread-service'
+            search_service:
+              serviceName: 'search-service'
+            file_service:
+              serviceName: 'file-service'
+            media_service:
+              serviceName: 'media-service'
+            bookmark_service:
+              serviceName: 'bookmark-service'
+            reminder_service:
+              serviceName: 'reminder-service'
+            attachment_service:
+              serviceName: 'attachment-service'
+            cdn_service:
+              serviceName: 'cdn-service'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/docker-build-go.yml
+            parameters:
+              serviceName: $(serviceName)
+              imageTag: '${{ parameters.imageTag }}'
+
+  # ===========================================================================
+  # Python Services
+  # ===========================================================================
+  - stage: Build_Python
+    displayName: 'Build Python Services'
+    dependsOn: []
+    jobs:
+      - job: Build
+        strategy:
+          matrix:
+            analytics_service:
+              serviceName: 'analytics-service'
+            ml_service:
+              serviceName: 'ml-service'
+            moderation_service:
+              serviceName: 'moderation-service'
+            export_service:
+              serviceName: 'export-service'
+            integration_service:
+              serviceName: 'integration-service'
+            sentiment_service:
+              serviceName: 'sentiment-service'
+            insights_service:
+              serviceName: 'insights-service'
+            smart_reply_service:
+              serviceName: 'smart-reply-service'
+        steps:
+          - checkout: self
+            submodules: true
+          - template: templates/docker-build-python.yml
+            parameters:
+              serviceName: $(serviceName)
+              imageTag: '${{ parameters.imageTag }}'

@@ -1,0 +1,40 @@
+# =============================================================================
+# Rollback Template
+# =============================================================================
+# Rolls back a Helm release to the previous revision
+
+parameters:
+  - name: environment
+    type: string
+  - name: namespace
+    type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Azure Login & Set AKS Context'
+    inputs:
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az aks get-credentials \
+          --resource-group rg-quckapp-${{ parameters.environment }} \
+          --name aks-quckapp-${{ parameters.environment }} \
+          --overwrite-existing
+
+  - script: |
+      echo "Current Helm release history:"
+      helm history quckapp -n ${{ parameters.namespace }} --max 5
+
+      echo ""
+      echo "Rolling back to previous revision..."
+      helm rollback quckapp 0 -n ${{ parameters.namespace }} --wait --timeout 10m
+
+      echo ""
+      echo "Post-rollback status:"
+      helm status quckapp -n ${{ parameters.namespace }}
+    displayName: 'Helm Rollback'
+
+  - script: |
+      kubectl rollout status deployment -n ${{ parameters.namespace }} --timeout=600s
+    displayName: 'Verify Rollback'

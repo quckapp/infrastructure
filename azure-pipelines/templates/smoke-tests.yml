@@ -1,0 +1,55 @@
+# =============================================================================
+# Post-Deployment Smoke Tests
+# =============================================================================
+
+parameters:
+  - name: namespace
+    type: string
+  - name: environment
+    type: string
+
+steps:
+  - script: |
+      echo "=== Pod Status ==="
+      kubectl get pods -n ${{ parameters.namespace }} --no-headers | head -50
+      echo ""
+      echo "=== Service Endpoints ==="
+      kubectl get svc -n ${{ parameters.namespace }} --no-headers
+      echo ""
+      echo "=== Recent Events ==="
+      kubectl get events -n ${{ parameters.namespace }} --sort-by='.lastTimestamp' | tail -20
+    displayName: 'Cluster Status Check'
+
+  - script: |
+      FAILED=0
+
+      # Check backend-gateway health
+      GATEWAY_IP=$(kubectl get svc backend-gateway -n ${{ parameters.namespace }} -o jsonpath='{.spec.clusterIP}' 2>/dev/null || echo "")
+      if [ -n "$GATEWAY_IP" ]; then
+        echo "Testing backend-gateway at $GATEWAY_IP:3000/health ..."
+        kubectl run smoke-test-gw --rm -it --restart=Never --image=curlimages/curl:latest \
+          -n ${{ parameters.namespace }} \
+          -- curl -sf "http://backend-gateway:3000/health" --max-time 30 \
+          && echo "backend-gateway: PASS" \
+          || { echo "backend-gateway: FAIL"; FAILED=$((FAILED+1)); }
+      else
+        echo "backend-gateway service not found, skipping"
+      fi
+
+      # Check auth-service health
+      AUTH_IP=$(kubectl get svc auth-service -n ${{ parameters.namespace }} -o jsonpath='{.spec.clusterIP}' 2>/dev/null || echo "")
+      if [ -n "$AUTH_IP" ]; then
+        kubectl run smoke-test-auth --rm -it --restart=Never --image=curlimages/curl:latest \
+          -n ${{ parameters.namespace }} \
+          -- curl -sf "http://auth-service:8081/actuator/health" --max-time 30 \
+          && echo "auth-service: PASS" \
+          || { echo "auth-service: FAIL"; FAILED=$((FAILED+1)); }
+      fi
+
+      echo ""
+      echo "Smoke tests completed. Failures: $FAILED"
+      if [ $FAILED -gt 0 ] && [ "${{ parameters.environment }}" = "prod" -o "${{ parameters.environment }}" = "live" ]; then
+        echo "##vso[task.logissue type=warning]$FAILED smoke test(s) failed in ${{ parameters.environment }}"
+      fi
+    displayName: 'Run Smoke Tests'
+    continueOnError: true

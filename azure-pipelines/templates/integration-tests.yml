@@ -1,0 +1,38 @@
+# =============================================================================
+# Integration Test Template
+# =============================================================================
+
+parameters:
+  - name: environment
+    type: string
+  - name: namespace
+    type: string
+
+steps:
+  - script: |
+      echo "Running integration tests for ${{ parameters.environment }}..."
+
+      # Verify core services are responding
+      SERVICES="backend-gateway auth-service user-service permission-service"
+      FAILED=0
+
+      for svc in $SERVICES; do
+        SVC_IP=$(kubectl get svc $svc -n ${{ parameters.namespace }} -o jsonpath='{.spec.clusterIP}' 2>/dev/null || echo "")
+        if [ -n "$SVC_IP" ]; then
+          echo "Testing $svc connectivity..."
+          kubectl run "inttest-${svc}" --rm -it --restart=Never --image=curlimages/curl:latest \
+            -n ${{ parameters.namespace }} \
+            -- curl -sf "http://${svc}:$(kubectl get svc $svc -n ${{ parameters.namespace }} -o jsonpath='{.spec.ports[0].port}')/health" --max-time 30 \
+            && echo "$svc: PASS" \
+            || { echo "$svc: FAIL"; FAILED=$((FAILED+1)); }
+        else
+          echo "$svc: NOT FOUND (skipping)"
+        fi
+      done
+
+      echo ""
+      echo "Integration tests completed. Failures: $FAILED"
+      if [ $FAILED -gt 0 ]; then
+        exit 1
+      fi
+    displayName: 'Run Integration Tests'

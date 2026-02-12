@@ -1,0 +1,96 @@
+# =============================================================================
+# Reusable Helm Deploy Steps
+# =============================================================================
+# Usage:
+#   - template: templates/deploy-steps.yml
+#     parameters:
+#       environment: dev
+#       serviceName: auth-service
+#       imageTag: main-abc1234
+# =============================================================================
+
+parameters:
+  - name: environment
+    type: string
+  - name: serviceName
+    type: string
+    default: ''
+  - name: imageTag
+    type: string
+  - name: helmTimeout
+    type: string
+    default: '15m'
+
+steps:
+  - task: AzureCLI@2
+    displayName: 'Azure Login & Set AKS Context'
+    inputs:
+      azureSubscription: 'QuckApp-${{ parameters.environment }}'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az aks get-credentials \
+          --resource-group rg-quckapp-${{ parameters.environment }} \
+          --name aks-quckapp-${{ parameters.environment }} \
+          --overwrite-existing
+
+  - task: HelmInstaller@1
+    displayName: 'Install Helm'
+    inputs:
+      helmVersionToInstall: '3.13.0'
+
+  - script: |
+      helm repo add bitnami https://charts.bitnami.com/bitnami
+      helm repo add elastic https://helm.elastic.co
+      helm repo add minio https://charts.min.io/
+      helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      helm repo add grafana https://grafana.github.io/helm-charts
+      helm repo update
+    displayName: 'Add Helm Repos'
+
+  - script: |
+      helm dependency build infrastructure/helm/quikapp
+    displayName: 'Build Helm Dependencies'
+
+  - script: |
+      ENV="${{ parameters.environment }}"
+      case $ENV in
+        prod) NAMESPACE="quckapp"; VALUES_FILE="values-production.yaml" ;;
+        live) NAMESPACE="quckapp-live"; VALUES_FILE="values-production.yaml" ;;
+        dev)  NAMESPACE="quckapp-dev"; VALUES_FILE="values-development.yaml" ;;
+        *)    NAMESPACE="quckapp-${ENV}"; VALUES_FILE="values-${ENV}.yaml" ;;
+      esac
+
+      kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+
+      HELM_SET_ARGS=""
+      if [ -n "${{ parameters.serviceName }}" ]; then
+        # Deploy single service - set only that service's image tag
+        SVC_KEY=$(echo "${{ parameters.serviceName }}" | sed 's/-/_/g' | sed 's/_s/S/;s/_s/S/;s/_o/O/;s/_b/B/')
+        HELM_SET_ARGS="--set ${SVC_KEY}.image.tag=${{ parameters.imageTag }}"
+      else
+        # Deploy all - set global image tag
+        HELM_SET_ARGS="--set global.imageTag=${{ parameters.imageTag }}"
+      fi
+
+      helm upgrade --install quckapp infrastructure/helm/quikapp \
+        --namespace $NAMESPACE \
+        --values infrastructure/helm/quikapp/${VALUES_FILE} \
+        --set global.imageRegistry=$(ACR_LOGIN_SERVER)/quckapp \
+        --set global.imagePullPolicy=Always \
+        $HELM_SET_ARGS \
+        --timeout ${{ parameters.helmTimeout }} \
+        --wait \
+        --atomic
+
+      echo "##vso[task.setvariable variable=namespace]$NAMESPACE"
+    displayName: 'Deploy with Helm'
+
+  - script: |
+      kubectl rollout status deployment -n $(namespace) --timeout=600s || true
+    displayName: 'Wait for Rollout'
+
+  - template: smoke-tests.yml
+    parameters:
+      namespace: $(namespace)
+      environment: ${{ parameters.environment }}

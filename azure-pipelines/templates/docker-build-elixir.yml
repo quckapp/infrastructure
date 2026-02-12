@@ -1,0 +1,23 @@
+# =============================================================================
+# Docker Build Template - Elixir Services
+# =============================================================================
+
+parameters:
+  - name: serviceName
+    type: string
+  - name: imageTag
+    type: string
+    default: '$(Build.BuildId)'
+
+steps:
+  - task: Docker@2
+    displayName: 'Build ${{ parameters.serviceName }}'
+    inputs:
+      containerRegistry: 'QuckApp-ACR'
+      repository: 'quckapp/${{ parameters.serviceName }}'
+      command: buildAndPush
+      Dockerfile: 'services/${{ parameters.serviceName }}/Dockerfile'
+      buildContext: 'services/${{ parameters.serviceName }}'
+      tags: |
+        ${{ parameters.imageTag }}
+        latest
