@@ -1,0 +1,118 @@
+# QuckApp Loki Log-Based Alert Rules
+# Evaluated by the Loki ruler component, forwarded to Alertmanager
+
+groups:
+  # ============================================
+  # Error Rate Alerts
+  # ============================================
+  - name: log_error_rates
+    rules:
+      - alert: HighErrorLogRate
+        expr: |
+          sum(rate({namespace="quckapp"} |= "ERROR" [5m])) by (service) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High error log rate on {{ $labels.service }}"
+          description: "{{ $labels.service }} is producing more than 5 error logs per second over the last 5 minutes."
+
+      - alert: CriticalErrorLogRate
+        expr: |
+          sum(rate({namespace="quckapp"} |= "ERROR" [5m])) by (service) > 20
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical error log rate on {{ $labels.service }}"
+          description: "{{ $labels.service }} is producing more than 20 error logs per second. Immediate investigation required."
+
+  # ============================================
+  # Fatal / Panic Detection
+  # ============================================
+  - name: log_fatal_detection
+    rules:
+      - alert: PanicDetected
+        expr: |
+          sum(count_over_time({namespace="quckapp"} |~ "(?i)(panic|fatal|PANIC|FATAL)" [5m])) by (service) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Panic/Fatal detected in {{ $labels.service }}"
+          description: "{{ $labels.service }} has logged a panic or fatal error. Service may be crashing."
+
+      - alert: OutOfMemoryDetected
+        expr: |
+          sum(count_over_time({namespace="quckapp"} |~ "(?i)(out of memory|OOM|oom-kill|OutOfMemoryError|runtime: out of memory)" [5m])) by (service) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "OOM detected in {{ $labels.service }}"
+          description: "{{ $labels.service }} has logged an out-of-memory condition. Check resource limits."
+
+  # ============================================
+  # Authentication & Security
+  # ============================================
+  - name: log_security
+    rules:
+      - alert: AuthenticationFailureSpike
+        expr: |
+          sum(count_over_time({service="auth-service"} |~ "(?i)(authentication failed|invalid credentials|unauthorized|login failed)" [5m])) > 50
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Authentication failure spike detected"
+          description: "More than 50 authentication failures in the last 5 minutes. Possible brute-force attack."
+
+      - alert: PermissionDeniedSpike
+        expr: |
+          sum(count_over_time({namespace="quckapp"} |~ "(?i)(permission denied|access denied|forbidden|403)" [5m])) by (service) > 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Permission denied spike on {{ $labels.service }}"
+          description: "{{ $labels.service }} is reporting many permission denied events. Check for misconfigured access."
+
+  # ============================================
+  # Database Connection Issues
+  # ============================================
+  - name: log_database
+    rules:
+      - alert: DatabaseConnectionErrors
+        expr: |
+          sum(count_over_time({namespace="quckapp"} |~ "(?i)(connection refused|connection reset|connection timed out|dial tcp.*connect)" [5m])) by (service) > 5
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection errors in {{ $labels.service }}"
+          description: "{{ $labels.service }} is experiencing database connection failures. Check database health."
+
+      - alert: SlowQueryWarning
+        expr: |
+          sum(count_over_time({namespace="quckapp"} |~ "(?i)(slow query|query.*exceeded.*timeout|long running query)" [5m])) by (service) > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow queries detected in {{ $labels.service }}"
+          description: "{{ $labels.service }} is reporting slow queries. Review query performance."
+
+  # ============================================
+  # Service Availability
+  # ============================================
+  - name: log_availability
+    rules:
+      - alert: NoLogsFromService
+        expr: |
+          sum(count_over_time({namespace="quckapp"}[15m])) by (service) == 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "No logs from {{ $labels.service }}"
+          description: "{{ $labels.service }} has not produced any logs in 15 minutes. Service may be down or log shipping broken."

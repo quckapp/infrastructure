@@ -118,6 +118,10 @@ scrape_configs:
         labels:
           service: 'admin-service'
           stack: 'spring-boot'
+      - targets: ['security-service:8086']
+        labels:
+          service: 'security-service'
+          stack: 'spring-boot'
 
   # ============================================
   # NestJS Services (Prometheus Metrics)

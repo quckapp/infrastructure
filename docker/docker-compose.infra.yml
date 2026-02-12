@@ -1,7 +1,8 @@
 # =============================================================================
 # QUCKAPP INFRASTRUCTURE - DOCKER COMPOSE
 # =============================================================================
-# Local development infrastructure: databases, message brokers, caching
+# Local development infrastructure: databases, message brokers, caching, storage.
+# Monitoring stack (Prometheus, Grafana, etc.) is in docker-compose.monitoring.yml.
 # =============================================================================
 
 services:
@@ -216,62 +217,6 @@ services:
     networks:
       - quckapp-network
 
-  # ===========================================================================
-  # MONITORING
-  # ===========================================================================
-
-  # Prometheus - Metrics collection
-  prometheus:
-    image: prom/prometheus:v2.47.0
-    container_name: quckapp-prometheus
-    restart: unless-stopped
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.enable-lifecycle'
-    ports:
-      - "${PROMETHEUS_PORT:-9090}:9090"
-    volumes:
-      - ./config/prometheus:/etc/prometheus:ro
-      - prometheus_data:/prometheus
-    networks:
-      - quckapp-network
-
-  # Grafana - Metrics visualization
-  grafana:
-    image: grafana/grafana:10.2.0
-    container_name: quckapp-grafana
-    restart: unless-stopped
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    ports:
-      - "${GRAFANA_PORT:-3030}:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
-    depends_on:
-      - prometheus
-    networks:
-      - quckapp-network
-
-  # Jaeger - Distributed tracing
-  jaeger:
-    image: jaegertracing/all-in-one:1.50
-    container_name: quckapp-jaeger
-    restart: unless-stopped
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
-    ports:
-      - "${JAEGER_UI_PORT:-16686}:16686"
-      - "4317:4317"   # OTLP gRPC
-      - "4318:4318"   # OTLP HTTP
-      - "14268:14268" # Jaeger HTTP
-      - "6831:6831/udp" # Jaeger compact thrift
-    networks:
-      - quckapp-network
-
 # =============================================================================
 # VOLUMES
 # =============================================================================
@@ -293,10 +238,6 @@ volumes:
   kafka_data:
     driver: local
   minio_data:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
     driver: local
 
 # =============================================================================

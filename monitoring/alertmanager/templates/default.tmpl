@@ -1,0 +1,154 @@
+{{/* QuckApp Alertmanager Notification Templates */}}
+
+{{/* ============================================ */}}
+{{/* Common Helpers                               */}}
+{{/* ============================================ */}}
+
+{{/* Alert title: [SEVERITY] AlertName - Service */}}
+{{ define "quckapp.title" }}
+  {{- if eq .Status "firing" -}}
+    [{{ .CommonLabels.severity | toUpper }}] {{ .CommonLabels.alertname }}
+    {{- if .CommonLabels.service }} - {{ .CommonLabels.service }}{{ end -}}
+  {{- else -}}
+    [RESOLVED] {{ .CommonLabels.alertname }}
+    {{- if .CommonLabels.service }} - {{ .CommonLabels.service }}{{ end -}}
+  {{- end -}}
+{{ end }}
+
+{{/* Short description from first alert */}}
+{{ define "quckapp.description" }}
+  {{- if gt (len .Alerts.Firing) 0 -}}
+    {{ (index .Alerts.Firing 0).Annotations.summary }}
+  {{- else -}}
+    {{ (index .Alerts.Resolved 0).Annotations.summary }}
+  {{- end -}}
+{{ end }}
+
+{{/* ============================================ */}}
+{{/* Slack Templates                              */}}
+{{/* ============================================ */}}
+
+{{ define "quckapp.slack.color" }}
+  {{- if eq .Status "firing" -}}
+    {{- if eq .CommonLabels.severity "critical" -}}
+      danger
+    {{- else if eq .CommonLabels.severity "warning" -}}
+      warning
+    {{- else -}}
+      #439FE0
+    {{- end -}}
+  {{- else -}}
+    good
+  {{- end -}}
+{{ end }}
+
+{{ define "quckapp.slack.title" }}
+  {{- template "quckapp.title" . -}}
+{{ end }}
+
+{{ define "quckapp.slack.text" }}
+*Status:* {{ if eq .Status "firing" }}:fire: Firing{{ else }}:white_check_mark: Resolved{{ end }}
+*Severity:* {{ .CommonLabels.severity }}
+{{- if .CommonLabels.service }}
+*Service:* {{ .CommonLabels.service }}
+{{- end }}
+{{- if .CommonLabels.stack }}
+*Stack:* {{ .CommonLabels.stack }}
+{{- end }}
+
+{{ range .Alerts }}
+---
+*Alert:* {{ .Labels.alertname }}
+*Summary:* {{ .Annotations.summary }}
+{{- if .Annotations.description }}
+*Description:* {{ .Annotations.description }}
+{{- end }}
+*Since:* {{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}
+{{- if .EndsAt.IsZero | not }}
+{{- if eq $.Status "resolved" }}
+*Resolved:* {{ .EndsAt.Format "2006-01-02 15:04:05 UTC" }}
+{{- end }}
+{{- end }}
+{{ end }}
+
+:chart_with_upwards_trend: <http://localhost:3030/d/quckapp-overview|Grafana Dashboard>
+:bell: <http://localhost:9093/#/alerts|Alertmanager>
+{{ end }}
+
+{{/* ============================================ */}}
+{{/* Email Templates                              */}}
+{{/* ============================================ */}}
+
+{{ define "quckapp.email.subject" }}
+  {{- template "quckapp.title" . -}}
+{{ end }}
+
+{{ define "quckapp.email.html" }}
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .header { padding: 20px; color: #fff; }
+    .header.critical { background: #dc3545; }
+    .header.warning { background: #ffc107; color: #333; }
+    .header.resolved { background: #28a745; }
+    .header.info { background: #17a2b8; }
+    .header h2 { margin: 0; font-size: 18px; }
+    .body { padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th { text-align: left; padding: 8px 12px; background: #f8f9fa; border-bottom: 2px solid #dee2e6; font-size: 13px; color: #495057; }
+    td { padding: 8px 12px; border-bottom: 1px solid #dee2e6; font-size: 13px; }
+    .severity-critical { color: #dc3545; font-weight: bold; }
+    .severity-warning { color: #856404; font-weight: bold; }
+    .footer { padding: 15px 20px; background: #f8f9fa; font-size: 12px; color: #6c757d; text-align: center; }
+    .footer a { color: #007bff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header {{ if eq .Status "resolved" }}resolved{{ else }}{{ .CommonLabels.severity }}{{ end }}">
+      <h2>{{ template "quckapp.title" . }}</h2>
+    </div>
+    <div class="body">
+      <table>
+        <tr><th>Status</th><td>{{ if eq .Status "firing" }}Firing{{ else }}Resolved{{ end }}</td></tr>
+        <tr><th>Severity</th><td class="severity-{{ .CommonLabels.severity }}">{{ .CommonLabels.severity }}</td></tr>
+        {{- if .CommonLabels.service }}
+        <tr><th>Service</th><td>{{ .CommonLabels.service }}</td></tr>
+        {{- end }}
+        {{- if .CommonLabels.stack }}
+        <tr><th>Stack</th><td>{{ .CommonLabels.stack }}</td></tr>
+        {{- end }}
+        <tr><th>Alerts</th><td>{{ .Alerts | len }} alert(s)</td></tr>
+      </table>
+
+      {{ range .Alerts }}
+      <h3 style="margin: 15px 0 5px;">{{ .Labels.alertname }}</h3>
+      <table>
+        <tr><th>Summary</th><td>{{ .Annotations.summary }}</td></tr>
+        {{- if .Annotations.description }}
+        <tr><th>Description</th><td>{{ .Annotations.description }}</td></tr>
+        {{- end }}
+        <tr><th>Started</th><td>{{ .StartsAt.Format "2006-01-02 15:04:05 UTC" }}</td></tr>
+        {{- if eq $.Status "resolved" }}
+        <tr><th>Resolved</th><td>{{ .EndsAt.Format "2006-01-02 15:04:05 UTC" }}</td></tr>
+        {{- end }}
+        {{- range .Labels.SortedPairs }}
+        {{- if and (ne .Name "alertname") (ne .Name "severity") }}
+        <tr><th>{{ .Name }}</th><td>{{ .Value }}</td></tr>
+        {{- end }}
+        {{- end }}
+      </table>
+      {{ end }}
+    </div>
+    <div class="footer">
+      <a href="http://localhost:3030/d/quckapp-overview">Grafana Dashboard</a> |
+      <a href="http://localhost:9093/#/alerts">Alertmanager</a> |
+      QuckApp Monitoring
+    </div>
+  </div>
+</body>
+</html>
+{{ end }}
