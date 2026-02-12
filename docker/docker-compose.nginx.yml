@@ -1,0 +1,70 @@
+# =============================================================================
+# QUCKAPP NGINX REVERSE PROXY - DOCKER COMPOSE
+# =============================================================================
+# Nginx reverse proxy and Prometheus metrics exporter.
+# Usage: docker compose -f docker-compose.infra.yml -f docker-compose.nginx.yml up -d
+# Requires: docker-compose.infra.yml (databases, message brokers) running first.
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # NGINX Reverse Proxy
+  # ===========================================================================
+  nginx:
+    build:
+      context: ../nginx
+      dockerfile: Dockerfile
+    container_name: quckapp-nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_HTTP_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+      - "8080:8080"  # Metrics stub_status
+    volumes:
+      # Mount config for hot-reloading during development
+      - ../nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/conf.d:/etc/nginx/conf.d:ro
+      - ../nginx/ssl:/etc/nginx/ssl:ro
+      # Persistent cache and logs
+      - nginx_cache:/var/cache/nginx/proxy_cache
+      - nginx_logs:/var/log/nginx
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # NGINX Prometheus Exporter
+  # ===========================================================================
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:0.11.0
+    container_name: quckapp-nginx-exporter
+    restart: unless-stopped
+    command:
+      - '-nginx.scrape-uri=http://nginx:8080/stub_status'
+    ports:
+      - "${NGINX_EXPORTER_PORT:-9113}:9113"
+    depends_on:
+      nginx:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  nginx_cache:
+    driver: local
+  nginx_logs:
+    driver: local
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  quckapp-network:
+    external: true

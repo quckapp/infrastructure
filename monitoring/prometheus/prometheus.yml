@@ -46,6 +46,16 @@ scrape_configs:
           service: 'cadvisor'
 
   # ============================================
+  # Nginx Reverse Proxy
+  # ============================================
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+        labels:
+          service: 'nginx'
+          component: 'reverse-proxy'
+
+  # ============================================
   # Database Exporters
   # ============================================
   - job_name: 'redis-exporter'
