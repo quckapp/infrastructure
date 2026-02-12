@@ -9,10 +9,16 @@ trigger: none
 
 pr: none
 
+pool:
+  vmImage: 'ubuntu-latest'
+
 resources:
   repositories:
-    - repository: self
-      type: git
+    - repository: github-repo
+      type: github
+      endpoint: 'GitHubServiceConn'
+      name: 'quckapp/quckapp'
+      ref: 'refs/heads/main'
 
 parameters:
   - name: serviceName
@@ -75,7 +81,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -102,7 +108,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -133,7 +139,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -160,7 +166,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -187,7 +193,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -217,7 +223,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -249,7 +255,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
@@ -277,7 +283,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - checkout: self
+                - checkout: github-repo
                   submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:

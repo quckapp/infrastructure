@@ -1,6 +1,10 @@
 # =============================================================================
 # Azure DevOps Variable Groups Reference
 # =============================================================================
+# Organization: AtomiverX
+# Project:      QuckApp
+# Portal:       https://dev.azure.com/AtomiverX/QuckApp
+#
 # This file documents the variable groups needed in Azure DevOps.
 # Create these manually in Azure DevOps > Pipelines > Library.
 # =============================================================================

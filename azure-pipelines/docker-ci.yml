@@ -8,6 +8,17 @@
 trigger: none
 pr: none
 
+pool:
+  vmImage: 'ubuntu-latest'
+
+resources:
+  repositories:
+    - repository: github-repo
+      type: github
+      endpoint: 'GitHubServiceConn'
+      name: 'quckapp/quckapp'
+      ref: 'refs/heads/main'
+
 parameters:
   - name: imageTag
     displayName: 'Image tag'
@@ -40,7 +51,7 @@ stages:
             realtime_service:
               serviceName: 'realtime-service'
         steps:
-          - checkout: self
+          - checkout: github-repo
             submodules: true
           - template: templates/docker-build-nestjs.yml
             parameters:
@@ -70,7 +81,7 @@ stages:
             security_service:
               serviceName: 'security-service'
         steps:
-          - checkout: self
+          - checkout: github-repo
             submodules: true
           - template: templates/docker-build-springboot.yml
             parameters:
@@ -100,7 +111,7 @@ stages:
             event_broadcast_service:
               serviceName: 'event-broadcast-service'
         steps:
-          - checkout: self
+          - checkout: github-repo
             submodules: true
           - template: templates/docker-build-elixir.yml
             parameters:
@@ -138,7 +149,7 @@ stages:
             cdn_service:
               serviceName: 'cdn-service'
         steps:
-          - checkout: self
+          - checkout: github-repo
             submodules: true
           - template: templates/docker-build-go.yml
             parameters:
@@ -172,7 +183,7 @@ stages:
             smart_reply_service:
               serviceName: 'smart-reply-service'
         steps:
-          - checkout: self
+          - checkout: github-repo
             submodules: true
           - template: templates/docker-build-python.yml
             parameters:
