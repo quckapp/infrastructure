@@ -1,0 +1,434 @@
+# =============================================================================
+# QUCKAPP - GO SERVICES DOCKER COMPOSE
+# =============================================================================
+# Base configuration for all Go microservices
+# Usage: docker-compose -f docker-compose.go-services.yml --env-file .env.local up
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # ATTACHMENT SERVICE
+  # ===========================================================================
+  attachment-service:
+    build:
+      context: ../../services/attachment-service
+      dockerfile: Dockerfile
+    image: quckapp/attachment-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-attachment-service
+    restart: unless-stopped
+    ports:
+      - "${ATTACHMENT_SERVICE_PORT:-5008}:5008"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5008
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Database
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-local_mongo_secret}@${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DB:-quckapp}?authSource=admin
+      - MONGO_DB=${MONGO_DB:-quckapp}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # S3/MinIO
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:9010}
+      - S3_BUCKET=${S3_BUCKET:-quckapp-attachments}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-minioadmin123}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # ===========================================================================
+  # BOOKMARK SERVICE
+  # ===========================================================================
+  bookmark-service:
+    build:
+      context: ../../services/bookmark-service
+      dockerfile: Dockerfile
+    image: quckapp/bookmark-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-bookmark-service
+    restart: unless-stopped
+    ports:
+      - "${BOOKMARK_SERVICE_PORT:-5006}:5006"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5006
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Database (MySQL)
+      - DB_HOST=${MYSQL_HOST:-localhost}
+      - DB_PORT=${MYSQL_PORT:-3306}
+      - DB_USER=${MYSQL_USER:-quckapp}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-local_mysql_secret}
+      - DB_NAME=${MYSQL_DB:-quckapp_bookmarks}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  # ===========================================================================
+  # CDN SERVICE
+  # ===========================================================================
+  cdn-service:
+    build:
+      context: ../../services/cdn-service
+      dockerfile: Dockerfile
+    image: quckapp/cdn-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-cdn-service
+    restart: unless-stopped
+    ports:
+      - "${CDN_SERVICE_PORT:-5009}:5009"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5009
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Redis (caching)
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # S3/MinIO
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:9010}
+      - S3_BUCKET=${S3_BUCKET:-quckapp-cdn}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-minioadmin123}
+      # CDN Config
+      - CDN_URL=${CDN_URL:-http://localhost:5009}
+      - CACHE_TTL=${CDN_CACHE_TTL:-3600}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5009/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # ===========================================================================
+  # FILE SERVICE
+  # ===========================================================================
+  file-service:
+    build:
+      context: ../../services/file-service
+      dockerfile: Dockerfile
+    image: quckapp/file-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-file-service
+    restart: unless-stopped
+    ports:
+      - "${FILE_SERVICE_PORT:-5003}:5003"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5003
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Database
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-local_mongo_secret}@${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DB:-quckapp}?authSource=admin
+      - MONGO_DB=${MONGO_DB:-quckapp}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # S3/MinIO
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:9010}
+      - S3_BUCKET=${S3_BUCKET:-quckapp-files}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-minioadmin123}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # File limits
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE:-104857600}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # ===========================================================================
+  # MEDIA SERVICE
+  # ===========================================================================
+  media-service:
+    build:
+      context: ../../services/media-service
+      dockerfile: Dockerfile
+    image: quckapp/media-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-media-service
+    restart: unless-stopped
+    ports:
+      - "${MEDIA_SERVICE_PORT:-5004}:5004"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5004
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Database
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-local_mongo_secret}@${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DB:-quckapp}?authSource=admin
+      - MONGO_DB=${MONGO_DB:-quckapp}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # S3/MinIO
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:9010}
+      - S3_BUCKET=${S3_BUCKET:-quckapp-media}
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-minioadmin}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-minioadmin123}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Media processing
+      - FFMPEG_PATH=/usr/bin/ffmpeg
+      - IMAGE_QUALITY=${IMAGE_QUALITY:-85}
+      - THUMBNAIL_SIZE=${THUMBNAIL_SIZE:-256}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  # ===========================================================================
+  # REMINDER SERVICE
+  # ===========================================================================
+  reminder-service:
+    build:
+      context: ../../services/reminder-service
+      dockerfile: Dockerfile
+    image: quckapp/reminder-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-reminder-service
+    restart: unless-stopped
+    ports:
+      - "${REMINDER_SERVICE_PORT:-5007}:5007"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5007
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Database
+      - MONGO_URI=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-local_mongo_secret}@${MONGO_HOST:-mongodb}:${MONGO_PORT:-27017}/${MONGO_DB:-quckapp}?authSource=admin
+      - MONGO_DB=${MONGO_DB:-quckapp}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Scheduler
+      - SCHEDULER_INTERVAL=${SCHEDULER_INTERVAL:-60}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ===========================================================================
+  # SEARCH SERVICE
+  # ===========================================================================
+  search-service:
+    build:
+      context: ../../services/search-service
+      dockerfile: Dockerfile
+    image: quckapp/search-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-search-service
+    restart: unless-stopped
+    ports:
+      - "${SEARCH_SERVICE_PORT:-5005}:5005"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5005
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Elasticsearch
+      - ELASTICSEARCH_URL=http://${ELASTICSEARCH_HOST:-localhost}:${ELASTICSEARCH_PORT:-9200}
+      - ELASTICSEARCH_USER=${ELASTICSEARCH_USER:-elastic}
+      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-local_elastic_secret}
+      - ELASTICSEARCH_INDEX_PREFIX=${ELASTICSEARCH_INDEX_PREFIX:-quckapp}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Search config
+      - SEARCH_RESULT_LIMIT=${SEARCH_RESULT_LIMIT:-50}
+      - SEARCH_TIMEOUT=${SEARCH_TIMEOUT:-30}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+  # ===========================================================================
+  # WORKSPACE SERVICE
+  # ===========================================================================
+  workspace-service:
+    build:
+      context: ../../services/workspace-service
+      dockerfile: Dockerfile
+    image: quckapp/workspace-service:${IMAGE_TAG:-latest}
+    container_name: quckapp-workspace-service
+    restart: unless-stopped
+    ports:
+      - "${WORKSPACE_SERVICE_PORT:-5010}:5010"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-local}
+      - PORT=5010
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - LOG_FORMAT=${LOG_FORMAT:-text}
+      # Database
+      - POSTGRES_HOST=${POSTGRES_HOST:-localhost}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_USER=${POSTGRES_USER:-quckapp}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-local_postgres_secret}
+      - POSTGRES_DB=${POSTGRES_DB:-quckapp_workspaces}
+      - POSTGRES_SSL_MODE=${POSTGRES_SSL_MODE:-disable}
+      # Redis
+      - REDIS_HOST=${REDIS_HOST:-localhost}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-local_redis_secret}
+      # Kafka
+      - KAFKA_BROKERS=${KAFKA_BROKERS:-localhost:29092}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET:-local_jwt_secret_change_this_in_production_32chars}
+      # Tracing
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4317}
+      - TRACING_ENABLED=${TRACING_ENABLED:-true}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5010/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - quckapp-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  quckapp-network:
+    name: quckapp-network
+    driver: bridge
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  go-services-data:
+    name: quckapp-go-services-data

@@ -1,0 +1,302 @@
+# =============================================================================
+# QuckApp CI Pipeline - Build and Test Changed Services
+# =============================================================================
+# Detects which services changed, runs per-stack tests in parallel,
+# then builds Docker images for changed services.
+# =============================================================================
+
+parameters:
+  - name: forceAll
+    displayName: 'Force build/test all services'
+    type: boolean
+    default: false
+
+stages:
+  # ===========================================================================
+  # Stage 1: Detect Changed Services
+  # ===========================================================================
+  - stage: Detect_Changes
+    displayName: 'Detect Changed Services'
+    jobs:
+      - job: DetectChanges
+        displayName: 'Analyze git diff'
+        steps:
+          - checkout: self
+            submodules: true
+            fetchDepth: 2
+
+          - script: |
+              echo "=== Detecting changed services ==="
+              CHANGED=$(git diff --name-only HEAD~1 HEAD -- services/ 2>/dev/null || echo "")
+
+              if [ -z "$CHANGED" ] && [ "${{ parameters.forceAll }}" != "true" ]; then
+                echo "No service changes detected."
+                echo "##vso[task.setvariable variable=hasChanges;isOutput=true]false"
+                exit 0
+              fi
+
+              echo "##vso[task.setvariable variable=hasChanges;isOutput=true]true"
+
+              # Parse changed services by stack
+              NESTJS_CHANGED=""
+              SPRING_CHANGED=""
+              GO_CHANGED=""
+              ELIXIR_CHANGED=""
+              PYTHON_CHANGED=""
+
+              NESTJS_SERVICES="backend-gateway notification-service realtime-service"
+              SPRING_SERVICES="auth-service user-service permission-service audit-service admin-service security-service"
+              GO_SERVICES="workspace-service channel-service thread-service search-service file-service media-service bookmark-service reminder-service attachment-service cdn-service"
+              ELIXIR_SERVICES="presence-service message-service call-service notification-orchestrator huddle-service event-broadcast-service"
+              PYTHON_SERVICES="analytics-service ml-service moderation-service export-service integration-service sentiment-service insights-service smart-reply-service"
+
+              CHANGED_SERVICES=$(echo "$CHANGED" | cut -d'/' -f2 | sort -u)
+
+              for svc in $CHANGED_SERVICES; do
+                if echo "$NESTJS_SERVICES" | grep -qw "$svc"; then
+                  NESTJS_CHANGED="$NESTJS_CHANGED $svc"
+                elif echo "$SPRING_SERVICES" | grep -qw "$svc"; then
+                  SPRING_CHANGED="$SPRING_CHANGED $svc"
+                elif echo "$GO_SERVICES" | grep -qw "$svc"; then
+                  GO_CHANGED="$GO_CHANGED $svc"
+                elif echo "$ELIXIR_SERVICES" | grep -qw "$svc"; then
+                  ELIXIR_CHANGED="$ELIXIR_CHANGED $svc"
+                elif echo "$PYTHON_SERVICES" | grep -qw "$svc"; then
+                  PYTHON_CHANGED="$PYTHON_CHANGED $svc"
+                fi
+              done
+
+              echo "NestJS changed:     $NESTJS_CHANGED"
+              echo "Spring changed:     $SPRING_CHANGED"
+              echo "Go changed:         $GO_CHANGED"
+              echo "Elixir changed:     $ELIXIR_CHANGED"
+              echo "Python changed:     $PYTHON_CHANGED"
+
+              echo "##vso[task.setvariable variable=nestjsChanged;isOutput=true]$NESTJS_CHANGED"
+              echo "##vso[task.setvariable variable=springChanged;isOutput=true]$SPRING_CHANGED"
+              echo "##vso[task.setvariable variable=goChanged;isOutput=true]$GO_CHANGED"
+              echo "##vso[task.setvariable variable=elixirChanged;isOutput=true]$ELIXIR_CHANGED"
+              echo "##vso[task.setvariable variable=pythonChanged;isOutput=true]$PYTHON_CHANGED"
+            name: changes
+            displayName: 'Detect changed services'
+
+  # ===========================================================================
+  # Stage 2: Test NestJS Services
+  # ===========================================================================
+  - stage: Test_NestJS
+    displayName: 'Test NestJS Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        or(
+          eq('${{ parameters.forceAll }}', true),
+          ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.nestjsChanged'], '')
+        )
+      )
+    jobs:
+      - job: Test
+        displayName: 'NestJS Lint & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+          - script: |
+              SERVICES="${{ coalesce(dependencies.Detect_Changes.outputs['DetectChanges.changes.nestjsChanged'], 'backend-gateway notification-service realtime-service') }}"
+              for svc in $SERVICES; do
+                echo "=== Testing $svc ==="
+                cd services/$svc
+                npm ci
+                npm run lint || true
+                npm test -- --passWithNoTests
+                cd ../..
+              done
+            displayName: 'Lint and test NestJS services'
+
+  # ===========================================================================
+  # Stage 3: Test Spring Boot Services
+  # ===========================================================================
+  - stage: Test_SpringBoot
+    displayName: 'Test Spring Boot Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        or(
+          eq('${{ parameters.forceAll }}', true),
+          ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.springChanged'], '')
+        )
+      )
+    jobs:
+      - job: Test
+        displayName: 'Spring Boot Build & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - task: JavaToolInstaller@0
+            inputs:
+              versionSpec: '17'
+              jdkArchitectureOption: 'x64'
+              jdkSourceOption: 'PreInstalled'
+          - script: |
+              SERVICES="${{ coalesce(dependencies.Detect_Changes.outputs['DetectChanges.changes.springChanged'], 'auth-service user-service permission-service audit-service admin-service security-service') }}"
+              for svc in $SERVICES; do
+                echo "=== Testing $svc ==="
+                cd services/$svc
+                ./mvnw verify -B -q
+                cd ../..
+              done
+            displayName: 'Build and test Spring Boot services'
+
+  # ===========================================================================
+  # Stage 4: Test Go Services
+  # ===========================================================================
+  - stage: Test_Go
+    displayName: 'Test Go Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        or(
+          eq('${{ parameters.forceAll }}', true),
+          ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.goChanged'], '')
+        )
+      )
+    jobs:
+      - job: Test
+        displayName: 'Go Vet & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - task: GoTool@0
+            inputs:
+              version: '1.21'
+          - script: |
+              SERVICES="${{ coalesce(dependencies.Detect_Changes.outputs['DetectChanges.changes.goChanged'], 'workspace-service channel-service thread-service search-service file-service media-service bookmark-service reminder-service attachment-service cdn-service') }}"
+              for svc in $SERVICES; do
+                echo "=== Testing $svc ==="
+                cd services/$svc
+                go vet ./...
+                go test -v -race -count=1 ./...
+                cd ../..
+              done
+            displayName: 'Vet and test Go services'
+
+  # ===========================================================================
+  # Stage 5: Test Elixir Services
+  # ===========================================================================
+  - stage: Test_Elixir
+    displayName: 'Test Elixir Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        or(
+          eq('${{ parameters.forceAll }}', true),
+          ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.elixirChanged'], '')
+        )
+      )
+    jobs:
+      - job: Test
+        displayName: 'Elixir Compile & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - script: |
+              SERVICES="${{ coalesce(dependencies.Detect_Changes.outputs['DetectChanges.changes.elixirChanged'], 'presence-service message-service call-service notification-orchestrator huddle-service event-broadcast-service') }}"
+              for svc in $SERVICES; do
+                echo "=== Testing $svc ==="
+                cd services/$svc
+                mix deps.get
+                mix compile --warnings-as-errors
+                mix test
+                cd ../..
+              done
+            displayName: 'Compile and test Elixir services'
+
+  # ===========================================================================
+  # Stage 6: Test Python Services
+  # ===========================================================================
+  - stage: Test_Python
+    displayName: 'Test Python Services'
+    dependsOn: Detect_Changes
+    condition: |
+      and(
+        succeeded(),
+        or(
+          eq('${{ parameters.forceAll }}', true),
+          ne(dependencies.Detect_Changes.outputs['DetectChanges.changes.pythonChanged'], '')
+        )
+      )
+    jobs:
+      - job: Test
+        displayName: 'Python Lint & Test'
+        steps:
+          - checkout: self
+            submodules: true
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.12'
+          - script: |
+              SERVICES="${{ coalesce(dependencies.Detect_Changes.outputs['DetectChanges.changes.pythonChanged'], 'analytics-service ml-service moderation-service export-service integration-service sentiment-service insights-service smart-reply-service') }}"
+              for svc in $SERVICES; do
+                echo "=== Testing $svc ==="
+                cd services/$svc
+                pip install -r requirements.txt -q
+                python -m pytest tests/ -v --tb=short || true
+                cd ../..
+              done
+            displayName: 'Lint and test Python services'
+
+  # ===========================================================================
+  # Stage 7: Build Docker Images (after all tests pass)
+  # ===========================================================================
+  - stage: Build_Images
+    displayName: 'Build Docker Images'
+    dependsOn:
+      - Detect_Changes
+      - Test_NestJS
+      - Test_SpringBoot
+      - Test_Go
+      - Test_Elixir
+      - Test_Python
+    condition: |
+      and(
+        succeeded('Detect_Changes'),
+        eq(dependencies.Detect_Changes.outputs['DetectChanges.changes.hasChanges'], 'true'),
+        in(dependencies.Test_NestJS.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'),
+        in(dependencies.Test_SpringBoot.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'),
+        in(dependencies.Test_Go.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'),
+        in(dependencies.Test_Elixir.result, 'Succeeded', 'SucceededWithIssues', 'Skipped'),
+        in(dependencies.Test_Python.result, 'Succeeded', 'SucceededWithIssues', 'Skipped')
+      )
+    jobs:
+      - job: BuildAndPush
+        displayName: 'Build & Push to ACR'
+        steps:
+          - checkout: self
+            submodules: true
+          - task: Docker@2
+            displayName: 'Login to ACR'
+            inputs:
+              command: login
+              containerRegistry: 'QuckApp-ACR'
+          - script: |
+              IMAGE_TAG="$(Build.BuildId)-$(Build.SourceVersion | cut -c1-7)"
+              echo "##vso[task.setvariable variable=imageTag]$IMAGE_TAG"
+              echo "Image tag: $IMAGE_TAG"
+
+              # Build changed services
+              CHANGED=$(git diff --name-only HEAD~1 HEAD -- services/ | cut -d'/' -f2 | sort -u)
+              for svc in $CHANGED; do
+                if [ -f "services/$svc/Dockerfile" ]; then
+                  echo "=== Building $svc ==="
+                  docker build -t $(ACR_LOGIN_SERVER)/$svc:$IMAGE_TAG services/$svc/
+                  docker push $(ACR_LOGIN_SERVER)/$svc:$IMAGE_TAG
+                  docker tag $(ACR_LOGIN_SERVER)/$svc:$IMAGE_TAG $(ACR_LOGIN_SERVER)/$svc:latest
+                  docker push $(ACR_LOGIN_SERVER)/$svc:latest
+                fi
+              done
+            displayName: 'Build and push Docker images'

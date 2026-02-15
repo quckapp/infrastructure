@@ -1,0 +1,245 @@
+# =============================================================================
+# QUCKAPP - ELIXIR SERVICES (LOCAL DEV - Uses existing infrastructure)
+# =============================================================================
+# Uses existing MongoDB, Redis, Kafka from auth-service stack
+# Usage: docker compose -f docker-compose.elixir-dev.yml up -d
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # REALTIME & PRESENCE
+  # ===========================================================================
+
+  # Presence Service (Elixir) - User presence tracking
+  presence-service:
+    image: quckapp-presence-service:latest
+    container_name: quckapp-presence-service
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4000
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/presence_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/3
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: presence-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4000:4000"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Realtime Service (Elixir/Phoenix) - WebSocket connections
+  realtime-service:
+    image: quckapp-realtime-service:latest
+    container_name: quckapp-realtime-service
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4003
+      PHX_HOST: localhost
+      DATABASE_URL: mysql://quckapp:quckapp_secret@auth-service-mysql-1:3306/realtime_db
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/realtime_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/0
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: realtime-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4003:4003"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ===========================================================================
+  # VOICE & VIDEO
+  # ===========================================================================
+
+  # Call Service (Elixir) - Voice/Video calls
+  call-service:
+    image: quckapp-call-service:latest
+    container_name: quckapp-call-service
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4002
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/call_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/1
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: call-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4002:4002"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Huddle Service (Elixir) - Quick audio rooms
+  huddle-service:
+    image: quckapp-huddle-service:latest
+    container_name: quckapp-huddle-service
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4005
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/huddle_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/2
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: huddle-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4005:4005"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ===========================================================================
+  # MESSAGING & NOTIFICATIONS
+  # ===========================================================================
+
+  # Message Service (Elixir) - Real-time messaging
+  message-service-elixir:
+    image: quckapp-message-service:latest
+    container_name: quckapp-message-service-elixir
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4006
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/message_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/4
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: message-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4006:4006"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Notification Orchestrator (Elixir) - Push notification management
+  notification-orchestrator:
+    image: quckapp-notification-orchestrator:latest
+    container_name: quckapp-notification-orchestrator
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4004
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/notification_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/5
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: notification-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4004:4004"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Event Broadcast Service (Elixir) - Event distribution
+  event-broadcast-service:
+    image: quckapp-event-broadcast-service:latest
+    container_name: quckapp-event-broadcast-service
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4007
+      PHX_HOST: localhost
+      MONGODB_URL: mongodb://admin:admin_secret@quckapp-mongodb:27017/event_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@auth-service-redis-1:6379/6
+      REDIS_HOST: auth-service-redis-1
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis_secret
+      KAFKA_ENABLED: "true"
+      KAFKA_BROKERS: auth-service-kafka-1:9092
+      KAFKA_CONSUMER_GROUP: event-broadcast-service-group
+      SECRET_KEY_BASE: dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890abcdef
+      JWT_SECRET: quckapp_jwt_secret_key_for_development_only_change_in_production
+      RELEASE_COOKIE: quckapp_dev_cookie
+    ports:
+      - "4007:4007"
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  quckapp-network:
+    external: true
+    name: quckapp-network

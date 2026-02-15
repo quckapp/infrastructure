@@ -204,12 +204,66 @@ CREATE TRIGGER update_conversations_updated_at
 -- Seed Data (for development)
 -- =============================================================================
 
--- Insert test user
-INSERT INTO users (id, email, username, full_name, email_verified, role)
+-- Insert test users (UUIDs consistent across all databases)
+INSERT INTO users (id, email, username, full_name, phone, email_verified, phone_verified, role, status)
 VALUES
-    ('00000000-0000-0000-0000-000000000001', 'admin@quckapp.dev', 'admin', 'Admin User', true, 'admin'),
-    ('00000000-0000-0000-0000-000000000002', 'user@quckapp.dev', 'testuser', 'Test User', true, 'user')
+    ('00000000-0000-0000-0000-000000000001', 'admin@quckapp.dev', 'admin', 'Admin User', '+1234567890', true, true, 'admin', 'active'),
+    ('00000000-0000-0000-0000-000000000002', 'user@quckapp.dev', 'testuser', 'Test User', '+1234567891', true, true, 'user', 'active'),
+    ('00000000-0000-0000-0000-000000000003', 'user2@quckapp.dev', 'alice', 'Alice Johnson', '+1234567892', true, false, 'user', 'active'),
+    ('00000000-0000-0000-0000-000000000004', 'user3@quckapp.dev', 'bob', 'Bob Smith', '+1234567893', true, false, 'moderator', 'active'),
+    ('00000000-0000-0000-0000-000000000005', 'bot@quckapp.dev', 'quckbot', 'QuckApp Bot', NULL, true, false, 'user', 'active')
 ON CONFLICT (email) DO NOTHING;
+
+-- Insert test conversations
+INSERT INTO conversations (id, type, name, last_message_at)
+VALUES
+    ('c0000000-0000-0000-0000-000000000001', 'direct', NULL, NOW() - INTERVAL '1 hour'),
+    ('c0000000-0000-0000-0000-000000000002', 'group', 'Project Alpha', NOW() - INTERVAL '30 minutes')
+ON CONFLICT DO NOTHING;
+
+-- Insert conversation participants
+INSERT INTO conversation_participants (id, conversation_id, user_id, role)
+VALUES
+    ('cp000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'member'),
+    ('cp000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'member'),
+    ('cp000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'admin'),
+    ('cp000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'member'),
+    ('cp000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', 'member'),
+    ('cp000000-0000-0000-0000-000000000006', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000004', 'member')
+ON CONFLICT DO NOTHING;
+
+-- Insert sample messages
+INSERT INTO messages (id, conversation_id, sender_id, type, content, created_at)
+VALUES
+    ('m0000000-0000-0000-0000-000000000001', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'text', 'Hey, how is the project going?', NOW() - INTERVAL '2 hours'),
+    ('m0000000-0000-0000-0000-000000000002', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'text', 'Going great! Almost done with the API.', NOW() - INTERVAL '1 hour 50 minutes'),
+    ('m0000000-0000-0000-0000-000000000003', 'c0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'text', 'Awesome, let me know if you need any help.', NOW() - INTERVAL '1 hour'),
+    ('m0000000-0000-0000-0000-000000000004', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'text', 'Welcome to Project Alpha everyone!', NOW() - INTERVAL '3 hours'),
+    ('m0000000-0000-0000-0000-000000000005', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', 'text', 'Thanks! Excited to collaborate.', NOW() - INTERVAL '2 hours 45 minutes'),
+    ('m0000000-0000-0000-0000-000000000006', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000004', 'text', 'Looking forward to it!', NOW() - INTERVAL '2 hours 30 minutes'),
+    ('m0000000-0000-0000-0000-000000000007', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'text', 'Sprint planning is tomorrow at 10am.', NOW() - INTERVAL '1 hour'),
+    ('m0000000-0000-0000-0000-000000000008', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'text', 'Will be there!', NOW() - INTERVAL '45 minutes'),
+    ('m0000000-0000-0000-0000-000000000009', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', 'text', 'Can we review the designs first?', NOW() - INTERVAL '30 minutes'),
+    ('m0000000-0000-0000-0000-000000000010', 'c0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'text', 'Sure, I will share the Figma link.', NOW() - INTERVAL '15 minutes')
+ON CONFLICT DO NOTHING;
+
+-- Insert sample notifications
+INSERT INTO notifications (id, user_id, type, title, body, data, created_at)
+VALUES
+    ('n0000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'mention', 'You were mentioned', 'Admin mentioned you in #general', '{"channel_id": "30000000-0000-0000-0000-000000000001"}', NOW() - INTERVAL '2 hours'),
+    ('n0000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000002', 'message', 'New message', 'Alice: Can we review the designs first?', '{"conversation_id": "c0000000-0000-0000-0000-000000000002"}', NOW() - INTERVAL '30 minutes'),
+    ('n0000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000003', 'workspace_invite', 'Workspace invitation', 'You were invited to QuckApp Dev Workspace', '{"workspace_id": "10000000-0000-0000-0000-000000000001"}', NOW() - INTERVAL '1 day'),
+    ('n0000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 'system', 'System update', 'QuckApp has been updated to v2.1.0', '{}', NOW() - INTERVAL '3 days'),
+    ('n0000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000004', 'message', 'New direct message', 'Admin sent you a message', '{"conversation_id": "c0000000-0000-0000-0000-000000000001"}', NOW() - INTERVAL '1 hour')
+ON CONFLICT DO NOTHING;
+
+-- Insert sample media
+INSERT INTO media (id, user_id, type, filename, original_filename, mime_type, size_bytes, s3_key, s3_bucket, status, created_at)
+VALUES
+    ('me000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'photo', 'avatar_admin.jpg', 'profile_photo.jpg', 'image/jpeg', 245760, 'avatars/00000000-0000-0000-0000-000000000001/avatar.jpg', 'quckapp-media-dev', 'ready', NOW() - INTERVAL '7 days'),
+    ('me000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000003', 'document', 'design_spec.pdf', 'Project Alpha Design Spec.pdf', 'application/pdf', 1048576, 'documents/design_spec_v1.pdf', 'quckapp-media-dev', 'ready', NOW() - INTERVAL '2 days'),
+    ('me000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000002', 'photo', 'screenshot.png', 'bug_screenshot.png', 'image/png', 512000, 'uploads/screenshot_20240101.png', 'quckapp-media-dev', 'ready', NOW() - INTERVAL '1 day')
+ON CONFLICT DO NOTHING;
 
 -- =============================================================================
 -- Grants
