@@ -20,6 +20,16 @@ CREATE DATABASE IF NOT EXISTS quckapp_bookmarks;
 CREATE DATABASE IF NOT EXISTS quckapp_reminders;
 CREATE DATABASE IF NOT EXISTS quckapp_search;
 
+-- Python services
+CREATE DATABASE IF NOT EXISTS quckapp_analytics;
+CREATE DATABASE IF NOT EXISTS quckapp_insights;
+CREATE DATABASE IF NOT EXISTS quckapp_moderation;
+CREATE DATABASE IF NOT EXISTS quckapp_exports;
+CREATE DATABASE IF NOT EXISTS quckapp_integrations;
+
+-- Elixir services
+CREATE DATABASE IF NOT EXISTS quckapp_realtime;
+
 -- Grant all privileges to quckapp user
 GRANT ALL PRIVILEGES ON quckapp_auth.* TO 'quckapp'@'%';
 GRANT ALL PRIVILEGES ON quckapp_users.* TO 'quckapp'@'%';
@@ -33,5 +43,11 @@ GRANT ALL PRIVILEGES ON quckapp_threads.* TO 'quckapp'@'%';
 GRANT ALL PRIVILEGES ON quckapp_bookmarks.* TO 'quckapp'@'%';
 GRANT ALL PRIVILEGES ON quckapp_reminders.* TO 'quckapp'@'%';
 GRANT ALL PRIVILEGES ON quckapp_search.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_analytics.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_insights.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_moderation.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_exports.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_integrations.* TO 'quckapp'@'%';
+GRANT ALL PRIVILEGES ON quckapp_realtime.* TO 'quckapp'@'%';
 
 FLUSH PRIVILEGES;

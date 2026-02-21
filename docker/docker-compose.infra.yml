@@ -99,6 +99,55 @@ services:
     networks:
       - quckapp-network
 
+  # ===========================================================================
+  # ScyllaDB - Message storage (Cassandra-compatible, append-optimized)
+  # ===========================================================================
+
+  scylladb-node1:
+    image: scylladb/scylla:5.4
+    container_name: quckapp-scylladb-1
+    restart: unless-stopped
+    command: --seeds=scylladb-node1 --smp 2 --memory 1G --overprovisioned 1 --api-address 0.0.0.0
+    ports:
+      - "${SCYLLA_CQL_PORT:-9042}:9042"
+      - "9180:9180"
+    volumes:
+      - scylladb_data1:/var/lib/scylla
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'SELECT now() FROM system.local' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s
+    networks:
+      - quckapp-network
+
+  scylladb-node2:
+    image: scylladb/scylla:5.4
+    container_name: quckapp-scylladb-2
+    restart: unless-stopped
+    command: --seeds=scylladb-node1 --smp 2 --memory 1G --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - scylladb_data2:/var/lib/scylla
+    depends_on:
+      scylladb-node1:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+
+  scylladb-node3:
+    image: scylladb/scylla:5.4
+    container_name: quckapp-scylladb-3
+    restart: unless-stopped
+    command: --seeds=scylladb-node1 --smp 2 --memory 1G --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - scylladb_data3:/var/lib/scylla
+    depends_on:
+      scylladb-node1:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+
   # Elasticsearch - Search engine
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
@@ -322,6 +371,12 @@ volumes:
   kafka_data:
     driver: local
   minio_data:
+    driver: local
+  scylladb_data1:
+    driver: local
+  scylladb_data2:
+    driver: local
+  scylladb_data3:
     driver: local
   prometheus_data:
     driver: local

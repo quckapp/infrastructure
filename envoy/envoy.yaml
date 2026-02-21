@@ -1,0 +1,228 @@
+# =============================================================================
+# QUCKAPP - Envoy Proxy Configuration
+# =============================================================================
+# Routes WebSocket traffic to Elixir/Phoenix real-time services.
+# All other traffic falls through to Kong API Gateway.
+#
+# Clients connect to Envoy on port 8090:
+#   - /socket*, /chat, /socket.io  → realtime-service:4000
+#   - /ws/presence                 → presence-service:4001
+#   - /ws/calls                    → call-service:4002
+#   - /ws/huddles                  → huddle-service:4005
+#   - everything else              → kong:8000 (REST APIs)
+# =============================================================================
+
+static_resources:
+  listeners:
+    - name: main_listener
+      address:
+        socket_address:
+          address: 0.0.0.0
+          port_value: 8090
+      filter_chains:
+        - filters:
+            - name: envoy.filters.network.http_connection_manager
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                stat_prefix: quckapp_proxy
+                upgrade_configs:
+                  - upgrade_type: websocket
+                    enabled: true
+                codec_type: AUTO
+                access_log:
+                  - name: envoy.access_loggers.stdout
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
+                route_config:
+                  name: local_routes
+                  virtual_hosts:
+                    - name: quckapp
+                      domains: ["*"]
+                      routes:
+                        # ---------------------------------------------------------
+                        # WebSocket routes → Elixir real-time services
+                        # ---------------------------------------------------------
+
+                        # Chat / messaging WebSocket
+                        - match:
+                            prefix: "/socket"
+                          route:
+                            cluster: realtime_service
+                            timeout: 0s
+                            idle_timeout: 3600s
+
+                        - match:
+                            prefix: "/chat"
+                          route:
+                            cluster: realtime_service
+                            timeout: 0s
+                            idle_timeout: 3600s
+
+                        - match:
+                            prefix: "/socket.io"
+                          route:
+                            cluster: realtime_service
+                            timeout: 0s
+                            idle_timeout: 3600s
+
+                        # Presence WebSocket
+                        - match:
+                            prefix: "/ws/presence"
+                          route:
+                            cluster: presence_service
+                            timeout: 0s
+                            idle_timeout: 3600s
+
+                        # Call signaling WebSocket
+                        - match:
+                            prefix: "/ws/calls"
+                          route:
+                            cluster: call_service
+                            timeout: 0s
+                            idle_timeout: 3600s
+
+                        # Huddle WebSocket
+                        - match:
+                            prefix: "/ws/huddles"
+                          route:
+                            cluster: huddle_service
+                            timeout: 0s
+                            idle_timeout: 3600s
+
+                        # ---------------------------------------------------------
+                        # Everything else → Kong API Gateway
+                        # ---------------------------------------------------------
+                        - match:
+                            prefix: "/"
+                          route:
+                            cluster: kong_gateway
+                            timeout: 30s
+
+                http_filters:
+                  - name: envoy.filters.http.cors
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.CorsPolicy
+                      allow_origin_string_match:
+                        - safe_regex:
+                            regex: ".*"
+                      allow_methods: "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+                      allow_headers: "authorization, content-type, x-request-id, x-api-key, upgrade, connection, sec-websocket-key, sec-websocket-version, sec-websocket-extensions, sec-websocket-protocol"
+                      allow_credentials: true
+                      max_age: "86400"
+                  - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+
+  # ---------------------------------------------------------------------------
+  # Upstream clusters
+  # ---------------------------------------------------------------------------
+  clusters:
+    # Realtime service (Elixir/Phoenix) — chat channels, WebRTC, store-and-forward
+    - name: realtime_service
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: realtime_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: realtime-service
+                      port_value: 4000
+      health_checks:
+        - timeout: 3s
+          interval: 15s
+          unhealthy_threshold: 3
+          healthy_threshold: 2
+          http_health_check:
+            path: /health
+
+    # Presence service (Elixir/Phoenix) — user online/offline tracking
+    - name: presence_service
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: presence_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: presence-service
+                      port_value: 4001
+      health_checks:
+        - timeout: 3s
+          interval: 15s
+          unhealthy_threshold: 3
+          healthy_threshold: 2
+          http_health_check:
+            path: /health
+
+    # Call service (Elixir/Phoenix) — WebRTC signaling + call lifecycle
+    - name: call_service
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: call_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: call-service
+                      port_value: 4002
+      health_checks:
+        - timeout: 3s
+          interval: 15s
+          unhealthy_threshold: 3
+          healthy_threshold: 2
+          http_health_check:
+            path: /health
+
+    # Huddle service (Elixir/Phoenix) — group audio/video rooms
+    - name: huddle_service
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: huddle_service
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: huddle-service
+                      port_value: 4005
+      health_checks:
+        - timeout: 3s
+          interval: 15s
+          unhealthy_threshold: 3
+          healthy_threshold: 2
+          http_health_check:
+            path: /health
+
+    # Kong API Gateway — REST API catch-all
+    - name: kong_gateway
+      connect_timeout: 5s
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: kong_gateway
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: kong
+                      port_value: 8000
+
+# Admin interface for metrics and debugging
+admin:
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: 9901

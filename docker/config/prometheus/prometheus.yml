@@ -170,3 +170,27 @@ scrape_configs:
     static_configs:
       - targets: ['sentiment-service:8003']
     metrics_path: /metrics
+
+  # ==========================================================================
+  # Infrastructure Monitoring
+  # ==========================================================================
+
+  - job_name: 'scylladb'
+    static_configs:
+      - targets: ['scylladb-node1:9180', 'scylladb-node2:9180', 'scylladb-node3:9180']
+    metrics_path: /metrics
+
+  - job_name: 'envoy'
+    static_configs:
+      - targets: ['envoy:9901']
+    metrics_path: /stats/prometheus
+
+  - job_name: 'livekit'
+    static_configs:
+      - targets: ['livekit:7880']
+    metrics_path: /metrics
+
+  - job_name: 'go-bff'
+    static_configs:
+      - targets: ['go-bff:3000']
+    metrics_path: /metrics
