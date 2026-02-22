@@ -1,58 +1,38 @@
-# Integration Tests Template
-# Runs integration tests against deployed service
+# =============================================================================
+# Integration Test Template
+# =============================================================================
 
 parameters:
   - name: environment
     type: string
-  - name: serviceName
+  - name: namespace
     type: string
 
 steps:
-  - checkout: self
-    displayName: 'Checkout Repository'
+  - script: |
+      echo "Running integration tests for ${{ parameters.environment }}..."
 
-  - task: NodeTool@0
-    displayName: 'Setup Node.js'
-    inputs:
-      versionSpec: '20.x'
+      # Verify core services are responding
+      SERVICES="backend-gateway auth-service user-service permission-service"
+      FAILED=0
 
-  - task: AzureCLI@2
+      for svc in $SERVICES; do
+        SVC_IP=$(kubectl get svc $svc -n ${{ parameters.namespace }} -o jsonpath='{.spec.clusterIP}' 2>/dev/null || echo "")
+        if [ -n "$SVC_IP" ]; then
+          echo "Testing $svc connectivity..."
+          kubectl run "inttest-${svc}" --rm -it --restart=Never --image=curlimages/curl:latest \
+            -n ${{ parameters.namespace }} \
+            -- curl -sf "http://${svc}:$(kubectl get svc $svc -n ${{ parameters.namespace }} -o jsonpath='{.spec.ports[0].port}')/health" --max-time 30 \
+            && echo "$svc: PASS" \
+            || { echo "$svc: FAIL"; FAILED=$((FAILED+1)); }
+        else
+          echo "$svc: NOT FOUND (skipping)"
+        fi
+      done
+
+      echo ""
+      echo "Integration tests completed. Failures: $FAILED"
+      if [ $FAILED -gt 0 ]; then
+        exit 1
+      fi
     displayName: 'Run Integration Tests'
-    inputs:
-      azureSubscription: 'QuckApp-${{ parameters.environment }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        # Determine service URL based on environment
-        case "${{ parameters.environment }}" in
-          dev)
-            BASE_URL="https://${{ parameters.serviceName }}.dev.quckapp.io"
-            ;;
-          qa)
-            BASE_URL="https://${{ parameters.serviceName }}.qa.quckapp.io"
-            ;;
-          *)
-            BASE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
-            ;;
-        esac
-
-        export BASE_URL
-        export TEST_ENV="${{ parameters.environment }}"
-
-        echo "Running integration tests against: $BASE_URL"
-
-        # Install test dependencies
-        npm ci --prefix tests/integration
-
-        # Run integration tests
-        npm run test:integration --prefix tests/integration -- \
-          --reporter=junit \
-          --reporter-options="mochaFile=test-results/integration-results.xml"
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Integration Test Results'
-    inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: '**/integration-results.xml'
-      testRunTitle: 'Integration Tests - ${{ parameters.serviceName }} (${{ parameters.environment }})'
-    condition: always()

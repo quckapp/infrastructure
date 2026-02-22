@@ -1,217 +1,96 @@
-# Deploy Steps Template
-# Standard deployment steps for all environments
+# =============================================================================
+# Reusable Helm Deploy Steps
+# =============================================================================
+# Usage:
+#   - template: templates/deploy-steps.yml
+#     parameters:
+#       environment: dev
+#       serviceName: auth-service
+#       imageTag: main-abc1234
+# =============================================================================
 
 parameters:
   - name: environment
     type: string
-  - name: namespace
-    type: string
   - name: serviceName
     type: string
+    default: ''
   - name: imageTag
     type: string
-  - name: replicas
-    type: number
-    default: 2
-  - name: memoryLimit
+  - name: helmTimeout
     type: string
-    default: '512Mi'
-  - name: cpuLimit
-    type: string
-    default: '500m'
-  - name: aksCluster
-    type: string
-    default: ''
-  - name: resourceGroup
-    type: string
-    default: ''
-  - name: enableAutoScale
-    type: boolean
-    default: false
-  - name: minReplicas
-    type: number
-    default: 2
-  - name: maxReplicas
-    type: number
-    default: 10
+    default: '15m'
 
 steps:
-  - checkout: self
-    displayName: 'Checkout Repository'
-
-  - task: DownloadPipelineArtifact@2
-    displayName: 'Download Kubernetes Manifests'
-    inputs:
-      artifact: 'k8s-manifests'
-      path: '$(Pipeline.Workspace)/manifests'
-    continueOnError: true
-
-  - task: DownloadPipelineArtifact@2
-    displayName: 'Download Environment Configs'
-    inputs:
-      artifact: 'configs'
-      path: '$(Pipeline.Workspace)/configs'
-    continueOnError: true
-
-  - ${{ if ne(parameters.aksCluster, '') }}:
-    - task: AzureCLI@2
-      displayName: 'Login to AKS Cluster'
-      inputs:
-        azureSubscription: 'QuckApp-${{ parameters.environment }}'
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az aks get-credentials \
-            --resource-group ${{ parameters.resourceGroup }} \
-            --name ${{ parameters.aksCluster }} \
-            --overwrite-existing
-
-  - task: KubernetesManifest@0
-    displayName: 'Create Namespace'
-    inputs:
-      action: 'createSecret'
-      kubernetesServiceConnection: 'QuckApp-K8s-${{ parameters.environment }}'
-      namespace: '${{ parameters.namespace }}'
-      secretType: 'generic'
-      secretName: 'namespace-placeholder'
-    continueOnError: true
-
-  - task: KubernetesManifest@0
-    displayName: 'Create/Update ConfigMap'
-    inputs:
-      action: 'createSecret'
-      kubernetesServiceConnection: 'QuckApp-K8s-${{ parameters.environment }}'
-      namespace: '${{ parameters.namespace }}'
-      secretType: 'generic'
-      secretName: '${{ parameters.serviceName }}-config'
-      secretArguments: '--from-env-file=$(Pipeline.Workspace)/configs/${{ parameters.environment }}.env'
-    continueOnError: true
-
-  - task: KubernetesManifest@0
-    displayName: 'Deploy to Kubernetes'
-    inputs:
-      action: 'deploy'
-      kubernetesServiceConnection: 'QuckApp-K8s-${{ parameters.environment }}'
-      namespace: '${{ parameters.namespace }}'
-      manifests: |
-        $(Pipeline.Workspace)/manifests/deployment.yaml
-        $(Pipeline.Workspace)/manifests/service.yaml
-        $(Pipeline.Workspace)/manifests/ingress.yaml
-      containers: |
-        $(acrRegistry)/${{ parameters.serviceName }}:${{ parameters.imageTag }}
-      imagePullSecrets: |
-        acr-secret
-
-  - task: Kubernetes@1
-    displayName: 'Scale Deployment'
-    inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
-      namespace: '${{ parameters.namespace }}'
-      command: 'scale'
-      arguments: 'deployment/${{ parameters.serviceName }} --replicas=${{ parameters.replicas }}'
-
-  - task: Kubernetes@1
-    displayName: 'Set Resource Limits'
-    inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
-      namespace: '${{ parameters.namespace }}'
-      command: 'set'
-      arguments: |
-        resources deployment/${{ parameters.serviceName }} \
-        --limits=memory=${{ parameters.memoryLimit }},cpu=${{ parameters.cpuLimit }} \
-        --requests=memory=$(echo "${{ parameters.memoryLimit }}" | sed 's/Gi/Gi/;s/Mi/Mi/' | awk '{print $1/2}'),cpu=$(echo "${{ parameters.cpuLimit }}" | sed 's/m//' | awk '{print $1/2"m"}')
-    continueOnError: true
-
-  - ${{ if eq(parameters.enableAutoScale, true) }}:
-    - task: Kubernetes@1
-      displayName: 'Configure Horizontal Pod Autoscaler'
-      inputs:
-        connectionType: 'Kubernetes Service Connection'
-        kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
-        namespace: '${{ parameters.namespace }}'
-        command: 'autoscale'
-        arguments: |
-          deployment/${{ parameters.serviceName }} \
-          --min=${{ parameters.minReplicas }} \
-          --max=${{ parameters.maxReplicas }} \
-          --cpu-percent=70
-
-  - task: Kubernetes@1
-    displayName: 'Wait for Rollout'
-    inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceEndpoint: 'QuckApp-K8s-${{ parameters.environment }}'
-      namespace: '${{ parameters.namespace }}'
-      command: 'rollout'
-      arguments: 'status deployment/${{ parameters.serviceName }} --timeout=300s'
-
   - task: AzureCLI@2
-    displayName: 'Health Check'
+    displayName: 'Azure Login & Set AKS Context'
     inputs:
       azureSubscription: 'QuckApp-${{ parameters.environment }}'
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
+      scriptType: bash
+      scriptLocation: inlineScript
       inlineScript: |
-        # Determine service URL based on environment
-        case "${{ parameters.environment }}" in
-          local)
-            SERVICE_URL="http://localhost:3000"
-            ;;
-          dev)
-            SERVICE_URL="https://${{ parameters.serviceName }}.dev.quckapp.io"
-            ;;
-          qa)
-            SERVICE_URL="https://${{ parameters.serviceName }}.qa.quckapp.io"
-            ;;
-          uat1)
-            SERVICE_URL="https://${{ parameters.serviceName }}.uat1.quckapp.io"
-            ;;
-          uat2)
-            SERVICE_URL="https://${{ parameters.serviceName }}.uat2.quckapp.io"
-            ;;
-          uat3)
-            SERVICE_URL="https://${{ parameters.serviceName }}.uat3.quckapp.io"
-            ;;
-          staging)
-            SERVICE_URL="https://${{ parameters.serviceName }}.staging.quckapp.io"
-            ;;
-          live)
-            SERVICE_URL="https://${{ parameters.serviceName }}.quckapp.io"
-            ;;
-          *)
-            SERVICE_URL="https://${{ parameters.serviceName }}.${{ parameters.environment }}.quckapp.io"
-            ;;
-        esac
+        az aks get-credentials \
+          --resource-group rg-quckapp-${{ parameters.environment }} \
+          --name aks-quckapp-${{ parameters.environment }} \
+          --overwrite-existing
 
-        echo "Checking health at: $SERVICE_URL/health"
-
-        for i in {1..10}; do
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$SERVICE_URL/health" 2>/dev/null || echo "000")
-          if [ "$HTTP_STATUS" = "200" ]; then
-            echo "Health check passed!"
-            exit 0
-          fi
-          echo "Attempt $i: Health check returned $HTTP_STATUS"
-          sleep 10
-        done
-
-        echo "Health check failed after 10 attempts"
-        exit 1
-
-  - task: PowerShell@2
-    displayName: 'Record Deployment Metrics'
+  - task: HelmInstaller@1
+    displayName: 'Install Helm'
     inputs:
-      targetType: 'inline'
-      script: |
-        $metrics = @{
-          serviceName = "${{ parameters.serviceName }}"
-          environment = "${{ parameters.environment }}"
-          imageTag = "${{ parameters.imageTag }}"
-          replicas = ${{ parameters.replicas }}
-          timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ"
-        }
+      helmVersionToInstall: '3.13.0'
 
-        Write-Host "##vso[task.setvariable variable=deploymentMetrics]$($metrics | ConvertTo-Json -Compress)"
-        Write-Host "Deployment completed successfully for ${{ parameters.serviceName }} to ${{ parameters.environment }}"
+  - script: |
+      helm repo add bitnami https://charts.bitnami.com/bitnami
+      helm repo add elastic https://helm.elastic.co
+      helm repo add minio https://charts.min.io/
+      helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      helm repo add grafana https://grafana.github.io/helm-charts
+      helm repo update
+    displayName: 'Add Helm Repos'
+
+  - script: |
+      helm dependency build infrastructure/helm/quikapp
+    displayName: 'Build Helm Dependencies'
+
+  - script: |
+      ENV="${{ parameters.environment }}"
+      case $ENV in
+        prod) NAMESPACE="quckapp"; VALUES_FILE="values-production.yaml" ;;
+        live) NAMESPACE="quckapp-live"; VALUES_FILE="values-production.yaml" ;;
+        dev)  NAMESPACE="quckapp-dev"; VALUES_FILE="values-development.yaml" ;;
+        *)    NAMESPACE="quckapp-${ENV}"; VALUES_FILE="values-${ENV}.yaml" ;;
+      esac
+
+      kubectl create namespace $NAMESPACE --dry-run=client -o yaml | kubectl apply -f -
+
+      HELM_SET_ARGS=""
+      if [ -n "${{ parameters.serviceName }}" ]; then
+        # Deploy single service - set only that service's image tag
+        SVC_KEY=$(echo "${{ parameters.serviceName }}" | sed 's/-/_/g' | sed 's/_s/S/;s/_s/S/;s/_o/O/;s/_b/B/')
+        HELM_SET_ARGS="--set ${SVC_KEY}.image.tag=${{ parameters.imageTag }}"
+      else
+        # Deploy all - set global image tag
+        HELM_SET_ARGS="--set global.imageTag=${{ parameters.imageTag }}"
+      fi
+
+      helm upgrade --install quckapp infrastructure/helm/quikapp \
+        --namespace $NAMESPACE \
+        --values infrastructure/helm/quikapp/${VALUES_FILE} \
+        --set global.imageRegistry=$(ACR_LOGIN_SERVER)/quckapp \
+        --set global.imagePullPolicy=Always \
+        $HELM_SET_ARGS \
+        --timeout ${{ parameters.helmTimeout }} \
+        --wait \
+        --atomic
+
+      echo "##vso[task.setvariable variable=namespace]$NAMESPACE"
+    displayName: 'Deploy with Helm'
+
+  - script: |
+      kubectl rollout status deployment -n $(namespace) --timeout=600s || true
+    displayName: 'Wait for Rollout'
+
+  - template: smoke-tests.yml
+    parameters:
+      namespace: $(namespace)
+      environment: ${{ parameters.environment }}

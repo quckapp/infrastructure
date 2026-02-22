@@ -1,0 +1,126 @@
+# =============================================================================
+# QUCKAPP - GO SERVICES MAKEFILE
+# =============================================================================
+# Convenience targets for managing Go services
+# Usage: make -f Makefile.go-services [target] ENV=[environment]
+# =============================================================================
+
+.PHONY: help up down build logs ps restart pull clean
+
+# Default environment
+ENV ?= local
+
+# Compose files
+BASE_COMPOSE := docker-compose.go-services.yml
+OVERRIDE_COMPOSE := docker-compose.go-services.$(ENV).yml
+ENV_FILE := .env.$(ENV)
+
+# Handle UAT environments
+ifeq ($(filter $(ENV),uat1 uat2 uat3),$(ENV))
+    OVERRIDE_COMPOSE := docker-compose.go-services.uat.yml
+endif
+
+# Docker compose command
+COMPOSE := docker-compose -f $(BASE_COMPOSE) -f $(OVERRIDE_COMPOSE) --env-file $(ENV_FILE)
+
+# =============================================================================
+# TARGETS
+# =============================================================================
+
+help: ## Show this help message
+	@echo "QUCKAPP Go Services - Available targets:"
+	@echo ""
+	@echo "Usage: make -f Makefile.go-services [target] ENV=[environment]"
+	@echo ""
+	@echo "Environments: local, dev, qa, uat1, uat2, uat3, staging, production, live"
+	@echo ""
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
+
+up: ## Start all Go services
+	@echo "Starting Go services ($(ENV))..."
+	$(COMPOSE) up -d
+	$(COMPOSE) ps
+
+up-build: ## Build and start all Go services
+	@echo "Building and starting Go services ($(ENV))..."
+	$(COMPOSE) up -d --build
+	$(COMPOSE) ps
+
+down: ## Stop all Go services
+	@echo "Stopping Go services ($(ENV))..."
+	$(COMPOSE) down
+
+restart: ## Restart all Go services
+	@echo "Restarting Go services ($(ENV))..."
+	$(COMPOSE) restart
+
+build: ## Build all Go services
+	@echo "Building Go services ($(ENV))..."
+	$(COMPOSE) build
+
+logs: ## Show logs for all services
+	$(COMPOSE) logs -f
+
+logs-%: ## Show logs for specific service (e.g., make logs-attachment-service)
+	$(COMPOSE) logs -f $*
+
+ps: ## Show status of all services
+	$(COMPOSE) ps
+
+pull: ## Pull latest images
+	@echo "Pulling latest images..."
+	$(COMPOSE) pull
+
+clean: ## Remove all containers, networks, and volumes
+	@echo "Cleaning up Go services ($(ENV))..."
+	$(COMPOSE) down -v --remove-orphans
+
+# =============================================================================
+# SERVICE-SPECIFIC TARGETS
+# =============================================================================
+
+attachment-service: ## Start only attachment-service
+	$(COMPOSE) up -d attachment-service
+
+bookmark-service: ## Start only bookmark-service
+	$(COMPOSE) up -d bookmark-service
+
+cdn-service: ## Start only cdn-service
+	$(COMPOSE) up -d cdn-service
+
+file-service: ## Start only file-service
+	$(COMPOSE) up -d file-service
+
+media-service: ## Start only media-service
+	$(COMPOSE) up -d media-service
+
+reminder-service: ## Start only reminder-service
+	$(COMPOSE) up -d reminder-service
+
+search-service: ## Start only search-service
+	$(COMPOSE) up -d search-service
+
+workspace-service: ## Start only workspace-service
+	$(COMPOSE) up -d workspace-service
+
+# =============================================================================
+# ENVIRONMENT-SPECIFIC SHORTCUTS
+# =============================================================================
+
+local: ## Start services in local environment
+	@$(MAKE) -f $(MAKEFILE_LIST) up ENV=local
+
+dev: ## Start services in development environment
+	@$(MAKE) -f $(MAKEFILE_LIST) up ENV=dev
+
+qa: ## Start services in QA environment
+	@$(MAKE) -f $(MAKEFILE_LIST) up ENV=qa
+
+staging: ## Start services in staging environment
+	@$(MAKE) -f $(MAKEFILE_LIST) up ENV=staging
+
+production: ## Start services in production environment
+	@$(MAKE) -f $(MAKEFILE_LIST) up ENV=production
+
+live: ## Start services in live environment
+	@$(MAKE) -f $(MAKEFILE_LIST) up ENV=live

@@ -1,5 +1,8 @@
 // =============================================================================
-// QuckApp MongoDB Seed Data
+// QuckApp MongoDB Seed Data (Development)
+// =============================================================================
+// UUIDs are consistent across all databases
+// Runs after 01-init.js which creates collections and indexes
 // =============================================================================
 
 db = db.getSiblingDB('quckapp');

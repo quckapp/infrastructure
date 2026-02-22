@@ -1,0 +1,121 @@
+# =============================================================================
+# QUCKAPP - GO SERVICES DEVELOPMENT OVERRIDE
+# =============================================================================
+# Development environment overrides
+# Usage: docker-compose -f docker-compose.go-services.yml -f docker-compose.go-services.dev.yml --env-file .env.dev up
+# =============================================================================
+
+version: '3.8'
+
+services:
+  attachment-service:
+    image: quckapp/attachment-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  bookmark-service:
+    image: quckapp/bookmark-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  cdn-service:
+    image: quckapp/cdn-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  file-service:
+    image: quckapp/file-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  media-service:
+    image: quckapp/media-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  reminder-service:
+    image: quckapp/reminder-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  search-service:
+    image: quckapp/search-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
+  workspace-service:
+    image: quckapp/workspace-service:${IMAGE_TAG:-dev}
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M

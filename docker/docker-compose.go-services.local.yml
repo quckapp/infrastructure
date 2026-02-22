@@ -1,0 +1,87 @@
+# =============================================================================
+# QUCKAPP - GO SERVICES LOCAL OVERRIDE
+# =============================================================================
+# Local development overrides with hot reload and debug settings
+# Usage: docker-compose -f docker-compose.go-services.yml -f docker-compose.go-services.local.yml --env-file .env.local up
+# =============================================================================
+
+services:
+  attachment-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/attachment-service:/app
+    command: go run main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  bookmark-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/bookmark-service:/app
+    command: go run cmd/server/main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  cdn-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/cdn-service:/app
+    command: go run main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  file-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/file-service:/app
+    command: go run cmd/server/main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  media-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/media-service:/app
+    command: go run cmd/server/main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  reminder-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/reminder-service:/app
+    command: go run main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  search-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/search-service:/app
+    command: go run cmd/server/main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug
+
+  workspace-service:
+    build:
+      target: builder
+    volumes:
+      - ../../services/workspace-service:/app
+    command: go run cmd/server/main.go
+    environment:
+      - GO_ENV=development
+      - GIN_MODE=debug

@@ -1,0 +1,193 @@
+# =============================================================================
+# QUCKAPP - GO SERVICES STAGING OVERRIDE
+# =============================================================================
+# Staging environment - mirrors production configuration
+# Usage: docker-compose -f docker-compose.go-services.yml -f docker-compose.go-services.staging.yml --env-file .env.staging up
+# =============================================================================
+
+version: '3.8'
+
+services:
+  attachment-service:
+    image: quckapp/attachment-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  bookmark-service:
+    image: quckapp/bookmark-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  cdn-service:
+    image: quckapp/cdn-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  file-service:
+    image: quckapp/file-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  media-service:
+    image: quckapp/media-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  reminder-service:
+    image: quckapp/reminder-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  search-service:
+    image: quckapp/search-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+
+  workspace-service:
+    image: quckapp/workspace-service:${IMAGE_TAG:-staging}
+    environment:
+      - GO_ENV=staging
+      - GIN_MODE=release
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback

@@ -1,7 +1,8 @@
 # =============================================================================
 # QUCKAPP INFRASTRUCTURE - DOCKER COMPOSE
 # =============================================================================
-# Local development infrastructure: databases, message brokers, caching
+# Local development infrastructure: databases, message brokers, caching, storage.
+# Monitoring stack (Prometheus, Grafana, etc.) is in docker-compose.monitoring.yml.
 # =============================================================================
 
 services:
@@ -26,6 +27,33 @@ services:
       - ./init-scripts/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-quckapp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # MySQL - Relational database (Spring Boot + Go services)
+  mysql:
+    image: mysql:8.0
+    container_name: quckapp-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_USER: ${MYSQL_USER:-quckapp}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-quckapp123}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts/mysql:/docker-entrypoint-initdb.d:ro
+    command: >
+      --default-authentication-plugin=caching_sha2_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max-connections=200
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root123}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -292,67 +320,13 @@ services:
     networks:
       - quckapp-network
 
-  # ===========================================================================
-  # MONITORING
-  # ===========================================================================
-
-  # Prometheus - Metrics collection
-  prometheus:
-    image: prom/prometheus:v2.47.0
-    container_name: quckapp-prometheus
-    restart: unless-stopped
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.enable-lifecycle'
-    ports:
-      - "${PROMETHEUS_PORT:-9090}:9090"
-    volumes:
-      - ./config/prometheus:/etc/prometheus:ro
-      - prometheus_data:/prometheus
-    networks:
-      - quckapp-network
-
-  # Grafana - Metrics visualization
-  grafana:
-    image: grafana/grafana:10.2.0
-    container_name: quckapp-grafana
-    restart: unless-stopped
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    ports:
-      - "${GRAFANA_PORT:-3030}:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
-    depends_on:
-      - prometheus
-    networks:
-      - quckapp-network
-
-  # Jaeger - Distributed tracing
-  jaeger:
-    image: jaegertracing/all-in-one:1.50
-    container_name: quckapp-jaeger
-    restart: unless-stopped
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
-    ports:
-      - "${JAEGER_UI_PORT:-16686}:16686"
-      - "4317:4317"   # OTLP gRPC
-      - "4318:4318"   # OTLP HTTP
-      - "14268:14268" # Jaeger HTTP
-      - "6831:6831/udp" # Jaeger compact thrift
-    networks:
-      - quckapp-network
-
 # =============================================================================
 # VOLUMES
 # =============================================================================
 volumes:
   postgres_data:
+    driver: local
+  mysql_data:
     driver: local
   mysql_data:
     driver: local
@@ -377,10 +351,6 @@ volumes:
   scylladb_data2:
     driver: local
   scylladb_data3:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
     driver: local
 
 # =============================================================================

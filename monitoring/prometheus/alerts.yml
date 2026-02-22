@@ -283,3 +283,55 @@ groups:
         annotations:
           summary: "Elasticsearch high disk usage"
           description: "Elasticsearch disk usage is above 80%."
+
+  # ============================================
+  # Nginx Alerts
+  # ============================================
+  - name: nginx_alerts
+    rules:
+      - alert: NginxDown
+        expr: nginx_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx reverse proxy is down"
+          description: "Nginx exporter reports the reverse proxy is unreachable."
+
+      - alert: NginxHighHttp5xxRate
+        expr: |
+          (rate(nginx_http_requests_total{status=~"5.."}[5m]) / rate(nginx_http_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx high 5xx error rate"
+          description: "More than 5% of requests are returning 5xx errors."
+
+      - alert: NginxHighHttp4xxRate
+        expr: |
+          (rate(nginx_http_requests_total{status=~"4.."}[5m]) / rate(nginx_http_requests_total[5m])) > 0.25
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nginx high 4xx error rate"
+          description: "More than 25% of requests are returning 4xx errors."
+
+      - alert: NginxHighConnectionCount
+        expr: nginx_connections_active > 1000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nginx high active connections"
+          description: "Nginx has more than 1000 active connections."
+
+      - alert: NginxHighWaitingConnections
+        expr: nginx_connections_waiting > 500
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Nginx high waiting connections"
+          description: "Nginx has more than 500 waiting connections. Backend services may be slow."

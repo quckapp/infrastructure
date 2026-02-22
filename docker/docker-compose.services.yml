@@ -24,7 +24,7 @@ services:
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
-      AUTH_SERVICE_URL: http://auth-service:3001
+      AUTH_SERVICE_URL: http://auth-service:8081
       USER_SERVICE_URL: http://user-service:3002
       WORKSPACE_SERVICE_URL: http://workspace-service:3003
       CHANNEL_SERVICE_URL: http://channel-service:3004
@@ -32,6 +32,14 @@ services:
       FILE_SERVICE_URL: http://file-service:3006
       SEARCH_SERVICE_URL: http://search-service:3007
       NOTIFICATION_SERVICE_URL: http://notification-service:3008
+      # Elixir Services
+      PRESENCE_SERVICE_URL: http://presence-service:4000
+      CALL_SERVICE_URL: http://call-service:4002
+      REALTIME_SERVICE_URL: http://realtime-service:4003
+      NOTIFICATION_ORCHESTRATOR_URL: http://notification-orchestrator:4004
+      HUDDLE_SERVICE_URL: http://huddle-service:4005
+      MESSAGE_SERVICE_ELIXIR_URL: http://message-service-elixir:4006
+      EVENT_BROADCAST_SERVICE_URL: http://event-broadcast-service:4007
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "${GATEWAY_PORT:-3000}:3000"
@@ -47,12 +55,12 @@ services:
       timeout: 10s
       retries: 3
 
-  # Auth Service (NestJS) - Authentication & Authorization
-  auth-service:
+  # Auth Service (NestJS) - Authentication & Authorization (Legacy)
+  auth-service-nestjs:
     build:
       context: ../../services/nestjs/auth-service
       dockerfile: ../../infrastructure/docker/dockerfiles/nestjs/Dockerfile
-    container_name: quckapp-auth-service
+    container_name: quckapp-auth-service-nestjs
     restart: unless-stopped
     environment:
       NODE_ENV: development
@@ -72,6 +80,39 @@ services:
       - redis
     networks:
       - quckapp-network
+
+  # Auth Service (Spring Boot) - Primary Authentication Service
+  auth-service:
+    build:
+      context: ../../services/auth-service
+      dockerfile: Dockerfile
+    container_name: quckapp-auth-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/quckapp
+      SPRING_DATASOURCE_USERNAME: quckapp
+      SPRING_DATASOURCE_PASSWORD: quckapp_secret
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: redis_secret
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      JWT_EXPIRATION: 3600
+      REFRESH_TOKEN_EXPIRATION: 604800
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # ===========================================================================
   # USER & WORKSPACE MANAGEMENT
@@ -328,61 +369,75 @@ services:
   # REALTIME & PRESENCE (Elixir)
   # ===========================================================================
 
-  # Realtime Service (Elixir/Phoenix) - WebSocket connections
-  realtime-service:
+  # Presence Service (Elixir) - User presence tracking
+  presence-service:
     build:
-      context: ../../services/elixir/realtime-service
-      dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
+      context: ../../services/presence-service
+      dockerfile: Dockerfile
       args:
-        APP_NAME: realtime_service
-    container_name: quckapp-realtime-service
+        APP_NAME: presence_service
+    container_name: quckapp-presence-service
     restart: unless-stopped
     environment:
-      MIX_ENV: dev
+      MIX_ENV: prod
       PORT: 4000
-      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/presence_db?authSource=admin
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
-      PHX_HOST: localhost
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "4000:4000"
       - "4369:4369"
     depends_on:
-      - postgres
+      - mongodb
       - redis
       - kafka
     networks:
       - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Presence Service (Elixir) - User presence tracking
-  presence-service:
+  # Realtime Service (Elixir/Phoenix) - WebSocket connections
+  realtime-service:
     build:
-      context: ../../services/elixir/presence-service
-      dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
+      context: ../../services/realtime-service
+      dockerfile: Dockerfile
       args:
-        APP_NAME: presence_service
-    container_name: quckapp-presence-service
+        APP_NAME: realtime_service
+    container_name: quckapp-realtime-service
     restart: unless-stopped
     environment:
-      MIX_ENV: dev
-      PORT: 4001
-      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
+      MIX_ENV: prod
+      PORT: 4003
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/realtime_db?authSource=admin
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
+      PHX_HOST: localhost
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
-      - "4001:4001"
+      - "4003:4003"
     depends_on:
-      - postgres
+      - mongodb
       - redis
       - kafka
     networks:
       - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # ===========================================================================
   # VOICE & VIDEO (Elixir)
@@ -391,56 +446,181 @@ services:
   # Call Service (Elixir) - Voice/Video calls
   call-service:
     build:
-      context: ../../services/elixir/call-service
-      dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
+      context: ../../services/call-service
+      dockerfile: Dockerfile
       args:
         APP_NAME: call_service
     container_name: quckapp-call-service
     restart: unless-stopped
     environment:
-      MIX_ENV: dev
+      MIX_ENV: prod
       PORT: 4002
-      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/call_db?authSource=admin
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
       - "4002:4002"
     depends_on:
-      - postgres
+      - mongodb
       - redis
       - kafka
     networks:
       - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # Huddle Service (Elixir) - Quick audio rooms
   huddle-service:
     build:
-      context: ../../services/elixir/huddle-service
-      dockerfile: ../../infrastructure/docker/dockerfiles/elixir/Dockerfile
+      context: ../../services/huddle-service
+      dockerfile: Dockerfile
       args:
         APP_NAME: huddle_service
     container_name: quckapp-huddle-service
     restart: unless-stopped
     environment:
-      MIX_ENV: dev
-      PORT: 4003
-      DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
+      MIX_ENV: prod
+      PORT: 4005
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/huddle_db?authSource=admin
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     ports:
-      - "4003:4003"
+      - "4005:4005"
     depends_on:
-      - postgres
+      - mongodb
       - redis
       - kafka
     networks:
       - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ===========================================================================
+  # MESSAGING & NOTIFICATIONS (Elixir)
+  # ===========================================================================
+
+  # Message Service (Elixir) - Real-time messaging
+  message-service-elixir:
+    build:
+      context: ../../services/message-service
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: message_service
+    container_name: quckapp-message-service-elixir
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4006
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/message_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@redis:6379
+      KAFKA_BROKERS: kafka:9092
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    ports:
+      - "4006:4006"
+    depends_on:
+      - mongodb
+      - redis
+      - kafka
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4006/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Notification Orchestrator (Elixir) - Push notification management
+  notification-orchestrator:
+    build:
+      context: ../../services/notification-orchestrator
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: notification_orchestrator
+    container_name: quckapp-notification-orchestrator
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4004
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/notification_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@redis:6379
+      KAFKA_BROKERS: kafka:9092
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
+      FCM_PROJECT_ID: ${FCM_PROJECT_ID:-}
+      FCM_PRIVATE_KEY: ${FCM_PRIVATE_KEY:-}
+      FCM_CLIENT_EMAIL: ${FCM_CLIENT_EMAIL:-}
+      APNS_KEY_ID: ${APNS_KEY_ID:-}
+      APNS_TEAM_ID: ${APNS_TEAM_ID:-}
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    ports:
+      - "4004:4004"
+    depends_on:
+      - mongodb
+      - redis
+      - kafka
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Event Broadcast Service (Elixir) - Event distribution
+  event-broadcast-service:
+    build:
+      context: ../../services/event-broadcast-service
+      dockerfile: Dockerfile
+      args:
+        APP_NAME: event_broadcast_service
+    container_name: quckapp-event-broadcast-service
+    restart: unless-stopped
+    environment:
+      MIX_ENV: prod
+      PORT: 4007
+      MONGODB_URL: mongodb://admin:admin_secret@mongodb:27017/event_db?authSource=admin
+      REDIS_URL: redis://:redis_secret@redis:6379
+      KAFKA_BROKERS: kafka:9092
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:-dev_secret_key_base_min_64_chars_long_for_phoenix_app_1234567890}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      AUTH_SERVICE_URL: http://auth-service:8081
+      RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    ports:
+      - "4007:4007"
+    depends_on:
+      - mongodb
+      - redis
+      - kafka
+    networks:
+      - quckapp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   # ===========================================================================
   # ANALYTICS & ML (Python)

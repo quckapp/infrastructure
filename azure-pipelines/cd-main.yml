@@ -1,569 +1,297 @@
-# Azure DevOps Multi-Stage CD Pipeline
-# Deploys to: Local/Mock -> Dev -> QA -> UAT1 -> UAT2 -> UAT3 -> Staging -> Live
-# All 8 environments with approval gates and governance controls
+# =============================================================================
+# QuckApp CD Pipeline - Environment Promotion
+# =============================================================================
+# Deploys services through: dev → QA → uat1 → uat2 → uat3 → staging → prod → live
+# Triggered by GitHub Actions (via webhook) or manually
+# =============================================================================
 
 trigger: none
 
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
 resources:
-  webhooks:
-    - webhook: GitHubActionsWebhook
-      connection: GitHubServiceConnection
-      filters:
-        - path: action
-          value: completed
+  repositories:
+    - repository: github-repo
+      type: github
+      endpoint: 'GitHubServiceConn'
+      name: 'quckapp/quckapp'
+      ref: 'refs/heads/main'
 
 parameters:
   - name: serviceName
+    displayName: 'Service to deploy (empty = all)'
     type: string
-    displayName: 'Service Name'
+    default: ''
   - name: imageTag
+    displayName: 'Image tag to deploy'
     type: string
-    displayName: 'Image Tag (Git SHA)'
-  - name: techStack
+    default: 'latest'
+  - name: startEnvironment
+    displayName: 'Start from environment'
     type: string
-    displayName: 'Technology Stack'
+    default: 'dev'
     values:
-      - spring-boot
-      - nestjs
-      - elixir
-      - go
-      - python
-  - name: deployToEnvironments
-    type: object
-    default:
-      - local
       - dev
       - qa
       - uat1
       - uat2
       - uat3
       - staging
+      - prod
+      - live
+  - name: stopAfter
+    displayName: 'Stop after environment (empty = deploy through all)'
+    type: string
+    default: ''
+    values:
+      - ''
+      - dev
+      - qa
+      - uat1
+      - uat2
+      - uat3
+      - staging
+      - prod
       - live
 
 variables:
-  - group: QuckApp-Global-Variables
-  - name: acrRegistry
-    value: 'quckapp.azurecr.io'
-  - name: imageRepository
-    value: '${{ parameters.serviceName }}'
-  - name: imageTag
-    value: '${{ parameters.imageTag }}'
+  - group: QuckApp-Global
+  - name: helmChart
+    value: 'infrastructure/helm/quikapp'
 
+# =============================================================================
+# Stage: Deploy to Dev
+# =============================================================================
 stages:
-  # ============================================================================
-  # LOCAL/MOCK ENVIRONMENT
-  # ============================================================================
-  - stage: Deploy_Local_Mock
-    displayName: 'Deploy to Local/Mock'
-    condition: contains('${{ parameters.deployToEnvironments }}', 'local')
-    jobs:
-      - deployment: DeployLocalMock
-        displayName: 'Deploy to Local/Mock Environment'
-        environment: 'quckapp-local-mock'
-        pool:
-          vmImage: 'ubuntu-latest'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - template: templates/deploy-steps.yml
-                  parameters:
-                    environment: 'local'
-                    namespace: 'quckapp-mock'
-                    serviceName: '${{ parameters.serviceName }}'
-                    imageTag: '${{ parameters.imageTag }}'
-                    replicas: 1
-                    memoryLimit: '256Mi'
-                    cpuLimit: '250m'
-
-  # ============================================================================
-  # DEV ENVIRONMENT
-  # ============================================================================
   - stage: Deploy_Dev
     displayName: 'Deploy to Dev'
-    dependsOn: Deploy_Local_Mock
     condition: |
       and(
-        or(succeeded(), eq(stageDependencies.Deploy_Local_Mock.result, 'Skipped')),
-        contains('${{ parameters.deployToEnvironments }}', 'dev')
+        succeeded(),
+        in('${{ parameters.startEnvironment }}', 'dev')
       )
     jobs:
-      - deployment: DeployDev
-        displayName: 'Deploy to Dev Environment'
-        environment: 'quckapp'
-        pool:
-          vmImage: 'ubuntu-latest'
+      - deployment: deploy_dev
+        displayName: 'Deploy to Dev'
+        environment: 'quckapp-dev'
         strategy:
           runOnce:
             deploy:
               steps:
+                - checkout: github-repo
+                  submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'dev'
-                    namespace: 'quckapp'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 2
-                    memoryLimit: '512Mi'
-                    cpuLimit: '500m'
-                    aksCluster: 'aks-dev'
-                    resourceGroup: 'rg-quckapp'
 
-      - job: IntegrationTests
-        displayName: 'Run Integration Tests'
-        dependsOn: DeployDev
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/integration-tests.yml
-            parameters:
-              environment: 'dev'
-              serviceName: '${{ parameters.serviceName }}'
-
-  # ============================================================================
-  # QA ENVIRONMENT
-  # ============================================================================
+  # ===========================================================================
+  # Stage: Deploy to QA
+  # ===========================================================================
   - stage: Deploy_QA
     displayName: 'Deploy to QA'
     dependsOn: Deploy_Dev
     condition: |
       and(
-        succeeded(),
-        contains('${{ parameters.deployToEnvironments }}', 'qa')
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'qa')),
+        ne('${{ parameters.stopAfter }}', 'dev')
       )
     jobs:
-      - deployment: DeployQA
-        displayName: 'Deploy to QA Environment'
+      - deployment: deploy_qa
+        displayName: 'Deploy to QA'
         environment: 'quckapp-qa'
-        pool:
-          vmImage: 'ubuntu-latest'
         strategy:
           runOnce:
-            preDeploy:
-              steps:
-                - task: ManualValidation@0
-                  displayName: 'QA Lead Approval'
-                  inputs:
-                    notifyUsers: |
-                      qa-lead@quckapp.com
-                    instructions: 'Please review and approve deployment to QA environment'
-                    timeoutInMinutes: 1440  # 24 hours
             deploy:
               steps:
+                - checkout: github-repo
+                  submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'qa'
-                    namespace: 'quckapp-qa'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 2
-                    memoryLimit: '512Mi'
-                    cpuLimit: '500m'
-                    aksCluster: 'aks-qa'
-                    resourceGroup: 'rg-quckapp-qa'
+                - template: templates/integration-tests.yml
+                  parameters:
+                    environment: 'qa'
+                    namespace: 'quckapp-qa'
 
-      - job: QATests
-        displayName: 'Run QA Test Suite'
-        dependsOn: DeployQA
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/qa-tests.yml
-            parameters:
-              environment: 'qa'
-              serviceName: '${{ parameters.serviceName }}'
-
-  # ============================================================================
-  # UAT1 ENVIRONMENT (Partner/Customer Acceptance Testing)
-  # ============================================================================
+  # ===========================================================================
+  # Stage: Deploy to UAT1
+  # ===========================================================================
   - stage: Deploy_UAT1
-    displayName: 'Deploy to UAT1 (Partner Testing)'
+    displayName: 'Deploy to UAT1'
     dependsOn: Deploy_QA
     condition: |
       and(
-        succeeded(),
-        contains('${{ parameters.deployToEnvironments }}', 'uat1')
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'uat1')),
+        ne('${{ parameters.stopAfter }}', 'qa')
       )
     jobs:
-      - deployment: DeployUAT1
-        displayName: 'Deploy to UAT1 Environment'
+      - deployment: deploy_uat1
+        displayName: 'Deploy to UAT1'
         environment: 'quckapp-uat1'
-        pool:
-          vmImage: 'ubuntu-latest'
         strategy:
           runOnce:
-            preDeploy:
-              steps:
-                - task: ManualValidation@0
-                  displayName: 'Product Owner Approval (UAT1)'
-                  inputs:
-                    notifyUsers: |
-                      product-owner@quckapp.com
-                      partner-team@quckapp.com
-                    instructions: |
-                      UAT1 Deployment - Partner/Customer Acceptance Testing
-
-                      This environment is used for external partner testing.
-                      Please verify QA testing is complete before approving.
-                    timeoutInMinutes: 2880  # 48 hours
             deploy:
               steps:
+                - checkout: github-repo
+                  submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'uat1'
-                    namespace: 'quckapp-uat1'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 2
-                    memoryLimit: '1Gi'
-                    cpuLimit: '1000m'
-                    aksCluster: 'aks-uat'
-                    resourceGroup: 'rg-quckapp-uat'
 
-  # ============================================================================
-  # UAT2 ENVIRONMENT (Internal QA Testing)
-  # ============================================================================
+  # ===========================================================================
+  # Stage: Deploy to UAT2
+  # ===========================================================================
   - stage: Deploy_UAT2
-    displayName: 'Deploy to UAT2 (Internal QA)'
-    dependsOn: Deploy_UAT1
+    displayName: 'Deploy to UAT2'
+    dependsOn: Deploy_QA
     condition: |
       and(
-        succeeded(),
-        contains('${{ parameters.deployToEnvironments }}', 'uat2')
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'uat2')),
+        ne('${{ parameters.stopAfter }}', 'qa')
       )
     jobs:
-      - deployment: DeployUAT2
-        displayName: 'Deploy to UAT2 Environment'
+      - deployment: deploy_uat2
+        displayName: 'Deploy to UAT2'
         environment: 'quckapp-uat2'
-        pool:
-          vmImage: 'ubuntu-latest'
         strategy:
           runOnce:
-            preDeploy:
-              steps:
-                - task: ManualValidation@0
-                  displayName: 'Product Owner Approval (UAT2)'
-                  inputs:
-                    notifyUsers: |
-                      product-owner@quckapp.com
-                      internal-qa@quckapp.com
-                    instructions: |
-                      UAT2 Deployment - Internal QA Testing
-
-                      This environment has debug logging enabled.
-                      Please verify UAT1 testing is complete before approving.
-                    timeoutInMinutes: 2880  # 48 hours
             deploy:
               steps:
+                - checkout: github-repo
+                  submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'uat2'
-                    namespace: 'quckapp-uat2'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 2
-                    memoryLimit: '1Gi'
-                    cpuLimit: '1000m'
-                    aksCluster: 'aks-uat'
-                    resourceGroup: 'rg-quckapp-uat'
 
-  # ============================================================================
-  # UAT3 ENVIRONMENT (Performance/Load Testing)
-  # ============================================================================
+  # ===========================================================================
+  # Stage: Deploy to UAT3
+  # ===========================================================================
   - stage: Deploy_UAT3
-    displayName: 'Deploy to UAT3 (Performance Testing)'
-    dependsOn: Deploy_UAT2
+    displayName: 'Deploy to UAT3'
+    dependsOn: Deploy_QA
     condition: |
       and(
-        succeeded(),
-        contains('${{ parameters.deployToEnvironments }}', 'uat3')
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'uat3')),
+        ne('${{ parameters.stopAfter }}', 'qa')
       )
     jobs:
-      - deployment: DeployUAT3
-        displayName: 'Deploy to UAT3 Environment'
+      - deployment: deploy_uat3
+        displayName: 'Deploy to UAT3'
         environment: 'quckapp-uat3'
-        pool:
-          vmImage: 'ubuntu-latest'
         strategy:
           runOnce:
-            preDeploy:
-              steps:
-                - task: ManualValidation@0
-                  displayName: 'Product Owner + Security Approval (UAT3)'
-                  inputs:
-                    notifyUsers: |
-                      product-owner@quckapp.com
-                      security-team@quckapp.com
-                      performance-team@quckapp.com
-                    instructions: |
-                      UAT3 Deployment - Performance/Load Testing
-
-                      Dual approval required:
-                      1. Product Owner sign-off
-                      2. Security team sign-off
-
-                      Please review security scan results and approve deployment.
-                    timeoutInMinutes: 4320  # 72 hours
             deploy:
               steps:
+                - checkout: github-repo
+                  submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'uat3'
-                    namespace: 'quckapp-uat3'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 3
-                    memoryLimit: '1Gi'
-                    cpuLimit: '1000m'
-                    aksCluster: 'aks-uat'
-                    resourceGroup: 'rg-quckapp-uat'
 
-      - job: SecurityTests
-        displayName: 'Run Security Tests'
-        dependsOn: DeployUAT3
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/security-tests.yml
-            parameters:
-              environment: 'uat3'
-              serviceName: '${{ parameters.serviceName }}'
-
-      - job: PerformanceTests
-        displayName: 'Run Performance Tests'
-        dependsOn: DeployUAT3
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/performance-tests.yml
-            parameters:
-              environment: 'uat3'
-              serviceName: '${{ parameters.serviceName }}'
-
-      - job: LoadTests
-        displayName: 'Run Load Tests'
-        dependsOn: DeployUAT3
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/load-tests.yml
-            parameters:
-              environment: 'uat3'
-              serviceName: '${{ parameters.serviceName }}'
-              targetRPS: 500
-              duration: '5m'
-
-  # ============================================================================
-  # STAGING ENVIRONMENT
-  # ============================================================================
+  # ===========================================================================
+  # Stage: Deploy to Staging
+  # ===========================================================================
   - stage: Deploy_Staging
     displayName: 'Deploy to Staging'
-    dependsOn: Deploy_UAT3
+    dependsOn:
+      - Deploy_UAT1
+      - Deploy_UAT2
+      - Deploy_UAT3
     condition: |
       and(
-        succeeded(),
-        contains('${{ parameters.deployToEnvironments }}', 'staging')
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'staging')),
+        not(in('${{ parameters.stopAfter }}', 'uat1', 'uat2', 'uat3'))
       )
     jobs:
-      - deployment: DeployStaging
-        displayName: 'Deploy to Staging Environment'
+      - deployment: deploy_staging
+        displayName: 'Deploy to Staging'
         environment: 'quckapp-staging'
-        pool:
-          vmImage: 'ubuntu-latest'
         strategy:
           runOnce:
-            preDeploy:
-              steps:
-                - task: ManualValidation@0
-                  displayName: 'Release Manager Approval'
-                  inputs:
-                    notifyUsers: |
-                      release-manager@quckapp.com
-                      devops-team@quckapp.com
-                    instructions: |
-                      Pre-Production Deployment
-
-                      Please verify:
-                      - All UAT sign-offs completed
-                      - Security scans passed
-                      - Performance benchmarks met
-                      - Rollback plan documented
-                    timeoutInMinutes: 4320  # 72 hours
             deploy:
               steps:
+                - checkout: github-repo
+                  submodules: true
                 - template: templates/deploy-steps.yml
                   parameters:
                     environment: 'staging'
-                    namespace: 'quckapp-staging'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 3
-                    memoryLimit: '2Gi'
-                    cpuLimit: '2000m'
-                    aksCluster: 'aks-staging'
-                    resourceGroup: 'rg-quckapp-staging'
-                    enableAutoScale: true
-                    minReplicas: 3
-                    maxReplicas: 10
+                    helmTimeout: '20m'
+                - template: templates/integration-tests.yml
+                  parameters:
+                    environment: 'staging'
+                    namespace: 'quckapp-staging'
 
-      - job: StagingLoadTests
-        displayName: 'Run Production-like Load Tests'
-        dependsOn: DeployStaging
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/load-tests.yml
-            parameters:
-              environment: 'staging'
-              serviceName: '${{ parameters.serviceName }}'
-              targetRPS: 1000
-              duration: '10m'
-
-  # ============================================================================
-  # LIVE/PRODUCTION ENVIRONMENT
-  # ============================================================================
-  - stage: Deploy_Live
-    displayName: 'Deploy to Live (Production)'
+  # ===========================================================================
+  # Stage: Deploy to Prod
+  # ===========================================================================
+  - stage: Deploy_Prod
+    displayName: 'Deploy to Production'
     dependsOn: Deploy_Staging
     condition: |
       and(
-        succeeded(),
-        contains('${{ parameters.deployToEnvironments }}', 'live')
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'prod')),
+        ne('${{ parameters.stopAfter }}', 'staging')
       )
     jobs:
-      - deployment: DeployLive
+      - deployment: deploy_prod
         displayName: 'Deploy to Production'
         environment: 'quckapp-production'
-        pool:
-          vmImage: 'ubuntu-latest'
         strategy:
           runOnce:
-            preDeploy:
-              steps:
-                - task: ManualValidation@0
-                  displayName: 'CAB + Release Manager Approval'
-                  inputs:
-                    notifyUsers: |
-                      cab@quckapp.com
-                      release-manager@quckapp.com
-                      cto@quckapp.com
-                      ops-team@quckapp.com
-                    instructions: |
-                      PRODUCTION DEPLOYMENT APPROVAL
-
-                      Change Advisory Board (CAB) Review Required
-
-                      Checklist:
-                      - All environment sign-offs completed
-                      - Security assessment passed
-                      - Performance benchmarks verified
-                      - Rollback plan approved
-                      - Communication plan ready
-                      - On-call team notified
-                      - Maintenance window confirmed
-
-                      Risk Assessment: [LOW/MEDIUM/HIGH]
-                      Rollback Time: < 5 minutes
-                    timeoutInMinutes: 10080  # 1 week
             deploy:
               steps:
-                - template: templates/deploy-canary.yml
+                - checkout: github-repo
+                  submodules: true
+                - template: templates/deploy-steps.yml
                   parameters:
-                    environment: 'live'
-                    namespace: 'quckapp-prod'
+                    environment: 'prod'
                     serviceName: '${{ parameters.serviceName }}'
                     imageTag: '${{ parameters.imageTag }}'
-                    replicas: 5
-                    memoryLimit: '4Gi'
-                    cpuLimit: '4000m'
-                    aksCluster: 'aks-prod'
-                    resourceGroup: 'rg-quckapp-prod'
-                    enableAutoScale: true
-                    minReplicas: 5
-                    maxReplicas: 50
-                    canaryPercentage: 10
-            postRouteTraffic:
+                    helmTimeout: '20m'
+
+  # ===========================================================================
+  # Stage: Deploy to Live
+  # ===========================================================================
+  - stage: Deploy_Live
+    displayName: 'Deploy to Live'
+    dependsOn: Deploy_Prod
+    condition: |
+      and(
+        or(succeeded(), in('${{ parameters.startEnvironment }}', 'live')),
+        ne('${{ parameters.stopAfter }}', 'prod')
+      )
+    jobs:
+      - deployment: deploy_live
+        displayName: 'Deploy to Live'
+        environment: 'quckapp-live'
+        strategy:
+          runOnce:
+            deploy:
               steps:
-                - task: AzureCLI@2
-                  displayName: 'Monitor Canary Metrics'
-                  inputs:
-                    azureSubscription: 'QuckApp-Production'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      # Monitor error rate, latency, and success rate
-                      ./scripts/monitor-canary.sh \
-                        --service ${{ parameters.serviceName }} \
-                        --duration 15m \
-                        --error-threshold 1% \
-                        --latency-threshold 200ms
-            on:
-              failure:
-                steps:
-                  - template: templates/rollback.yml
-                    parameters:
-                      environment: 'live'
-                      serviceName: '${{ parameters.serviceName }}'
-              success:
-                steps:
-                  - task: ManualValidation@0
-                    displayName: 'Ops Team Post-Deployment Verification'
-                    inputs:
-                      notifyUsers: |
-                        ops-team@quckapp.com
-                      instructions: |
-                        Post-Deployment Verification
-
-                        Please verify:
-                        - Service health checks passing
-                        - No increase in error rates
-                        - Latency within acceptable range
-                        - User feedback monitored
-                      timeoutInMinutes: 60
-
-      - job: SmokeTests
-        displayName: 'Production Smoke Tests'
-        dependsOn: DeployLive
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - template: templates/smoke-tests.yml
-            parameters:
-              environment: 'live'
-              serviceName: '${{ parameters.serviceName }}'
-
-      - job: NotifyStakeholders
-        displayName: 'Notify Stakeholders'
-        dependsOn: SmokeTests
-        condition: succeeded()
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: PowerShell@2
-            displayName: 'Send Deployment Notification'
-            inputs:
-              targetType: 'inline'
-              script: |
-                $body = @{
-                  "text" = "QuckApp Deployment Complete - ${{ parameters.serviceName }}"
-                  "blocks" = @(
-                    @{
-                      "type" = "header"
-                      "text" = @{
-                        "type" = "plain_text"
-                        "text" = "Production Deployment Successful"
-                      }
-                    }
-                    @{
-                      "type" = "section"
-                      "fields" = @(
-                        @{ "type" = "mrkdwn"; "text" = "*Service:*`n${{ parameters.serviceName }}" }
-                        @{ "type" = "mrkdwn"; "text" = "*Version:*`n${{ parameters.imageTag }}" }
-                        @{ "type" = "mrkdwn"; "text" = "*Environment:*`nProduction" }
-                        @{ "type" = "mrkdwn"; "text" = "*Status:*`nSuccess" }
-                      )
-                    }
-                  )
-                } | ConvertTo-Json -Depth 10
-
-                Invoke-RestMethod -Uri "$(SLACK_WEBHOOK_URL)" -Method Post -Body $body -ContentType "application/json"
+                - checkout: github-repo
+                  submodules: true
+                - template: templates/deploy-steps.yml
+                  parameters:
+                    environment: 'live'
+                    serviceName: '${{ parameters.serviceName }}'
+                    imageTag: '${{ parameters.imageTag }}'
+                    helmTimeout: '20m'
+                - template: templates/integration-tests.yml
+                  parameters:
+                    environment: 'live'
+                    namespace: 'quckapp-live'

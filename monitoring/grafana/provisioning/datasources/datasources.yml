@@ -95,6 +95,20 @@ datasources:
         spanStartTimeShift: '-1h'
         spanEndTimeShift: '1h'
 
+  # ClickHouse - Analytics database
+  - name: ClickHouse
+    type: grafana-clickhouse-datasource
+    access: proxy
+    url: http://clickhouse:8123
+    editable: false
+    jsonData:
+      defaultDatabase: quckapp_analytics
+      port: 9000
+      protocol: native
+    secureJsonData:
+      username: ${CLICKHOUSE_USER:-quckapp}
+      password: ${CLICKHOUSE_PASSWORD:-clickhouse_secret}
+
   # Tempo alternative (if using Tempo instead of Jaeger)
   # - name: Tempo
   #   type: tempo

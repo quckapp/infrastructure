@@ -1,0 +1,313 @@
+# =============================================================================
+# QUCKAPP - GO SERVICES LIVE OVERRIDE
+# =============================================================================
+# Live environment - blue/green deployment with maximum availability
+# Usage: docker-compose -f docker-compose.go-services.yml -f docker-compose.go-services.live.yml --env-file .env.live up
+# =============================================================================
+
+version: '3.8'
+
+services:
+  attachment-service:
+    image: quckapp/attachment-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  bookmark-service:
+    image: quckapp/bookmark-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  cdn-service:
+    image: quckapp/cdn-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  file-service:
+    image: quckapp/file-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  media-service:
+    image: quckapp/media-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  reminder-service:
+    image: quckapp/reminder-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  search-service:
+    image: quckapp/search-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first
+
+  workspace-service:
+    image: quckapp/workspace-service:${IMAGE_TAG:-live}
+    environment:
+      - GO_ENV=live
+      - GIN_MODE=release
+      - GOMAXPROCS=4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    deploy:
+      replicas: 5
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 180s
+      update_config:
+        parallelism: 1
+        delay: 60s
+        failure_action: rollback
+        monitor: 120s
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 30s
+        failure_action: continue
+        monitor: 60s
+        order: start-first

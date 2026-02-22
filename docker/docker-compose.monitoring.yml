@@ -1,0 +1,338 @@
+# =============================================================================
+# QUCKAPP MONITORING STACK - DOCKER COMPOSE
+# =============================================================================
+# Full observability stack for local development.
+# Usage: docker compose -f docker-compose.infra.yml -f docker-compose.monitoring.yml up -d
+# Requires: docker-compose.infra.yml (databases, message brokers) running first.
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # METRICS COLLECTION
+  # ===========================================================================
+
+  # Prometheus - Metrics collection and alerting
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: quckapp-prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ../monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      alertmanager:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # Alertmanager - Alert routing and notification
+  alertmanager:
+    image: prom/alertmanager:v0.26.0
+    container_name: quckapp-alertmanager
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=http://localhost:9093'
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    volumes:
+      - ../monitoring/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ../monitoring/alertmanager/templates:/etc/alertmanager/templates:ro
+      - alertmanager_data:/alertmanager
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9093/-/healthy"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # VISUALIZATION
+  # ===========================================================================
+
+  # Grafana - Metrics visualization and dashboards
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: quckapp-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_INSTALL_PLUGINS: "grafana-clickhouse-datasource"
+    ports:
+      - "${GRAFANA_PORT:-3030}:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ../monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # LOG AGGREGATION
+  # ===========================================================================
+
+  # Loki - Log aggregation engine
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: quckapp-loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+    volumes:
+      - ../monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - ../monitoring/loki/rules:/loki/rules:ro
+      - loki_data:/loki
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3100/ready"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # Promtail - Log shipping agent
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: quckapp-promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/promtail-config.yml
+    ports:
+      - "${PROMTAIL_PORT:-9080}:9080"
+    volumes:
+      - ../monitoring/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - promtail_positions:/tmp/positions
+    depends_on:
+      loki:
+        condition: service_healthy
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # DISTRIBUTED TRACING
+  # ===========================================================================
+
+  # Jaeger - Trace storage and UI
+  jaeger:
+    image: jaegertracing/all-in-one:1.50
+    container_name: quckapp-jaeger
+    restart: unless-stopped
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "${JAEGER_UI_PORT:-16686}:16686"   # UI
+      - "14268:14268"                       # Jaeger HTTP receiver
+      - "14250:14250"                       # Jaeger gRPC receiver
+      - "6831:6831/udp"                     # Jaeger compact thrift
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:14269/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # OpenTelemetry Collector - Unified telemetry collection
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.91.0
+    container_name: quckapp-otel-collector
+    restart: unless-stopped
+    command: --config=/etc/otel/otel-collector-config.yml
+    ports:
+      - "${OTEL_GRPC_PORT:-4317}:4317"     # OTLP gRPC
+      - "${OTEL_HTTP_PORT:-4318}:4318"     # OTLP HTTP
+      - "8889:8889"                         # Prometheus metrics exporter
+      - "9411:9411"                         # Zipkin receiver
+      - "13133:13133"                       # Health check
+    volumes:
+      - ../monitoring/otel/otel-collector-config.yml:/etc/otel/otel-collector-config.yml:ro
+    depends_on:
+      jaeger:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:13133/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # HOST & CONTAINER METRICS
+  # ===========================================================================
+
+  # Node Exporter - Host-level metrics
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: quckapp-node-exporter
+    restart: unless-stopped
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "${NODE_EXPORTER_PORT:-9100}:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    networks:
+      - quckapp-network
+
+  # cAdvisor - Container-level metrics
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: quckapp-cadvisor
+    restart: unless-stopped
+    ports:
+      - "${CADVISOR_PORT:-8080}:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - quckapp-network
+
+  # ===========================================================================
+  # DATABASE EXPORTERS
+  # ===========================================================================
+
+  # Redis Exporter
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.55.0
+    container_name: quckapp-redis-exporter
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_secret}
+    ports:
+      - "${REDIS_EXPORTER_PORT:-9121}:9121"
+    networks:
+      - quckapp-network
+
+  # MySQL Exporter
+  mysql-exporter:
+    image: prom/mysqld-exporter:v0.15.0
+    container_name: quckapp-mysql-exporter
+    restart: unless-stopped
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: ${MYSQL_PASSWORD:-mysql_secret}
+    command:
+      - '--mysqld.username=${MYSQL_USER:-quckapp}'
+      - '--mysqld.address=mysql:3306'
+    ports:
+      - "${MYSQL_EXPORTER_PORT:-9104}:9104"
+    networks:
+      - quckapp-network
+
+  # PostgreSQL Exporter
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: quckapp-postgres-exporter
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${POSTGRES_USER:-quckapp}:${POSTGRES_PASSWORD:-quckapp_secret}@postgres:5432/${POSTGRES_DB:-quckapp}?sslmode=disable"
+    ports:
+      - "${POSTGRES_EXPORTER_PORT:-9187}:9187"
+    networks:
+      - quckapp-network
+
+  # MongoDB Exporter
+  mongodb-exporter:
+    image: percona/mongodb_exporter:0.39.0
+    container_name: quckapp-mongodb-exporter
+    restart: unless-stopped
+    command:
+      - '--mongodb.uri=mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-admin_secret}@mongodb:27017'
+      - '--discovering-mode'
+      - '--collect-all'
+    ports:
+      - "${MONGODB_EXPORTER_PORT:-9216}:9216"
+    networks:
+      - quckapp-network
+
+  # Elasticsearch Exporter
+  elasticsearch-exporter:
+    image: quay.io/prometheuscommunity/elasticsearch-exporter:v1.6.0
+    container_name: quckapp-elasticsearch-exporter
+    restart: unless-stopped
+    command:
+      - '--es.uri=http://elasticsearch:9200'
+      - '--es.all'
+      - '--es.indices'
+      - '--es.shards'
+    ports:
+      - "${ES_EXPORTER_PORT:-9114}:9114"
+    networks:
+      - quckapp-network
+
+  # Kafka Exporter
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.7.0
+    container_name: quckapp-kafka-exporter
+    restart: unless-stopped
+    command:
+      - '--kafka.server=kafka:9092'
+      - '--topic.filter=.*'
+      - '--group.filter=.*'
+    ports:
+      - "${KAFKA_EXPORTER_PORT:-9308}:9308"
+    networks:
+      - quckapp-network
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  prometheus_data:
+    driver: local
+  alertmanager_data:
+    driver: local
+  grafana_data:
+    driver: local
+  loki_data:
+    driver: local
+  promtail_positions:
+    driver: local
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  quckapp-network:
+    external: true
