@@ -43,7 +43,7 @@ Generate PodDisruptionBudgets for all enabled services
 {{- $replicaCount := $service.replicaCount | default 1 }}
 {{- if gt (int $replicaCount) 1 }}
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ $service.name }}

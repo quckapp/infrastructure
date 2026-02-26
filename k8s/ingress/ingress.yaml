@@ -7,7 +7,7 @@
 # =============================================================================
 # INGRESS CLASS
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: IngressClass
 metadata:
   name: nginx
@@ -19,7 +19,7 @@ spec:
 # =============================================================================
 # MAIN API INGRESS
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: Ingress
 metadata:
   name: quckapp-api-ingress
@@ -73,7 +73,7 @@ spec:
 # =============================================================================
 # WEBSOCKET INGRESS (Separate for sticky sessions)
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: Ingress
 metadata:
   name: quckapp-websocket-ingress
@@ -137,7 +137,7 @@ spec:
 # =============================================================================
 # INTERNAL SERVICES INGRESS (Admin/Monitoring)
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: Ingress
 metadata:
   name: quckapp-admin-ingress
@@ -174,7 +174,7 @@ spec:
 # =============================================================================
 # CERT-MANAGER CLUSTER ISSUERS
 # =============================================================================
-apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/api/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
@@ -189,7 +189,7 @@ spec:
           ingress:
             class: nginx
 ---
-apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/api/v1
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod

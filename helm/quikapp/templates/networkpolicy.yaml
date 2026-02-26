@@ -4,7 +4,7 @@ Network policies for QuckApp microservices
 {{- if .Values.networkPolicies.enabled }}
 ---
 # Default deny all ingress traffic
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-default-deny
@@ -21,7 +21,7 @@ spec:
 
 ---
 # Allow ingress from ingress controller
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-allow-ingress
@@ -48,7 +48,7 @@ spec:
 
 ---
 # Allow egress to DNS
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-allow-dns
@@ -75,7 +75,7 @@ spec:
 
 ---
 # Allow egress to infrastructure services (databases, cache, etc.)
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-allow-infrastructure
@@ -150,7 +150,7 @@ spec:
 
 ---
 # Allow internal service-to-service communication
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-allow-internal
@@ -177,7 +177,7 @@ spec:
 
 ---
 # Allow egress to monitoring services
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-allow-monitoring
@@ -220,7 +220,7 @@ spec:
 
 ---
 # Allow Prometheus to scrape all services
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: {{ include "quckapp.fullname" . }}-prometheus-scrape

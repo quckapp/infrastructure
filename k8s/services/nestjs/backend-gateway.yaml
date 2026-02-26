@@ -4,7 +4,7 @@
 # Main API gateway that routes requests to microservices
 # =============================================================================
 
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: backend-gateway
@@ -183,14 +183,14 @@ spec:
   selector:
     app.kubernetes.io/name: backend-gateway
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: backend-gateway-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: backend-gateway
   minReplicas: 3
@@ -226,7 +226,7 @@ spec:
           periodSeconds: 15
       selectPolicy: Max
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: backend-gateway-pdb

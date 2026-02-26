@@ -7,7 +7,7 @@
 # =============================================================================
 # ANALYTICS SERVICE (FastAPI)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: analytics-service
@@ -165,14 +165,14 @@ spec:
   selector:
     app.kubernetes.io/name: analytics-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: analytics-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: analytics-service
   minReplicas: 2
@@ -188,7 +188,7 @@ spec:
 # =============================================================================
 # ML SERVICE (FastAPI + ML Models)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: ml-service
@@ -336,14 +336,14 @@ spec:
   selector:
     app.kubernetes.io/name: ml-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: ml-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: ml-service
   minReplicas: 2
@@ -365,7 +365,7 @@ spec:
 # =============================================================================
 # MODERATION SERVICE (FastAPI + Content Moderation)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: moderation-service
@@ -506,14 +506,14 @@ spec:
   selector:
     app.kubernetes.io/name: moderation-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: moderation-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: moderation-service
   minReplicas: 2
@@ -529,7 +529,7 @@ spec:
 # =============================================================================
 # SENTIMENT SERVICE (FastAPI + NLP)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: sentiment-service
@@ -662,14 +662,14 @@ spec:
   selector:
     app.kubernetes.io/name: sentiment-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: sentiment-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: sentiment-service
   minReplicas: 2
@@ -691,7 +691,7 @@ spec:
 # =============================================================================
 # PDB FOR PYTHON SERVICES
 # =============================================================================
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: analytics-service-pdb
@@ -702,7 +702,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: analytics-service
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: ml-service-pdb
@@ -713,7 +713,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: ml-service
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: moderation-service-pdb

@@ -5,7 +5,7 @@
 # =============================================================================
 # DEFAULT DENY ALL
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny-all
@@ -19,7 +19,7 @@ spec:
 # =============================================================================
 # ALLOW DNS
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-dns
@@ -42,7 +42,7 @@ spec:
 # =============================================================================
 # ALLOW INGRESS FROM INGRESS CONTROLLER
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-ingress-controller
@@ -65,7 +65,7 @@ spec:
 # =============================================================================
 # ALLOW INTER-SERVICE COMMUNICATION
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-internal-services
@@ -91,7 +91,7 @@ spec:
 # =============================================================================
 # ALLOW DATABASE ACCESS
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-database-access
@@ -147,7 +147,7 @@ spec:
 # =============================================================================
 # ALLOW MESSAGE BROKER ACCESS
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-broker-access
@@ -179,7 +179,7 @@ spec:
 # =============================================================================
 # ALLOW EXTERNAL HTTPS (for external APIs)
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-external-https
@@ -198,7 +198,7 @@ spec:
 # =============================================================================
 # ALLOW MONITORING
 # =============================================================================
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/api/v1
 kind: NetworkPolicy
 metadata:
   name: allow-monitoring

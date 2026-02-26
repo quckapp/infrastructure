@@ -130,7 +130,7 @@ backendGateway:
     port: 3000
   ingress:
     enabled: true
-    path: /api
+    path: /api/v1
   resources:
     requests:
       cpu: 200m
@@ -237,7 +237,7 @@ authService:
     port: 8080
   ingress:
     enabled: true
-    path: /api/auth
+    path: /api/v1/auth
   resources:
     requests:
       cpu: 200m
@@ -269,7 +269,7 @@ userService:
     port: 8081
   ingress:
     enabled: true
-    path: /api/users
+    path: /api/v1/users
   resources:
     requests:
       cpu: 200m
@@ -359,7 +359,7 @@ adminService:
     port: 8084
   ingress:
     enabled: true
-    path: /api/admin
+    path: /api/v1/admin
   resources:
     requests:
       cpu: 100m
@@ -388,7 +388,7 @@ securityService:
     port: 8086
   ingress:
     enabled: true
-    path: /api/security
+    path: /api/v1/security
   resources:
     requests:
       cpu: 200m
@@ -400,7 +400,7 @@ securityService:
     SPRING_PROFILES_ACTIVE: kubernetes
     SERVER_PORT: "8086"
   healthCheck:
-    path: /api/security/actuator/health
+    path: /api/v1/security/actuator/health
     port: 8086
   autoscaling:
     enabled: true
@@ -453,7 +453,7 @@ messageService:
     port: 4001
   ingress:
     enabled: true
-    path: /api/messages
+    path: /api/v1/messages
   resources:
     requests:
       cpu: 200m
@@ -486,7 +486,7 @@ callService:
     port: 4002
   ingress:
     enabled: true
-    path: /api/calls
+    path: /api/v1/calls
   resources:
     requests:
       cpu: 200m
@@ -549,7 +549,7 @@ huddleService:
     port: 4004
   ingress:
     enabled: true
-    path: /api/huddles
+    path: /api/v1/huddles
   resources:
     requests:
       cpu: 200m
@@ -615,7 +615,7 @@ workspaceService:
     port: 8090
   ingress:
     enabled: true
-    path: /api/workspaces
+    path: /api/v1/workspaces
   resources:
     requests:
       cpu: 100m
@@ -647,7 +647,7 @@ channelService:
     port: 8091
   ingress:
     enabled: true
-    path: /api/channels
+    path: /api/v1/channels
   resources:
     requests:
       cpu: 100m
@@ -679,7 +679,7 @@ threadService:
     port: 8092
   ingress:
     enabled: true
-    path: /api/threads
+    path: /api/v1/threads
   resources:
     requests:
       cpu: 100m
@@ -711,7 +711,7 @@ searchService:
     port: 8093
   ingress:
     enabled: true
-    path: /api/search
+    path: /api/v1/search
   resources:
     requests:
       cpu: 200m
@@ -743,7 +743,7 @@ fileService:
     port: 8094
   ingress:
     enabled: true
-    path: /api/files
+    path: /api/v1/files
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: "500m"
   resources:
@@ -777,7 +777,7 @@ mediaService:
     port: 8095
   ingress:
     enabled: true
-    path: /api/media
+    path: /api/v1/media
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: "1g"
   resources:
@@ -811,7 +811,7 @@ bookmarkService:
     port: 8096
   ingress:
     enabled: true
-    path: /api/bookmarks
+    path: /api/v1/bookmarks
   resources:
     requests:
       cpu: 50m
@@ -843,7 +843,7 @@ reminderService:
     port: 8097
   ingress:
     enabled: true
-    path: /api/reminders
+    path: /api/v1/reminders
   resources:
     requests:
       cpu: 50m
@@ -875,7 +875,7 @@ attachmentService:
     port: 8098
   ingress:
     enabled: true
-    path: /api/attachments
+    path: /api/v1/attachments
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: "100m"
   resources:
@@ -947,7 +947,7 @@ analyticsService:
     port: 5000
   ingress:
     enabled: true
-    path: /api/analytics
+    path: /api/v1/analytics
   resources:
     requests:
       cpu: 200m
@@ -1037,7 +1037,7 @@ exportService:
     port: 5003
   ingress:
     enabled: true
-    path: /api/export
+    path: /api/v1/export
   resources:
     requests:
       cpu: 200m
@@ -1069,7 +1069,7 @@ integrationService:
     port: 5004
   ingress:
     enabled: true
-    path: /api/integrations
+    path: /api/v1/integrations
   resources:
     requests:
       cpu: 100m
@@ -1130,7 +1130,7 @@ insightsService:
     port: 5006
   ingress:
     enabled: true
-    path: /api/insights
+    path: /api/v1/insights
   resources:
     requests:
       cpu: 200m

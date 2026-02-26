@@ -7,7 +7,7 @@
 # =============================================================================
 # PRESENCE SERVICE (Elixir/Phoenix)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: presence-service
@@ -159,7 +159,7 @@ spec:
 # =============================================================================
 # MESSAGE SERVICE (Elixir/Phoenix)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: message-service
@@ -286,7 +286,7 @@ spec:
 # =============================================================================
 # CALL SERVICE (Elixir/Phoenix + WebRTC)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: call-service
@@ -405,7 +405,7 @@ spec:
 # =============================================================================
 # HUDDLE SERVICE (Elixir/Phoenix)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: huddle-service
@@ -522,14 +522,14 @@ spec:
 # =============================================================================
 # HPA FOR ELIXIR SERVICES
 # =============================================================================
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: presence-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: presence-service
   minReplicas: 3
@@ -542,14 +542,14 @@ spec:
           type: Utilization
           averageUtilization: 60
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: message-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: message-service
   minReplicas: 3
@@ -565,7 +565,7 @@ spec:
 # =============================================================================
 # PDB FOR ELIXIR SERVICES
 # =============================================================================
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: presence-service-pdb
@@ -576,7 +576,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: presence-service
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: message-service-pdb

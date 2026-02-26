@@ -40,7 +40,7 @@ services:
       HUDDLE_SERVICE_URL: http://huddle-service:4005
       MESSAGE_SERVICE_ELIXIR_URL: http://message-service-elixir:4006
       EVENT_BROADCAST_SERVICE_URL: http://event-broadcast-service:4007
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "${GATEWAY_PORT:-3000}:3000"
     depends_on:
@@ -72,7 +72,7 @@ services:
       REFRESH_TOKEN_EXPIRATION: 604800
       OAUTH_GOOGLE_CLIENT_ID: ${OAUTH_GOOGLE_CLIENT_ID:-}
       OAUTH_GOOGLE_CLIENT_SECRET: ${OAUTH_GOOGLE_CLIENT_SECRET:-}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3001:3001"
     depends_on:
@@ -100,7 +100,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       JWT_EXPIRATION: 3600
       REFRESH_TOKEN_EXPIRATION: 604800
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "8081:8081"
     depends_on:
@@ -134,7 +134,7 @@ services:
       MINIO_ENDPOINT: minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3002:3002"
     depends_on:
@@ -162,7 +162,7 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3003:3003"
     depends_on:
@@ -193,7 +193,7 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3004:3004"
     depends_on:
@@ -217,7 +217,7 @@ services:
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       ELASTICSEARCH_URL: http://elasticsearch:9200
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3005:3005"
     depends_on:
@@ -241,7 +241,7 @@ services:
       DATABASE_URL: postgresql://quckapp:quckapp_secret@postgres:5432/quckapp
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3006:3006"
     depends_on:
@@ -272,7 +272,7 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
       MINIO_BUCKET: quckapp-files
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3007:3007"
     depends_on:
@@ -299,7 +299,7 @@ services:
       MINIO_ENDPOINT: minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3008:3008"
     depends_on:
@@ -327,7 +327,7 @@ services:
       ELASTICSEARCH_URL: http://elasticsearch:9200
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3009:3009"
     depends_on:
@@ -355,7 +355,7 @@ services:
       FCM_CLIENT_EMAIL: ${FCM_CLIENT_EMAIL:-}
       APNS_KEY_ID: ${APNS_KEY_ID:-}
       APNS_TEAM_ID: ${APNS_TEAM_ID:-}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3010:3010"
     depends_on:
@@ -388,7 +388,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4000:4000"
       - "4369:4369"
@@ -424,7 +424,7 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8081
       PHX_HOST: localhost
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4003:4003"
     depends_on:
@@ -462,7 +462,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4002:4002"
     depends_on:
@@ -496,7 +496,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4005:4005"
     depends_on:
@@ -534,7 +534,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4006:4006"
     depends_on:
@@ -573,7 +573,7 @@ services:
       APNS_KEY_ID: ${APNS_KEY_ID:-}
       APNS_TEAM_ID: ${APNS_TEAM_ID:-}
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4004:4004"
     depends_on:
@@ -607,7 +607,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
       AUTH_SERVICE_URL: http://auth-service:8081
       RELEASE_COOKIE: ${ERLANG_COOKIE:-quckapp_dev_cookie}
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "4007:4007"
     depends_on:
@@ -644,7 +644,7 @@ services:
       CLICKHOUSE_DB: quckapp_analytics
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "8000:8000"
     depends_on:
@@ -669,7 +669,7 @@ services:
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       MODEL_PATH: /app/models
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "8001:8001"
     volumes:
@@ -695,7 +695,7 @@ services:
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       ML_SERVICE_URL: http://ml-service:8001
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "8002:8002"
     depends_on:
@@ -720,7 +720,7 @@ services:
       REDIS_URL: redis://:redis_secret@redis:6379
       KAFKA_BROKERS: kafka:9092
       ML_SERVICE_URL: http://ml-service:8001
-      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "8003:8003"
     depends_on:
@@ -751,7 +751,7 @@ services:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3011:3011"
     depends_on:
@@ -775,7 +775,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: quckapp_secret
       SPRING_DATA_MONGODB_URI: mongodb://admin:admin_secret@mongodb:27017/quckapp?authSource=admin
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3012:3012"
     depends_on:
@@ -802,7 +802,7 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: redis_secret
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "3013:3013"
     depends_on:
@@ -830,7 +830,7 @@ services:
       SPRING_DATA_REDIS_PASSWORD: redis_secret
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
-      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      OTEL_EXPORTER_JAEGER_ENDPOINT: http://jaeger:14268/api/v1/traces
     ports:
       - "8086:8086"
     depends_on:
@@ -839,7 +839,7 @@ services:
     networks:
       - quckapp-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8086/api/security/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8086/api/v1/security/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3

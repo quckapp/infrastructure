@@ -1,7 +1,7 @@
 # =============================================================================
 # NOTIFICATION SERVICE (NestJS)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: notification-service
@@ -144,14 +144,14 @@ spec:
   selector:
     app.kubernetes.io/name: notification-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: notification-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: notification-service
   minReplicas: 2
@@ -167,7 +167,7 @@ spec:
 # =============================================================================
 # REALTIME SERVICE (NestJS + Socket.io)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: realtime-service
@@ -312,14 +312,14 @@ spec:
   selector:
     app.kubernetes.io/name: realtime-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: realtime-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: realtime-service
   minReplicas: 3
@@ -338,7 +338,7 @@ spec:
           type: Utilization
           averageUtilization: 70
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: realtime-service-pdb

@@ -5,7 +5,7 @@
 # Use if you prefer separate Dockerfiles per service.
 #
 # Build:
-#   docker build -f docker/Dockerfile.api -t quckapp/api .
+#   docker build -f docker/Dockerfile.api -t quckapp/api/v1 .
 # =============================================================================
 
 FROM node:20-alpine AS base

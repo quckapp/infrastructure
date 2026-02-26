@@ -143,7 +143,7 @@ output "private_dns_zone_id" {
 output "aks_secret_provider_class" {
   description = "Example SecretProviderClass YAML for AKS CSI driver"
   value       = <<-EOF
-apiVersion: secrets-store.csi.x-k8s.io/v1
+apiVersion: secrets-store.csi.x-k8s.io/api/v1
 kind: SecretProviderClass
 metadata:
   name: ${var.name}-secrets

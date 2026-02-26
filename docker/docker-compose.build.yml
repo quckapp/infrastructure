@@ -24,7 +24,7 @@ services:
       target: api
       args:
         - NODE_ENV=production
-    image: quckapp/api:local
+    image: quckapp/api/v1:local
     container_name: quckapp-api
     restart: unless-stopped
     ports:

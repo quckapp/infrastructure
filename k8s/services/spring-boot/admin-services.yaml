@@ -1,7 +1,7 @@
 # =============================================================================
 # PERMISSION SERVICE (Spring Boot)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: permission-service
@@ -115,7 +115,7 @@ spec:
 # =============================================================================
 # AUDIT SERVICE (Spring Boot)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: audit-service
@@ -220,7 +220,7 @@ spec:
 # =============================================================================
 # ADMIN SERVICE (Spring Boot)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: admin-service

@@ -8,7 +8,7 @@
 # =============================================================================
 # WORKSPACE SERVICE (Go/Gin)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: workspace-service
@@ -133,7 +133,7 @@ spec:
 # =============================================================================
 # CHANNEL SERVICE (Go/Gin)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: channel-service
@@ -239,7 +239,7 @@ spec:
 # =============================================================================
 # THREAD SERVICE (Go/Gin)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: thread-service
@@ -340,7 +340,7 @@ spec:
 # =============================================================================
 # SEARCH SERVICE (Go/Gin)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: search-service
@@ -451,7 +451,7 @@ spec:
 # =============================================================================
 # FILE SERVICE (Go/Gin)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: file-service
@@ -573,7 +573,7 @@ spec:
 # =============================================================================
 # MEDIA SERVICE (Go/Gin)
 # =============================================================================
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: media-service
@@ -689,14 +689,14 @@ spec:
 # =============================================================================
 # HPA FOR GO SERVICES
 # =============================================================================
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: workspace-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: workspace-service
   minReplicas: 2
@@ -709,14 +709,14 @@ spec:
           type: Utilization
           averageUtilization: 70
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: channel-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: channel-service
   minReplicas: 2
@@ -729,14 +729,14 @@ spec:
           type: Utilization
           averageUtilization: 70
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: search-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: search-service
   minReplicas: 2
@@ -749,14 +749,14 @@ spec:
           type: Utilization
           averageUtilization: 60
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: file-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: file-service
   minReplicas: 2

@@ -41,7 +41,7 @@ Generate HorizontalPodAutoscalers for services with autoscaling enabled
 {{- if and $service.enabled $service.autoscaling }}
 {{- if $service.autoscaling.enabled }}
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ $service.name }}

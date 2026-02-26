@@ -4,7 +4,7 @@
 # Handles user profiles, preferences, and account management
 # =============================================================================
 
-apiVersion: apps/v1
+apiVersion: apps/api/v1
 kind: Deployment
 metadata:
   name: user-service
@@ -121,14 +121,14 @@ spec:
   selector:
     app.kubernetes.io/name: user-service
 ---
-apiVersion: autoscaling/v2
+apiVersion: autoscaling/api/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: user-service-hpa
   namespace: quckapp
 spec:
   scaleTargetRef:
-    apiVersion: apps/v1
+    apiVersion: apps/api/v1
     kind: Deployment
     name: user-service
   minReplicas: 2
@@ -141,7 +141,7 @@ spec:
           type: Utilization
           averageUtilization: 70
 ---
-apiVersion: policy/v1
+apiVersion: policy/api/v1
 kind: PodDisruptionBudget
 metadata:
   name: user-service-pdb

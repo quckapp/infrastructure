@@ -38,7 +38,7 @@ metadata:
 # =============================================================================
 
 # Role for reading ConfigMaps and Secrets
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/api/v1
 kind: Role
 metadata:
   name: quckapp-config-reader
@@ -52,7 +52,7 @@ rules:
     verbs: ["get", "list", "watch"]
 ---
 # Role for service discovery
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/api/v1
 kind: Role
 metadata:
   name: quckapp-service-discovery
@@ -67,7 +67,7 @@ rules:
 # =============================================================================
 
 # Bind config reader to default service account
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/api/v1
 kind: RoleBinding
 metadata:
   name: quckapp-config-reader-binding
@@ -88,7 +88,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ---
 # Bind service discovery to all service accounts
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/api/v1
 kind: RoleBinding
 metadata:
   name: quckapp-service-discovery-binding
